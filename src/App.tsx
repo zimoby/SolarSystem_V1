@@ -46,7 +46,7 @@ const distOfEarthToSun10_6Km = 149.6;
 
 
 const InfoAboutObject = React.forwardRef(({ positionText, offset, params, setActiveObjectName }, ref) => {
-  const [position, setPosition] = useState({ x: 0, y: 0, z: 0 });
+  // const [position, setPosition] = useState({ x: 0, y: 0, z: 0 });
 
   // console.log("params", ref.current);
 
@@ -109,20 +109,6 @@ const listOfParamsIgnoreToNormalize = ["name", "orbitInclinationDeg"];
 
 function App() {
   // const [distSizeFactor, setDistSizeFactor] = useState(1 / 2);
-
-  const { gridSize, ...gridConfig } = {
-    gridSize: [10, 10],
-    cellSize: 0.1,
-    cellThickness: 0.5,
-    cellColor: "#6f6f6f",
-    sectionSize: 1,
-    sectionThickness: 1,
-    sectionColor: "yellow",
-    fadeDistance: 30,
-    fadeStrength: 1,
-    followCamera: false,
-    infiniteGrid: true,
-  };
 
   const {
     commonOrbitSpeed,
@@ -422,88 +408,17 @@ function App() {
   };
 
 
-  const cameraDistance = 3;
-
-  const ControlComponent = () => {
-
-    const [statesUpdate, setStatesUpdate] = useState(0);
-
-    // const [activeItemPosition, setActiveItemPosition] = useState(new THREE.Vector3(0, 0, 0));
-    // useEffect(() => {
-    //   console.log("active object name", activeObjectName);
-    //   setActiveItemPosition(planetsPositionCollection.current[activeObjectName]);
-    //   console.log("active item position", activeItemPosition);
-    // }, [activeItemPosition]);
-    
-
-    const activeItemPosition = useMemo(() => {
-      return planetsPositionCollection.current[activeObjectName];
-    }, [activeObjectName, statesUpdate]);
-  
   
 
-    useFrame((state, delta) => {
 
-      const frameRate = 60; // Desired frame rate
-      const frameInterval = 1 / frameRate; // Interval between frames
-  
-      if (state.clock.getElapsedTime() % frameInterval < delta) {
-        setStatesUpdate(prev => (prev + 1) % 1000); // Changing this state will cause a re-render
-      }
-
-      // setStatesUpdate(prev => prev + 1);
-    })
-
-    
-    return (
-      <>
-        <color args={["#111111"]} attach="background" />
-        {/* <EffectComposer> */}
-          {/* <Bloom height={200} mipmapBlur/> */}
-          {/* <SSAO /> */}
-          {/* <Noise opacity={0.2} 
-            blendFunction={BlendFunction.MULTIPLY}
-          />
-          <Vignette  offset={0.3} darkness={0.5} /> */}
-          {/* <ToneMapping /> */}
-        {/* </EffectComposer> */}
-        <OrbitControls
-          enablePan={true}
-          enableZoom={true}
-          enableDamping={true}
-          dampingFactor={0.2}
-          rotateSpeed={0.5}
-          zoomSpeed={1}
-          panSpeed={0.8}
-          target={activeItemPosition}
-        />
-      </>
-    );
-  }
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-black">
       <Canvas orthographic gl={{ antialias: true }}>
-        <ControlComponent />
-        <Stats />
-        <Perf position="bottom-left"  />
+        <ControlComponent planetsPositionCollection={planetsPositionCollection} activeObjectName={activeObjectName} />
+        <AppStatsPerformance />
+        <SceneSetup />
 
-        {/* <EffectComposer>
-          <Bloom mipmapBlur luminanceThreshold={1} radius={1000} />
-        </EffectComposer> */}
-        {/* <color attach="background" args={['#141622']} /> */}
-        <PerspectiveCamera makeDefault position={[0, cameraDistance , cameraDistance * 2]} fov={10} />
-        {/* <directionalLight color="white" position={[5, 5, 5]} /> */}
-        <hemisphereLight groundColor={"#000000"} intensity={Math.PI / 2} />
-        <spotLight position={[2, 2, 2]} angle={0.2} penumbra={1} intensity={Math.PI * 2} />
-        <ambientLight intensity={0.4} />
-
-        <Stars />
-        {/* <mesh position={[1, 0, 0]} ref={targetRef}>
-          <Sphere args={[0.1]} scale={[0.05, 0.05, 0.05]} >
-            <meshBasicMaterial color="orange" />
-          </Sphere>
-        </mesh> */}
         {/* <PlanetConnections planetPositions={Object.values(planetPositions)} /> */}
 
         {planetsSystem.map((planet, index) => {
@@ -511,21 +426,106 @@ function App() {
         })}
 
         <Sun setActiveObjectName={setActiveObjectName} />
-        
-
-
-        {/* <Environment background files={[skyStars]} /> */}
-        {/* <Environment preset="sunset"  /> */}
-        <Grid position={[0, 0, 0]} args={gridSize} {...gridConfig} />
-        <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
-          <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
-        </GizmoHelper>
-
-        {/* <OrbitControls  /> */}
-        {/* <OrbitControls target={activeItemPosition} /> */}
-        
       </Canvas>
     </div>
+  );
+}
+
+const SolarSystem = ({ planetsData }) => {
+  const planets = planetsData.map((planet, index) => {
+    return <CosmicSphere key={index} {...planet} />;
+  });
+
+  return <>{planets}</>;
+}
+
+const SceneSetup = () => {
+  const cameraDistance = 3;
+
+  const { gridSize, ...gridConfig } = {
+    gridSize: [10, 10],
+    cellSize: 0.1,
+    cellThickness: 0.5,
+    cellColor: "#6f6f6f",
+    sectionSize: 1,
+    sectionThickness: 1,
+    sectionColor: "yellow",
+    fadeDistance: 40,
+    fadeStrength: 3,
+    followCamera: false,
+    infiniteGrid: true,
+  };
+
+  return (
+    <>
+      <PerspectiveCamera makeDefault position={[0, cameraDistance , cameraDistance * 2]} fov={10} />
+      <hemisphereLight groundColor={"#000000"} intensity={Math.PI / 2} />
+      <spotLight position={[2, 2, 2]} angle={0.2} penumbra={1} intensity={Math.PI * 2} />
+      <ambientLight intensity={0.4} />
+      <Stars />
+
+
+      <Grid position={[0, 0, 0]} args={gridSize} {...gridConfig} />
+      <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+        <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
+      </GizmoHelper>
+
+      {/* <Environment background files={[skyStars]} /> */}
+      {/* <Environment preset="sunset"  /> */}
+    </>
+  );
+}
+
+const AppStatsPerformance = () => {
+  return (
+    <>
+        <Stats />
+        <Perf position="bottom-left"  />
+    </>
+  );
+}
+
+const ControlComponent = ({planetsPositionCollection , activeObjectName}) => {
+  const [statesUpdate, setStatesUpdate] = useState(0);
+
+  const activeItemPosition = useMemo(() => {
+    return planetsPositionCollection.current[activeObjectName];
+  }, [activeObjectName, statesUpdate]);
+
+  useFrame((state, delta) => {
+
+    const frameRate = 30; // Desired frame rate
+    const frameInterval = 1 / frameRate; // Interval between frames
+
+    if (state.clock.getElapsedTime() % frameInterval < delta) {
+      setStatesUpdate(prev => (prev + 1) % 1000); // Changing this state will cause a re-render
+    }
+
+  })
+  
+  return (
+    <>
+      <color args={["#111111"]} attach="background" />
+      {/* <EffectComposer> */}
+        {/* <Bloom height={200} mipmapBlur/> */}
+        {/* <SSAO /> */}
+        {/* <Noise opacity={0.2} 
+          blendFunction={BlendFunction.MULTIPLY}
+        />
+        <Vignette  offset={0.3} darkness={0.5} /> */}
+        {/* <ToneMapping /> */}
+      {/* </EffectComposer> */}
+      <OrbitControls
+        enablePan={true}
+        enableZoom={true}
+        enableDamping={true}
+        dampingFactor={0.2}
+        rotateSpeed={0.5}
+        zoomSpeed={1}
+        panSpeed={0.8}
+        target={activeItemPosition}
+      />
+    </>
   );
 }
 
@@ -640,11 +640,13 @@ const CosmicSphere = (params) => {
     quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), orbitInclination);
     position.applyQuaternion(quaternion);
 
+    
+
     refPlanet.current.position.copy(position);
     refPlanet.current.rotation.y = (refPlanet.current.rotation.y - ((Math.PI * 2 * delta) / 60 / 60) * axisRotationSpeed) % (Math.PI * 2);
 
 
-    const frameRate = 15; // Desired frame rate
+    const frameRate = 30; // Desired frame rate
     const frameInterval = 1 / frameRate; // Interval between frames
 
     if (state.clock.getElapsedTime() % frameInterval < delta) {
