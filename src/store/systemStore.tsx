@@ -8,7 +8,7 @@ import * as THREE from "three";
 // }
 
 export const useSystemStore = create(devtools((set) => ({
-    activeObjectName : '',
+    activeObjectName : 'sun',
     setActiveObjectName : (name: string) => set({activeObjectName: name}),
     timeSpeed: 1,
     setTimeSpeed: (speed: number) => set({timeSpeed: speed}),
@@ -53,12 +53,7 @@ export const useSolarSystemStore = create(devtools((set) => ({
       })),
 
     //Real-time data: Properties of celestial bodies
-    properties: {
-        sun: {
-            position: new THREE.Vector3(0, 0, 0),
-            rotation: new THREE.Euler(0, 0, 0),
-        },
-    },
+    properties: {},
     addCelestialBodyProperty: (name, property, value) => set((state) => ({
         properties: {
             ...state.properties,
