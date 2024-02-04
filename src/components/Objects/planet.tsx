@@ -82,14 +82,14 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
           </group>
         )}
         <group ref={planetRef} rotation={[0, 0, 0]}>
-          {/* <Trail
+          <Trail
             local
             width={planetSize * 100}
             length={5}
             color={"white"}
             attenuation={(t) => t * t}
-            target={planetPositionRef}
-          /> */}
+            target={planetRef}
+          />
 
           {/* <group>
                   {moons.map((moon, index) => {
