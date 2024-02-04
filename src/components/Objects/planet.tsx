@@ -26,12 +26,14 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
 
   // console.log("planetDistance", planetDistance);
 
-  const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
+  const planetRef = useRef();
+  // const planetRotationRef = useRef();
 
   useEffect(() => {
     const unsubscribe = useSolarSystemStore.subscribe(
       (state) => {
-        planetPositionRef.current.position.copy(state.properties[planetName]?.position);
+        planetRef.current.position.copy(state.properties[planetName]?.position);
+        planetRef.current.rotation.y = (state.properties[planetName]?.rotation.y);
       },
       (state) => state.properties[planetName] // This function selects which part of the state to subscribe to
     );
@@ -79,15 +81,15 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
             </mesh>
           </group>
         )}
-        <group ref={planetPositionRef} rotation={[0, 0, 0]}>
-          <Trail
+        <group ref={planetRef} rotation={[0, 0, 0]}>
+          {/* <Trail
             local
             width={planetSize * 100}
             length={5}
             color={"white"}
             attenuation={(t) => t * t}
             target={planetPositionRef}
-          />
+          /> */}
 
           {/* <group>
                   {moons.map((moon, index) => {

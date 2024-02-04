@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import starsData from "../data/starsData.json";
 import solarData from "../data/data.json";
-import { planetsNamesOrder, planetsScaleFactor } from "../data/solarSystemData";
+import { dayInSeconds, objectsRotationSpeed, planetsNamesOrder, planetsScaleFactor, yearInSeconds } from "../data/solarSystemData";
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
 import { useSolarSystemStore, useSystemStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
@@ -14,6 +14,7 @@ export const useInitiateSolarSystem = () => {
     "semimajorAxis10_6Km",
     "siderealOrbitPeriodDays",
     "orbitInclinationDeg",
+    "siderealRotationPeriodHrs",
   ];
   const sunData = starsData["sun"];
 
@@ -87,7 +88,9 @@ export const useInitiateSolarSystem = () => {
 
     // process sun data
     // const sunData = useSolarSystemStore.getState().celestialBodies.stars.sun;
-    const normalizedSunData = normalizeDataToEarth(sunData);
+    const filterSunData = filterObjectData(sunData, usedProperties);
+    const normalizedSunData = normalizeDataToEarth(filterSunData);
+    console.log("normalizedSunData", normalizedSunData);
     useSolarSystemStore.getState().addCelestialBody("stars", "sun", normalizedSunData);
     useSolarSystemStore
       .getState()
@@ -112,12 +115,13 @@ export const useCelestialBodyUpdates = () => {
       const celestialBody = useSolarSystemStore.getState().celestialBodies.planets[name] || {};
 
       if (celestialBody.semimajorAxis10_6Km) {
+
+        // const tSec = (state.clock.getElapsedTime() * useSystemStore.getState().timeSpeed * Math.PI * 2) % (Math.PI * 2);
+        // console.log("tSec", tSec);
+
         const t =
           (((state.clock.getElapsedTime() * Math.PI * 2) /
-            60 /
-            60 /
-            24 /
-            365 /
+            yearInSeconds /
             celestialBody.siderealOrbitPeriodDays) *
             useSystemStore.getState().timeSpeed +
             (useSystemStore.getState().timeOffset * (Math.PI * 2)) / 365) %
@@ -145,7 +149,7 @@ export const useCelestialBodyUpdates = () => {
         const currentRotation = properties[name]?.rotation || new THREE.Euler(0, 0, 0);
         const newRotation = new THREE.Euler(
           currentRotation.x,
-          currentRotation.y + 0.01,
+          (currentRotation.y + delta * (Math.PI * 2) / dayInSeconds / celestialBody.siderealRotationPeriodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed) % (Math.PI * 2),
           currentRotation.z
         );
 

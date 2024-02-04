@@ -2,6 +2,10 @@ const distOfEarthToSun10_6Km = 149.6;
 
 export const planetsScaleFactor = 100;
 export const starsScaleFactor = 1000;
+export const objectsRotationSpeed = 0.01
+
+export const yearInSeconds = 60 * 60 * 24 * 365;
+export const dayInSeconds = 60 * 60 * 24;
 
 export const planetsNamesOrder = [
   "mercury",

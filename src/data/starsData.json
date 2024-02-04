@@ -2,6 +2,7 @@
   "sun": {
     "name": "Sun",
     "volumetricMeanRadiusKm": 695700,
-    "distance10_6km": 0
+    "distance10_6km": 0,
+    "siderealRotationPeriodHrs": 609.12
   }
 }
