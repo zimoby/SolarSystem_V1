@@ -1,7 +1,8 @@
 import { GizmoHelper, GizmoViewport, Grid, PerspectiveCamera, Stars } from "@react-three/drei";
+import {ToneMapping, Bloom, EffectComposer, Noise, SSAO, Vignette } from "@react-three/postprocessing";
 
 export const SceneSetup = () => {
-    const cameraDistance = 3;
+    const cameraDistance = 10;
   
     const { gridSize, ...gridConfig } = {
       gridSize: [10, 10],
