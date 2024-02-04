@@ -1,7 +1,7 @@
 {
-    "sun": {
-        "name": "Sun",
-        "volumetricMeanRadiusKm": 695700,
-        "distance10_6km": 0
-    }
+  "sun": {
+    "name": "Sun",
+    "volumetricMeanRadiusKm": 695700,
+    "distance10_6km": 0
+  }
 }

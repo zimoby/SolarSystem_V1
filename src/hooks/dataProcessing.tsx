@@ -59,7 +59,9 @@ export const useInitiateSolarSystem = () => {
       }, {});
 
       // Add planet data
-      useSolarSystemStore.getState().addCelestialBody("planets", planetName, additionalProcessingParams);
+      useSolarSystemStore
+        .getState()
+        .addCelestialBody("planets", planetName, additionalProcessingParams);
 
       // Add moons if they exist
       if (planetData.moons && planetData.moons.length > 0) {
@@ -75,8 +77,12 @@ export const useInitiateSolarSystem = () => {
       }
 
       // Initialize default position and rotation for each planet
-      useSolarSystemStore.getState().addCelestialBodyProperty(planetName, "position", new THREE.Vector3(0, 0, 0));
-      useSolarSystemStore.getState().addCelestialBodyProperty(planetName, "rotation", new THREE.Euler(0, 0, 0));
+      useSolarSystemStore
+        .getState()
+        .addCelestialBodyProperty(planetName, "position", new THREE.Vector3(0, 0, 0));
+      useSolarSystemStore
+        .getState()
+        .addCelestialBodyProperty(planetName, "rotation", new THREE.Euler(0, 0, 0));
     });
 
     // process sun data

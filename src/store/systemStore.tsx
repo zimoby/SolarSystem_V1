@@ -38,7 +38,7 @@ export const useSystemStore = create(
     objectsRelativeScale: 1,
     orbitAngleOffset: 0,
 
-		updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
+    updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
   }))
 );
 

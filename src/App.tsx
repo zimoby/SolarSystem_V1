@@ -15,7 +15,6 @@ import { SceneSetup } from "./components/Scene";
 import { useSyncControlsWithStore } from "./hooks/controls";
 
 function App() {
-
   useSyncControlsWithStore();
 
   return (
@@ -31,7 +30,5 @@ function App() {
     </div>
   );
 }
-
-
 
 export default App;

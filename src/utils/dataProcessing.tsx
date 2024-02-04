@@ -38,4 +38,4 @@ export const filterObjectData = (objData, usedProperties) => {
     }
     return acc;
   }, {});
-}
+};

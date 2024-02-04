@@ -3,13 +3,8 @@ import { useEffect } from "react";
 import { useSystemStore } from "../store/systemStore";
 
 export const useSyncControlsWithStore = () => {
-    const {
-      timeSpeed,
-      timeOffset,
-      objectsDistance,
-      objectsRelativeScale,
-      orbitAngleOffset,
-    } = useControls({
+  const { timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, orbitAngleOffset } =
+    useControls({
       timeSpeed: {
         value: 50,
         min: 1,
@@ -41,16 +36,23 @@ export const useSyncControlsWithStore = () => {
         step: 1,
       },
     });
-  
-    const updateSystemSettings = useSystemStore((state) => state.updateSystemSettings);
-  
-    useEffect(() => {
-      updateSystemSettings({
-        timeSpeed: timeSpeed === 1 ? 1 : timeSpeed * 100000,
-        timeOffset,
-        objectsDistance,
-        objectsRelativeScale,
-        orbitAngleOffset,
-      });
-    }, [timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, orbitAngleOffset, updateSystemSettings]);
-  }
+
+  const updateSystemSettings = useSystemStore((state) => state.updateSystemSettings);
+
+  useEffect(() => {
+    updateSystemSettings({
+      timeSpeed: timeSpeed === 1 ? 1 : timeSpeed * 100000,
+      timeOffset,
+      objectsDistance,
+      objectsRelativeScale,
+      orbitAngleOffset,
+    });
+  }, [
+    timeSpeed,
+    timeOffset,
+    objectsDistance,
+    objectsRelativeScale,
+    orbitAngleOffset,
+    updateSystemSettings,
+  ]);
+};

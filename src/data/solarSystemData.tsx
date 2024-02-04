@@ -17,4 +17,3 @@ export const planetsNamesOrder = [
 
 const solarSystemDataLink =
   "https://github.com/sempostma/planetary-factsheet/blob/2a108f418ebefbc3859d5a27e09f71bf5367eafd/data.json";
-
