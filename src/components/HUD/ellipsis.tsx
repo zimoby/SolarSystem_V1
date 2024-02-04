@@ -9,7 +9,20 @@ import * as THREE from "three";
 import { Line } from "@react-three/drei";
 
 
-export const ObjectEllipse = ({ params }) => {
+export const ObjectEllipse = ({ params, name, objSelected }) => {
+  const [selected, setSelected] = useState(false);
+
+  useEffect(() => {
+    // if (objSelected) {
+      setSelected(objSelected);
+    // }
+  }, [objSelected]);
+
+  // const activeObjectName = useSystemStore(state => state.activeObjectName);
+
+  // if 
+
+  // console.log("params", params);
 
   const planetDistance = calculateRelativeDistance(
     params.semimajorAxis10_6Km,
@@ -41,12 +54,9 @@ export const ObjectEllipse = ({ params }) => {
     ).getPoints(64);
   }, [planetDistance, planetInclination]);
 
-
-  const [selected, setSelected] = useState(false);
-
   return (
     <>
-      <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(false)}>
+      <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(objSelected || false)}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <Line
             points={pointsDependOnInclination}

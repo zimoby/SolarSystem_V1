@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import {
   calculateRelativeDistance,
@@ -17,6 +17,7 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
   );
 
   const planetRef = useRef();
+  const [selected, setSelected] = useState(false);
 
   useEffect(() => {
     const unsubscribe = useSolarSystemStore.subscribe(
@@ -33,7 +34,7 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
     <>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
-        <ObjectEllipse params={params} />
+        <ObjectEllipse params={params} name={planetName} objSelected={selected} />
         <group ref={planetRef} rotation={[0, 0, 0]}>
           <Trail
             local
@@ -49,12 +50,24 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
                     return <CosmicSphere key={index} planetsPositionCollection={planetsPositionCollection} {...moon} />;
                   } )}
                 </group> */}
+              {/* create circle if sphere is selected */}
+              {selected && (
+                <mesh rotation={[0, Math.PI / 2, 0]}>
+                  <Line
+                    points={new THREE.EllipseCurve(0, 0, planetSize * 1.5, planetSize * 1.5, 0, Math.PI * 2, false).getPoints(64)}
+                    color={"yellow"}
+                    lineWidth={1}
+                  />
+                </mesh>
+              )}
           <Sphere
             args={[planetSize]}
             onClick={() => {
               // console.log("clicked on planet", planetName);
               useSystemStore.getState().updateSystemSettings({ activeObjectName: planetName });
             }}
+            onPointerOver={() => setSelected(true)}
+            onPointerOut={() => setSelected(false)}
           >
             <meshStandardMaterial map={planetTexture} />
           </Sphere>
