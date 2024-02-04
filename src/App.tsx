@@ -21,6 +21,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 import solarData from "./data/data.json";
+import starsData from "./data/starsData.json";
 import { useControls } from "leva";
 
 import earthTexture from "./assets/2k_earth_daymap.jpg";
@@ -36,6 +37,8 @@ import skyStars from "./assets/2k_stars_milky_way.jpg";
 import {ToneMapping, Bloom, EffectComposer, Noise, SSAO, Vignette } from "@react-three/postprocessing";
 import { Perf } from "r3f-perf";
 import { BlendFunction } from "postprocessing";
+
+import { useSolarSystemStore, useSystemStore } from "./store/systemStore";
 // import { color } from "three/examples/jsm/nodes/Nodes.js";
 
 
@@ -111,42 +114,35 @@ function App() {
   // const [distSizeFactor, setDistSizeFactor] = useState(1 / 2);
 
   const {
-    commonOrbitSpeed,
-    movementTimeOffset,
+    timeSpeed,
+    timeOffset,
+    objectsDistance,
+    objectsRelativeScale,
     orbitAngleOffset,
-    commonAxisRotationSpeed,
-    distSizeFactor,
-    sizePlanetsFactor
   } = useControls({
-    distSizeFactor: {
-      value: 1 / 2,
-      min: 1 / 10,
+    timeSpeed: {
+      value: 50,
+      min: 1,
+      max: 100,
+      step: 1,
+    },
+    timeOffset: {
+      value: 0,
+      min: -365,
+      max: 365,
+      step: 1,
+    },
+    objectsDistance: {
+      value: 2,
+      min: 1,
       max: 10,
       step: 0.1,
     },
-    sizePlanetsFactor: {
-      value: 0.01,
-      min: 0.01,
-      max: 1,
-      step: 0.01,
-    },
-    commonAxisRotationSpeed: {
-      value: 60 * 2,
-      min: 60,
-      max: 60 * 24,
-      step: 60,
-    },
-    commonOrbitSpeed: {
-      value: 60 * 60 * 24 * 2,
-      min: 60 * 60 * 24,
-      max: 60 * 60 * 24 * 365,
-      step: 60 * 60 * 24,
-    },
-    movementTimeOffset: {
-      value: 0,
-      min: 0,
-      max: 60 * 60 * 24 * 365,
-      step: 60 * 60 * 24,
+    objectsRelativeScale: {
+      value: 1,
+      min: 1,
+      max: 10,
+      step: 1,
     },
     orbitAngleOffset: {
       value: 0,
@@ -157,9 +153,37 @@ function App() {
   });
 
 
-  // const [commonOrbitSpeed, setCommonOrbitSpeed] = useState(60 * 60 * 24 * 2);
-  // const [commonAxisRotationSpeed, setCommonAxisRotationSpeed] = useState(60 * 2);
-  // const [sizePlanetsFactor, setsizePlanetsFactor] = useState(0.1 * distSizeFactor);
+
+  useEffect(() => {
+    useSystemStore.getState().setTimeOffset(timeOffset);
+  }, [timeOffset]);
+
+  useEffect(() => {
+    if (timeSpeed === 1) {
+      useSystemStore.getState().setTimeSpeed(1);
+    } else {
+      useSystemStore.getState().setTimeSpeed(timeSpeed * 100000);
+    }
+  }, [timeSpeed]);
+
+  useEffect(() => {
+    useSystemStore.getState().setObjectsDistance(objectsDistance);
+  }, [objectsDistance]);
+
+  useEffect(() => {
+    useSystemStore.getState().setObjectsRelativeScale(objectsRelativeScale);
+  }, [objectsRelativeScale]);
+
+  useEffect(() => {
+    useSystemStore.getState().setOrbitAngleOffset(orbitAngleOffset);
+  }, [orbitAngleOffset]);
+  
+  const distSizeFactor = 1 / 2;
+  const movementTimeOffset = 0;
+  // const orbitAngleOffset = 0;
+  const [commonOrbitSpeed, setCommonOrbitSpeed] = useState(60 * 60 * 24 * 2);
+  const [commonAxisRotationSpeed, setCommonAxisRotationSpeed] = useState(60 * 2);
+  const [sizePlanetsFactor, setsizePlanetsFactor] = useState(0.1 * distSizeFactor);
   const [commonDistFactor, setCommonDistFactor] = useState(1);
   const [changeSize, setChangeSize] = useState(true);
   // const [realtimeUpdate , setRealtimeUpdate] = useState(false);
@@ -175,13 +199,11 @@ function App() {
     }, {})
   });
 
-  useEffect(() => {
-    console.log("planetsPositionCollection", planetsPositionCollection.current);
-  }, [planetsPositionCollection]);
+  // useEffect(() => {
+  //   console.log("planetsPositionCollection", planetsPositionCollection.current);
+  // }, [planetsPositionCollection]);
 
-  const [activeObjectName, setActiveObjectName] = useState("sun");
-  const [initStart, setInitStart] = useState(false);
-  
+  const [activeObjectName, setActiveObjectName] = useState("sun");  
 
 
   const solarSystemDataLink =
@@ -359,13 +381,13 @@ function App() {
     // console.log("planetsData", planetsData);
     return planetsData.map((planet, index) => {
       return {
-        commonParams: {
-          distSizeFactor,
-          commonOrbitSpeed,
-          commonAxisRotationSpeed,
-          sizePlanetsFactor,
-          commonDistFactor,
-        },
+        // commonParams: {
+        //   distSizeFactor,
+        //   commonOrbitSpeed,
+        //   commonAxisRotationSpeed,
+        //   sizePlanetsFactor,
+        //   commonDistFactor,
+        // },
         planetParams: planet,
         dist: commonDistFactor * planet.semimajorAxis10_6Km,
         size: sizePlanetsFactor * (changeSize ? planet.diameterKm : 1),
@@ -376,13 +398,13 @@ function App() {
         orbitAngleOffset
       };
     });
-  }, [planetsData, distSizeFactor, commonOrbitSpeed, commonAxisRotationSpeed, sizePlanetsFactor, commonDistFactor, changeSize, movementTimeOffset, orbitAngleOffset]);
+  }, [planetsData, commonOrbitSpeed, commonAxisRotationSpeed, sizePlanetsFactor, commonDistFactor, changeSize, movementTimeOffset, orbitAngleOffset]);
 
 
 
-  useEffect(() => {
-    console.log("all planets data", planetsSystem);
-  }, [planetsSystem]);
+  // useEffect(() => {
+  //   console.log("all planets data", planetsSystem);
+  // }, [planetsSystem]);
 
 
 
@@ -399,7 +421,8 @@ function App() {
         <pointLight position={[0, 0, 0]} intensity={1} distance={500} />
         <Sphere args={[1]} scale={[0.1, 0.1, 0.1]} onClick={() => {
           // console.log("clicked on sun");
-          setActiveObjectName("sun");
+          // setActiveObjectName("sun");
+          useSystemStore.getState().setActiveObjectName("sun");
         }}>
           <meshStandardMaterial map={createSunTexture} emissive="orange" emissiveIntensity={2} toneMapped={false} />
         </Sphere>
@@ -419,25 +442,211 @@ function App() {
         <AppStatsPerformance />
         <SceneSetup />
 
+        <SolarSystem />
+
         {/* <PlanetConnections planetPositions={Object.values(planetPositions)} /> */}
 
-        {planetsSystem.map((planet, index) => {
+        {/* {planetsSystem.map((planet, index) => {
           return <CosmicSphere key={index} planetsPositionCollection={planetsPositionCollection} setActiveObjectName={setActiveObjectName} {...planet} />;
-        })}
+        })} */}
 
-        <Sun setActiveObjectName={setActiveObjectName} />
+        {/* <Sun setActiveObjectName={setActiveObjectName} /> */}
       </Canvas>
     </div>
   );
 }
 
-const SolarSystem = ({ planetsData }) => {
-  const planets = planetsData.map((planet, index) => {
-    return <CosmicSphere key={index} {...planet} />;
-  });
+const SolarSystem = () => {
 
-  return <>{planets}</>;
+  useInitiateSolarSystem();
+  useCelestialBodyUpdates();
+
+
+  return (
+    <>
+      <GeneratePlanets />
+      <SunComponent />
+    </>
+  )
 }
+
+const normalizeDataToEarth = (objData) => {
+  const earthData = solarData["earth"];
+  const normalizedData = Object.keys(objData).reduce((acc, key) => {
+
+    const planetValue = objData[key];
+    const earthValue = earthData[key];
+
+    if (typeof planetValue !== "number" || typeof earthValue !== "number" || earthValue === 0 || planetValue === 0) {
+      return {
+        ...acc,
+        [key]: planetValue
+      }
+    }
+
+    // console.log("planetValue", planetValue, earthValue);
+    const normalizedValue = planetValue / earthValue;
+    return {
+      ...acc,
+      [key]: normalizedValue,
+    };
+  }, {});
+  return normalizedData;
+}
+
+// function calculateAdjustedLog(distance, sliderValue) {
+//   const base = 2 + sliderValue; 
+//   return Math.log(distance) / Math.log(base);
+// }
+
+const useInitiateSolarSystem = () => {
+
+  const usedProperties = ["volumetricMeanRadiusKm", "semimajorAxis10_6Km", "siderealOrbitPeriodDays", "orbitInclinationDeg"]
+  // const earthData = solarData["earth"];
+
+  // const relativeDistanceToSun = useSystemStore.getState().objectsDistance;
+
+  // console.log("relativeDistanceToSun", relativeDistanceToSun);
+  const sunData = starsData["sun"];
+
+  const reorderPlanets = useMemo(() => {
+    // reorder object
+    return planetsNamesOrder.reduce((acc, planetName) => {
+      const planetData = solarData[planetName];
+      return {
+        ...acc,
+        [planetName]: planetData
+      };
+    }, {});
+  }, []);
+
+  useEffect(() => {
+    //process planets data
+    Object.keys(reorderPlanets).forEach((planetName) => {
+      const planetData = reorderPlanets[planetName];
+
+      // Prepare planet data excluding moons for adding to the store
+      const { moons, ...planetWithoutMoonData } = planetData;
+
+      const filterPlanetData = Object.keys(planetWithoutMoonData).reduce((acc, key) => {
+        if (usedProperties.includes(key)) {
+          return {
+            ...acc,
+            [key]: planetWithoutMoonData[key]
+          }
+        }
+        return acc;
+      }, {});
+
+      // normalize data
+      const normalizedPlanetData = normalizeDataToEarth(filterPlanetData);
+
+      console.log("normalizedPlanetData", planetName, normalizedPlanetData);
+
+      const additionalProcessingParams = Object.keys(normalizedPlanetData).reduce((acc, key) => {
+        // console.log("key", key, normalizedData[key]);
+
+        if (key === "volumetricMeanRadiusKm") {
+          return {
+            ...acc,
+            [key]: normalizedPlanetData[key] / 100 // /1000000
+          }
+        } else if (key === "semimajorAxis10_6Km") {
+          return {
+            ...acc,
+            [key]: normalizedPlanetData[key] // calculateAdjustedLog(normalizedPlanetData[key], 0) // Math.pow(normalizedPlanetData[key], 1 / relativeDistanceToSun)
+          }
+        } else {
+          return {
+            ...acc,
+            [key]: normalizedPlanetData[key]
+          }
+        }
+
+      }, {});
+
+      // console.log("additionalProcessingParams", planetName, additionalProcessingParams);
+
+
+      // Add planet data
+      useSolarSystemStore.getState().addCelestialBody("planets", planetName, additionalProcessingParams);
+
+      // Add moons if they exist
+      if (planetData.moons && planetData.moons.length > 0) {
+        planetData.moons.forEach((moon) => {
+          const updatedMoonData = {
+            ...moon,
+            type: planetName // Assuming 'type' indicates the moon's parent planet
+          };
+          useSolarSystemStore.getState().addCelestialBody("moons", moon.name, updatedMoonData);
+        });
+      }
+      
+      // Initialize default position and rotation for each planet
+      useSolarSystemStore.getState().addCelestialBodyProperty(planetName, "position", new THREE.Vector3(0, 0, 0));
+      useSolarSystemStore.getState().addCelestialBodyProperty(planetName, "rotation", new THREE.Euler(0, 0, 0));
+    });
+
+    // process sun data
+    // const sunData = useSolarSystemStore.getState().celestialBodies.stars.sun;
+    const normalizedSunData = normalizeDataToEarth(sunData);
+    console.log("normalizedSunData", normalizedSunData);
+    useSolarSystemStore.getState().addCelestialBody("stars", "sun", normalizedSunData);
+  }, []); 
+
+}
+
+const calculateRelativeDistance = (distance, sliderValue) => {
+  return Math.pow(distance, 1 / sliderValue);
+}
+
+const calculateRelativeScale = (size, sliderValue) => {
+  return Math.pow(size, 1 / sliderValue) / sliderValue - (sliderValue - 1) * 0.007;
+}
+
+const useCelestialBodyUpdates = () => {
+  const frameRate = 30;
+  const frameInterval = 1 / frameRate;
+
+  useFrame((state, delta) => {
+    const properties = useSolarSystemStore.getState().properties;
+
+    if (state.clock.getElapsedTime() % frameInterval < delta) {
+    //   updateCelestialBodyPositions(t, properties);
+    // }
+      Object.keys(properties).forEach((name) => {
+        const celestialBody = useSolarSystemStore.getState().celestialBodies.planets[name] || {};
+        
+        if (celestialBody.semimajorAxis10_6Km) {
+
+          const t = ((state.clock.getElapsedTime() * Math.PI * 2) / 60 / 60 / 24 / 365 / celestialBody.siderealOrbitPeriodDays * useSystemStore.getState().timeSpeed + (useSystemStore.getState().timeOffset * (Math.PI * 2) / 365)) % (Math.PI * 2);
+          const recalcDistance = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km, useSystemStore.getState().objectsDistance);
+          // Position update logic
+          const newPosition = new THREE.Vector3(
+            Math.cos(t) * recalcDistance,
+            0,
+            Math.sin(t) * recalcDistance
+          );
+          const quaternion = new THREE.Quaternion();
+          quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(celestialBody.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset) );
+          newPosition.applyQuaternion(quaternion);
+
+          // Rotation update logic
+          const currentRotation = properties[name]?.rotation || new THREE.Euler(0, 0, 0);
+          const newRotation = new THREE.Euler(currentRotation.x, currentRotation.y + 0.01, currentRotation.z);
+
+          // Updating the store
+          useSolarSystemStore.getState().updateProperty(name, "position", newPosition);
+          useSolarSystemStore.getState().updateProperty(name, "rotation", newRotation);
+          
+
+          // console.log("planet name", name, newPosition);
+
+        }
+      });
+    }
+  });
+};
 
 const SceneSetup = () => {
   const cameraDistance = 3;
@@ -463,7 +672,6 @@ const SceneSetup = () => {
       <spotLight position={[2, 2, 2]} angle={0.2} penumbra={1} intensity={Math.PI * 2} />
       <ambientLight intensity={0.4} />
       <Stars />
-
 
       <Grid position={[0, 0, 0]} args={gridSize} {...gridConfig} />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
@@ -529,6 +737,210 @@ const ControlComponent = ({planetsPositionCollection , activeObjectName}) => {
   );
 }
 
+const PlanetComponent = ({planetName, params, planetTexture}) => {
+
+  // const planetSize = params.volumetricMeanRadiusKm;
+  // console.log("planet name", planetName, params.volumetricMeanRadiusKm);
+  const planetSize = calculateRelativeScale(params.volumetricMeanRadiusKm, useSystemStore.getState().objectsRelativeScale);
+  const planetDistance = calculateRelativeDistance(params.semimajorAxis10_6Km, useSystemStore.getState().objectsDistance);
+  const planetInclination = degreesToRadians(params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset);
+
+  // console.log("planet name", planetName, planetSize, planetDistance);
+
+  // const planetPositionFromStore = useSolarSystemStore.getState().properties[planetName]?.position;
+
+  // console.log("planet name", planetName, planetSize, planetPositionFromStore);
+  
+  // const planetRef = useRef();
+  const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
+  // const [updateTrigger, setUpdateTrigger] = useState(0);
+  // const planetPosRef2 = useRef(useSolarSystemStore.getState().properties[planetName]?.position);
+
+  // useEffect(() => {
+  //   console.log("planet position ref", planetPositionRef.current);
+  // }, [planetPositionRef]);
+  
+
+  // const Component = () => {
+  //   // Fetch initial state
+  //   const scratchRef = useRef(useScratchStore.getState().scratches)
+  //   // Connect to the store on mount, disconnect on unmount, catch state-changes in a reference
+  //   useEffect(() => useScratchStore.subscribe(
+  //     state => (scratchRef.current = state.scratches)
+  //   ), [])
+  //   ...
+
+  // useEffect(() => { useSolarSystemStore.subscribe(
+  //   state => (planetPosRef2.current = state.properties[planetName]?.position)
+  // )}, []);
+
+  useEffect(() => {
+    const unsubscribe = useSolarSystemStore.subscribe(
+      (state) => {
+        planetPositionRef.current.position.copy(state.properties[planetName]?.position);
+      },
+      (state) => state.properties[planetName] // This function selects which part of the state to subscribe to
+    );
+    return unsubscribe; 
+  }, []);
+
+  const points = useMemo(
+    () => new THREE.EllipseCurve(0, 0, planetDistance, planetDistance, 0, Math.PI * 2, false).getPoints(64 * 3),
+    [planetDistance]
+  );
+
+  const pointsDependOnInclination = useMemo(() => {
+    const ellipseSize = planetDistance * Math.cos(planetInclination);
+    return new THREE.EllipseCurve(0, 0, planetDistance, ellipseSize, 0, Math.PI * 2, false).getPoints(64);
+  }, [planetDistance, planetInclination]);
+
+
+
+  return (
+    <>
+      {/* <Line points={lineFromZeroOrbitToPlanet2} color="white" lineWidth={1} transparent={true} opacity={0.4} /> */}
+      {/* <Line points={lineFromZeroOrbitToPlanet} color="white" lineWidth={1} transparent={true} opacity={0.3} /> */}
+      {/* <Trail local width={size * 100} length={5} color={"white"} attenuation={(t) => t * t} target={refPlanet} /> */}
+      <PlanetHUDComponent planetName={planetName} />
+      <group>
+        {true && (
+          <group>
+            <mesh rotation={[Math.PI / 2, 0, 0]}>
+              <Line points={pointsDependOnInclination} color={"white"} lineWidth={1} transparent={true} opacity={0.2} />
+            </mesh>
+            <mesh rotation={[Math.PI / 2 + (planetInclination), 0, 0]}>
+              <Line points={points} color={"white"} lineWidth={1} />
+            </mesh>
+          </group>
+        )}
+        <group ref={planetPositionRef} rotation={[0, 0, 0]}>
+          {/* <InfoAboutObject ref={refPlanet} positionText={positionText} offset={size} params={planetParams} setActiveObjectName={setActiveObjectName} /> */}
+          {/* <group ref={refPlanet2} > */}
+            {/* <group>
+              {moons.map((moon, index) => {
+                return <CosmicSphere key={index} planetsPositionCollection={planetsPositionCollection} {...moon} />;
+              } )}
+            </group> */}
+            <Sphere args={[planetSize]} onClick={() => {}}>
+              <meshStandardMaterial map={planetTexture} />
+            </Sphere>
+          {/* </group> */}
+        </group>
+      </group>
+    </>
+  );
+}
+
+const PlanetHUDComponent = ({ planetName }) => {
+  const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0)); // Assuming initial position
+  const [updateTrigger, setUpdateTrigger] = useState(0); // Trigger state for re-rendering
+
+  useEffect(() => {
+    const unsubscribe = useSolarSystemStore.subscribe(
+      (state) => {
+        const newPosition = state.properties[planetName]?.position;
+        if (newPosition) {
+          planetPositionRef.current = newPosition; // Update position reference
+          setUpdateTrigger(prev => prev + 1); // Trigger re-render
+        }
+      },
+      (state) => state.properties[planetName]
+    );
+    return unsubscribe;
+  }, [planetName]);
+
+  // Calculate line points dynamically on each render
+  const lineFromZeroOrbitToPlanet = [new THREE.Vector3(0, 0, 0), planetPositionRef.current];
+  const lineFromZeroOrbitToPlanet2 = [new THREE.Vector3(planetPositionRef.current.x, 0, planetPositionRef.current.z), planetPositionRef.current];
+
+  // const lineFromZeroOrbitToPlanet2 = useMemo(() => {
+  //   // two points, one at the center and one at the planet
+  //   const planetPosition = refPlanet.current?.position || new THREE.Vector3(0, 0, 0);
+  //   const twoAxisPostion = new THREE.Vector3(planetPosition.x, 0, planetPosition.z);
+  //   const coordArray = [twoAxisPostion, planetPosition];
+
+  //   return coordArray;
+  // }, [updateTrigger]);
+
+
+  return (
+    <>
+      <Line points={lineFromZeroOrbitToPlanet} color="white" lineWidth={1} transparent={true} opacity={0.3}/>
+      <Line points={lineFromZeroOrbitToPlanet2} color="white" lineWidth={1} transparent={true} opacity={0.3}/>
+    </>
+  );
+};
+
+const SunComponent = () => {
+  const createSunTexture = useTexture(sunTexture);
+  const sunData = useSolarSystemStore((state) => state.celestialBodies.stars.sun);
+  const relativeScale = useSystemStore.getState().objectsRelativeScale;
+  const sunSize = sunData?.volumetricMeanRadiusKm / 1000 ?? 0.1;
+  const calculatedSunSize = calculateRelativeScale(sunSize, relativeScale);
+
+
+  // const [sunSize, setSunSize] = useState(0.1);
+
+  // useEffect(() => {
+  //   const sunData = useSolarSystemStore.getState().celestialBodies.stars.sun;
+  //   const relativeScale = useSystemStore.getState().objectsRelativeScale;
+  //   const calculatedSunSize = calculateRelativeScale(sunData.volumetricMeanRadiusKm, relativeScale);
+  //   setSunSize(calculatedSunSize);
+  //   console.log("sun size", calculatedSunSize);
+  // }, []);
+
+  console.log("sun size", calculatedSunSize);
+
+
+  return (
+    <group>
+      {/* <pointLight position={[0, 0, 0]} intensity={1} distance={500} /> */}
+      <Sphere args={[calculatedSunSize]}>
+        {/* <meshStandardMaterial /> */}
+        <meshStandardMaterial map={createSunTexture} emissive="orange" emissiveIntensity={2} toneMapped={false} />
+      </Sphere>
+    </group>
+  );
+}
+
+const GeneratePlanets = () => {
+
+  const getPlanetsData = useSolarSystemStore((state) => state.celestialBodies.planets);
+
+  const createEarthTexture = useTexture(earthTexture);
+  const createJupiterTexture = useTexture(jupiterTexture);
+  const createMarsTexture = useTexture(marsTexture);
+  const createMercuryTexture = useTexture(mercuryTexture);
+  const createNeptuneTexture = useTexture(neptuneTexture);
+  const createSaturnTexture = useTexture(saturnTexture);
+  const createUranusTexture = useTexture(uranusTexture);
+  const createVenusTexture = useTexture(venusTexture);
+
+  const mapedTextures = {
+    earth: createEarthTexture,
+    jupiter: createJupiterTexture,
+    mars: createMarsTexture,
+    mercury: createMercuryTexture,
+    neptune: createNeptuneTexture,
+    saturn: createSaturnTexture,
+    uranus: createUranusTexture,
+    venus: createVenusTexture,
+  };
+
+  
+  const planetsComposition = Object.keys(getPlanetsData).map((planetName, index) => {
+    const planetTexture = mapedTextures[planetName];
+    return <PlanetComponent key={index} planetName={planetName} params={getPlanetsData[planetName]} planetTexture={planetTexture} />;
+  });
+
+  return (
+    <>
+      {planetsComposition}
+    </>
+  )
+
+}
+
 const CosmicSphere = (params) => {
   const {
     dist = 1,
@@ -553,9 +965,9 @@ const CosmicSphere = (params) => {
 
 
 
-  useEffect(() => {
-    console.log("planet data", planetParams.name, planetParams);
-  }, []);
+  // useEffect(() => {
+  //   console.log("planet data", planetParams.name, planetParams);
+  // }, []);
 
   const [objectSelected, setObjectSelected] = useState(false);
   const [trackPosition, setTrackPosition] = useState(false);
