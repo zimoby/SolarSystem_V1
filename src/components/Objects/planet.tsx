@@ -8,6 +8,7 @@ import {
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
 import { Line, Sphere, Trail } from "@react-three/drei";
+import { ObjectEllipse } from "../HUD/ellipsis";
 
 export const PlanetComponent = ({ planetName, params, planetTexture }) => {
   const planetSize = calculateRelativeScale(
@@ -15,19 +16,7 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
     useSystemStore.getState().objectsRelativeScale
   );
 
-  const planetDistance = calculateRelativeDistance(
-    params.semimajorAxis10_6Km,
-    useSystemStore.getState().objectsDistance
-  );
-
-  const planetInclination = degreesToRadians(
-    params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
-  );
-
-  // console.log("planetDistance", planetDistance);
-
   const planetRef = useRef();
-  // const planetRotationRef = useRef();
 
   useEffect(() => {
     const unsubscribe = useSolarSystemStore.subscribe(
@@ -40,47 +29,11 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
     return unsubscribe;
   }, []);
 
-  const points = useMemo(
-    () =>
-      new THREE.EllipseCurve(0, 0, planetDistance, planetDistance, 0, Math.PI * 2, false).getPoints(
-        64 * 3
-      ),
-    [planetDistance]
-  );
-
-  const pointsDependOnInclination = useMemo(() => {
-    const ellipseSize = planetDistance * Math.cos(planetInclination);
-    return new THREE.EllipseCurve(
-      0,
-      0,
-      planetDistance,
-      ellipseSize,
-      0,
-      Math.PI * 2,
-      false
-    ).getPoints(64);
-  }, [planetDistance, planetInclination]);
-
   return (
     <>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
-        {true && (
-          <group>
-            <mesh rotation={[Math.PI / 2, 0, 0]}>
-              <Line
-                points={pointsDependOnInclination}
-                color={"white"}
-                lineWidth={1}
-                transparent={true}
-                opacity={0.2}
-              />
-            </mesh>
-            <mesh rotation={[Math.PI / 2 + planetInclination, 0, 0]}>
-              <Line points={points} color={"white"} lineWidth={1} />
-            </mesh>
-          </group>
-        )}
+        <ObjectEllipse params={params} />
         <group ref={planetRef} rotation={[0, 0, 0]}>
           <Trail
             local
