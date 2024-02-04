@@ -74,6 +74,8 @@ export const useInitiateSolarSystem = () => {
             type: planetName, // Assuming 'type' indicates the moon's parent planet
           };
           useSolarSystemStore.getState().addCelestialBody("moons", moon.name, updatedMoonData);
+          useSolarSystemStore.getState().addCelestialBodyProperty(moon.name, "position", new THREE.Vector3(0, 0, 0));
+          useSolarSystemStore.getState().addCelestialBodyProperty(moon.name, "rotation", new THREE.Euler(0, 0, 0));
         });
       }
 
@@ -92,32 +94,37 @@ export const useInitiateSolarSystem = () => {
     const normalizedSunData = normalizeDataToEarth(filterSunData);
     console.log("normalizedSunData", normalizedSunData);
     useSolarSystemStore.getState().addCelestialBody("stars", "sun", normalizedSunData);
-    useSolarSystemStore
-      .getState()
-      .addCelestialBodyProperty("sun", "position", new THREE.Vector3(0, 0, 0));
-    useSolarSystemStore
-      .getState()
-      .addCelestialBodyProperty("sun", "rotation", new THREE.Euler(0, 0, 0));
+    // useSolarSystemStore
+    //   .getState()
+    //   .addCelestialBodyProperty("sun", "position", new THREE.Vector3(0, 0, 0));
+    // useSolarSystemStore
+    //   .getState()
+    //   .addCelestialBodyProperty("sun", "rotation", new THREE.Euler(0, 0, 0));
   }, []);
 };
 
 export const useCelestialBodyUpdates = () => {
   const frameRate = 30;
   const frameInterval = 1 / frameRate;
-
+  // const properties = useSolarSystemStore.getState().properties;
+  
+  // console.log("planets", planets);
+  
   useFrame((state, delta) => {
-    const properties = useSolarSystemStore.getState().properties;
+    const planets = useSolarSystemStore.getState().celestialBodies.planets;
+
+    // console.log("delta", delta);
 
     // if (state.clock.getElapsedTime() % frameInterval < delta) {
     //   updateCelestialBodyPositions(t, properties);
     // }
-    Object.keys(properties).forEach((name) => {
-      const celestialBody = useSolarSystemStore.getState().celestialBodies.planets[name] || {};
+    Object.keys(planets).forEach((name) => {
+      const celestialBody = planets[name] || {};
 
       if (celestialBody.semimajorAxis10_6Km) {
 
         // const tSec = (state.clock.getElapsedTime() * useSystemStore.getState().timeSpeed * Math.PI * 2) % (Math.PI * 2);
-        // console.log("tSec", tSec);
+        // console.log("celestialBody", celestialBody, name);
 
         const t =
           (((state.clock.getElapsedTime() * Math.PI * 2) /
@@ -146,11 +153,10 @@ export const useCelestialBodyUpdates = () => {
         newPosition.applyQuaternion(quaternion);
 
         // Rotation update logic
-        const currentRotation = properties[name]?.rotation || new THREE.Euler(0, 0, 0);
         const newRotation = new THREE.Euler(
-          currentRotation.x,
-          (currentRotation.y + delta * (Math.PI * 2) / dayInSeconds / celestialBody.siderealRotationPeriodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed) % (Math.PI * 2),
-          currentRotation.z
+          0,
+          (state.clock.getElapsedTime() * (Math.PI * 2) / dayInSeconds / celestialBody.siderealRotationPeriodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed) % (Math.PI * 2),
+          0
         );
 
         // Updating the store
