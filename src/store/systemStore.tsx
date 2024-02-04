@@ -1,76 +1,101 @@
-import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
-import * as THREE from "three";
+import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 
-// interface ISystemStore {
-//     planetPosition: THREE.Vector3;
-//     setPlanetPosition: (position: THREE.Vector3) => void;
-// }
+interface CelestialBody {
+  [key: string]: any; // Replace `any` with a more specific type based on your data structure
+}
 
-export const useSystemStore = create(devtools((set) => ({
-    activeObjectName : 'sun',
-    setActiveObjectName : (name: string) => set({activeObjectName: name}),
+interface SystemState {
+  activeObjectName: string;
+  timeSpeed: number;
+  timeOffset: number;
+  objectsDistance: number;
+  objectsRelativeScale: number;
+  orbitAngleOffset: number;
+  celestialBodies: {
+    stars: { [key: string]: CelestialBody };
+    planets: { [key: string]: CelestialBody };
+    moons: { [key: string]: CelestialBody };
+    asteroids: { [key: string]: CelestialBody };
+    objects: { [key: string]: CelestialBody };
+  };
+  properties: { [key: string]: any }; // Again, replace `any` with something more specific
+  updateSystemSettings: (updates: Partial<SystemState>) => void;
+  modifyCelestialBody: (
+    type: keyof SystemState["celestialBodies"],
+    name: string,
+    data: CelestialBody | Partial<CelestialBody>,
+    isUpdate?: boolean
+  ) => void;
+}
+
+export const useSystemStore = create(
+  devtools((set) => ({
+    activeObjectName: "sun",
     timeSpeed: 1,
-    setTimeSpeed: (speed: number) => set({timeSpeed: speed}),
     timeOffset: 0,
-    setTimeOffset: (offset: number) => set({timeOffset: offset}),
     objectsDistance: 1,
-    setObjectsDistance: (distance: number) => set({objectsDistance: distance}),
     objectsRelativeScale: 1,
-    setObjectsRelativeScale: (scale: number) => set({objectsRelativeScale: scale}),
     orbitAngleOffset: 0,
-    setOrbitAngleOffset: (offset: number) => set({orbitAngleOffset: offset}),
-})));
 
-export const useSolarSystemStore = create(devtools((set) => ({
+		updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
+  }))
+);
+
+export const useSolarSystemStore = create(
+  devtools((set) => ({
     // Static data: Basic information about celestial bodies
     celestialBodies: {
-        stars: {},
-        planets: {},
-        moons: {},
-        asteroids: {},
-        objects: {},
+      stars: {},
+      planets: {},
+      moons: {},
+      asteroids: {},
+      objects: {},
     },
-  // Function to add celestial bodies dynamically
-    addCelestialBody: (type, name, data) => set((state) => ({
-        celestialBodies: {
-            ...state.celestialBodies,
-            [type]: {
-                ...state.celestialBodies[type],
-                [name]: data
-            }
-        },
-    })),
-    // Dynamic data: User-controllable properties (e.g., sliders for size and distance)
-    updateCelestialBody: (type, name, updates) => set((state) => ({
+    // Function to add celestial bodies dynamically
+    addCelestialBody: (type, name, data) =>
+      set((state) => ({
         celestialBodies: {
           ...state.celestialBodies,
           [type]: {
             ...state.celestialBodies[type],
-            [name]: { ...state.celestialBodies[type][name], ...updates }
+            [name]: data,
+          },
+        },
+      })),
+    // Dynamic data: User-controllable properties (e.g., sliders for size and distance)
+    updateCelestialBody: (type, name, updates) =>
+      set((state) => ({
+        celestialBodies: {
+          ...state.celestialBodies,
+          [type]: {
+            ...state.celestialBodies[type],
+            [name]: { ...state.celestialBodies[type][name], ...updates },
           },
         },
       })),
 
     //Real-time data: Properties of celestial bodies
     properties: {},
-    addCelestialBodyProperty: (name, property, value) => set((state) => ({
+    addCelestialBodyProperty: (name, property, value) =>
+      set((state) => ({
         properties: {
-            ...state.properties,
-            [name]: {
-                ...state.properties[name],
-                [property]: value,
-            },
+          ...state.properties,
+          [name]: {
+            ...state.properties[name],
+            [property]: value,
+          },
         },
-    })),
-    updateProperty: (name, property, value) => set((state) => ({
+      })),
+    updateProperty: (name, property, value) =>
+      set((state) => ({
         properties: {
-            ...state.properties,
-            [name]: {
-                ...state.properties[name],
-                [property]: value,
-            },
+          ...state.properties,
+          [name]: {
+            ...state.properties[name],
+            [property]: value,
+          },
         },
-    })),
-
-})));
+      })),
+  }))
+);

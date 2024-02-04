@@ -63,7 +63,7 @@ export const InfoAboutObject = ({ position, offset, params }) => {
         className="w-fit h-auto px-1 text-left text-xs text-red-50 bg-black/70 rounded-sm select-none cursor-pointer"
         style={{ transform: "translate(50%, 75%)" }}
         onClick={() => {
-          useSystemStore.getState().setActiveObjectName(params.name);
+          useSystemStore.getState().updateSystemSettings({ activeObjectName: params.name });
         }}
       >
         <div className="uppercase text-base font-extrabold">{params.name}</div>

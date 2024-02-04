@@ -13,8 +13,6 @@ export const SunComponent = () => {
     const sunSize = sunData?.volumetricMeanRadiusKm / 1000 ?? 0.1;
     const calculatedSunSize = calculateRelativeScale(sunSize, relativeScale);
   
-    const setActiveObjectName = useSystemStore((state) => state.setActiveObjectName);
-
     return (
       <group>
         <InfoAboutObject position={[0, 0, 0]} offset={0.1} params={{ name: "sun" }} />
@@ -22,7 +20,7 @@ export const SunComponent = () => {
         <Sphere
           args={[calculatedSunSize]}
           onClick={() => {
-            setActiveObjectName("sun");
+            useSystemStore.getState().updateSystemSettings({ activeObjectName: "sun" });
           }}
         >
           <meshStandardMaterial

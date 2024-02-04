@@ -94,8 +94,7 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
             args={[planetSize]}
             onClick={() => {
               console.log("clicked on planet", planetName);
-              // setActiveObjectName(planetName)
-              useSystemStore.getState().setActiveObjectName(planetName);
+              useSystemStore.getState().updateSystemSettings({ activeObjectName: planetName });
             }}
           >
             <meshStandardMaterial map={planetTexture} />
