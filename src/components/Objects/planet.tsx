@@ -14,13 +14,17 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
     params.volumetricMeanRadiusKm,
     useSystemStore.getState().objectsRelativeScale
   );
+
   const planetDistance = calculateRelativeDistance(
     params.semimajorAxis10_6Km,
     useSystemStore.getState().objectsDistance
   );
+
   const planetInclination = degreesToRadians(
     params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
   );
+
+  // console.log("planetDistance", planetDistance);
 
   const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
 
@@ -93,7 +97,7 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
           <Sphere
             args={[planetSize]}
             onClick={() => {
-              console.log("clicked on planet", planetName);
+              // console.log("clicked on planet", planetName);
               useSystemStore.getState().updateSystemSettings({ activeObjectName: planetName });
             }}
           >

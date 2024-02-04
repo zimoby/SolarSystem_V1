@@ -4,13 +4,14 @@ import sunTexture from "../../assets/2k_sun.jpg";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import { calculateRelativeScale } from "../../utils/calculations";
 import { InfoAboutObject } from "../HUD/hud";
+import { starsScaleFactor } from "../../data/solarSystemData";
 
 
 export const SunComponent = () => {
     const createSunTexture = useTexture(sunTexture);
     const sunData = useSolarSystemStore((state) => state.celestialBodies.stars.sun);
     const relativeScale = useSystemStore.getState().objectsRelativeScale;
-    const sunSize = sunData?.volumetricMeanRadiusKm / 1000 ?? 0.1;
+    const sunSize = sunData?.volumetricMeanRadiusKm / starsScaleFactor ?? 0.1;
     const calculatedSunSize = calculateRelativeScale(sunSize, relativeScale);
   
     return (

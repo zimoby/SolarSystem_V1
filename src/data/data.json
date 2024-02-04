@@ -1,7 +1,6 @@
 {
     "mars": {
         "mass10_24Kg": 0.64171,
-        "diameterKm": 6792.4,
         "volume10_10Km3": 16.318,
         "equatorialRadiusKm": 3396.2,
         "polarRadiusKm": 3376.2,
@@ -41,7 +40,6 @@
     },
     "earth": {
         "mass10_24Kg": 5.9724,
-        "diameterKm": 12756.3,
         "volume10_10Km3": 108.321,
         "equatorialRadiusKm": 6378.1,
         "polarRadiusKm": 6356.8,
@@ -81,9 +79,9 @@
         "moons": [
             {
                 "name": "moon",
-                "diameterKm": 3474.8,
+                "volumetricMeanRadiusKm": 1737.1,
                 "distanceToPlanetKm": 384400,
-                "semimajorAxis10_6Km": 384.4,
+                "semimajorAxis10_6Km": 0.3844,
                 "siderealOrbitPeriodDays": 27.3217,
                 "tropicalOrbitPeriodDays": 27.3216,
                 "perihelion10_6Km": 363.3,
@@ -102,7 +100,6 @@
     },
     "venus": {
         "mass10_24Kg": 4.8675,
-        "diameterKm": 12104,
         "volume10_10Km3": 92.843,
         "equatorialRadiusKm": 6051.8,
         "polarRadiusKm": 6051.8,
@@ -141,7 +138,6 @@
     },
     "mercury": {
         "mass10_24Kg": 0.33011,
-        "diameterKm": 4879.4,
         "volume10_10Km3": 6.083,
         "equatorialRadiusKm": 2439.7,
         "polarRadiusKm": 2439.7,
@@ -180,7 +176,6 @@
     },
     "pluto": {
         "mass10_24Kg": 0.01303,
-        "diameterKm": 2370,
         "volume10_10Km3": 0.697,
         "equatorialRadiusKm": 1187,
         "polarRadiusKm": 1187,
@@ -216,7 +211,6 @@
     },
     "jupiter": {
         "mass10_24Kg": 1898.19,
-        "diameterKm": 142984,
         "volume10_10Km3": 143128,
         "equatorialRadius1BarLevelKm": 71492,
         "polarRadiusKm": 66854,
@@ -254,7 +248,6 @@
     },
     "saturn": {
         "mass10_24Kg": 568.34,
-        "diameterKm": 120536,
         "volume10_10Km3": 82713,
         "equatorialRadius1BarLevelKm": 60268,
         "polarRadius1BarLevelKm": 54364,
@@ -291,7 +284,6 @@
     },
     "uranus": {
         "mass10_24Kg": 86.813,
-        "diameterKm": 51118,
         "volume10_10Km3": 6833,
         "equatorialRadius1BarLevelKm": 25559,
         "polarRadius1BarLevelKm": 24973,
@@ -329,7 +321,6 @@
     },
     "neptune": {
         "mass10_24Kg": 102.413,
-        "diameterKm": 49528,
         "volume10_10Km3": 6254,
         "equatorialRadius1BarLevelKm": 24764,
         "polarRadius1BarLevelKm": 24341,
