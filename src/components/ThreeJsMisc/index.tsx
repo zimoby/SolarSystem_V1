@@ -1,8 +1,10 @@
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, Stats, useKeyboardControls } from "@react-three/drei";
 import { Perf } from "r3f-perf";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { Controls } from "../../types";
+import { planetsNamesOrder } from "../../data/solarSystemData";
 
 export const AppStatsPerformance = () => {
   return (
@@ -12,6 +14,28 @@ export const AppStatsPerformance = () => {
     </>
   );
 };
+
+export const KeyboardInit = () => {
+
+  const rightPressed = useKeyboardControls<Controls>(state => state.right);
+  const leftPressed = useKeyboardControls<Controls>(state => state.left);
+
+  const activeObjectName = useSystemStore.getState().activeObjectName;
+
+  // console.log("rightPressed", rightPressed, leftPressed, activeObjectName);
+
+  useEffect(() => {
+    if (!rightPressed && !leftPressed) { return; }
+    const findActivePlanet = planetsNamesOrder.findIndex((planetName) => planetName === activeObjectName);
+    if (rightPressed) {
+      useSystemStore.getState().updateSystemSettings({ activeObjectName: planetsNamesOrder[(findActivePlanet + 1) % planetsNamesOrder.length] });
+    } else if (leftPressed) {
+      useSystemStore.getState().updateSystemSettings({ activeObjectName: planetsNamesOrder[(findActivePlanet - 1 + planetsNamesOrder.length) % planetsNamesOrder.length] });
+    }
+  }, [rightPressed, leftPressed, activeObjectName]);
+
+  return <></>;
+}
 
 export const ControlComponent = () => {
   const [statesUpdate, setStatesUpdate] = useState(0);
