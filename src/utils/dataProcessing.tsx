@@ -1,6 +1,6 @@
 import solarData from "../data/data.json";
 
-export const normalizeDataToEarth = (objData) => {
+export const normalizeDataToEarth = (objData, ignoreToNormalize) => {
   const earthData = solarData["earth"];
   const normalizedData = Object.keys(objData).reduce((acc, key) => {
     const planetValue = objData[key];
@@ -10,7 +10,8 @@ export const normalizeDataToEarth = (objData) => {
       typeof planetValue !== "number" ||
       typeof earthValue !== "number" ||
       earthValue === 0 ||
-      planetValue === 0
+      planetValue === 0 ||
+      ignoreToNormalize.includes(key)
     ) {
       return {
         ...acc,

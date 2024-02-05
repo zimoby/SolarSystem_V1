@@ -19,40 +19,40 @@ export const ObjectEllipse = ({ params, name, objSelected }) => {
   }, [objSelected]);
 
   // const activeObjectName = useSystemStore(state => state.activeObjectName);
-
+  const objectsDistance = useSystemStore.getState().objectsDistance;
   // if 
 
-  // console.log("params", params);
-
-  const planetDistance = calculateRelativeDistance(
-    params.semimajorAxis10_6Km,
-    useSystemStore.getState().objectsDistance
+  const planetDistanceX = calculateRelativeDistance(
+    params.semimajorAxis10_6Km * (1 - params.orbitEccentricity),
+    objectsDistance
+  );
+  const planetDistanceY = calculateRelativeDistance(
+    params.semimajorAxis10_6Km * (1 + params.orbitEccentricity),
+    objectsDistance
   );
 
   const planetInclination = degreesToRadians(
     params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
   );
 
-  const points = useMemo(
-    () =>
-      new THREE.EllipseCurve(0, 0, planetDistance, planetDistance, 0, Math.PI * 2, false).getPoints(
-        64 * 3
-      ),
-    [planetDistance]
+  const points = useMemo(() => 
+    new THREE.EllipseCurve(0, 0, planetDistanceX, planetDistanceY, 0, Math.PI * 2, false).getPoints(64 * 3),
+    [planetDistanceX, planetDistanceY]
   );
 
   const pointsDependOnInclination = useMemo(() => {
-    const ellipseSize = planetDistance * Math.cos(planetInclination);
+    // Adjusting the minor axis based on inclination
+    const ellipseSize = planetDistanceY * Math.cos(planetInclination); // Assuming Y is the minor axis
     return new THREE.EllipseCurve(
       0,
       0,
-      planetDistance,
-      ellipseSize,
+      planetDistanceX, // Major axis remains unchanged
+      ellipseSize,     // Adjusted minor axis based on inclination
       0,
       Math.PI * 2,
       false
     ).getPoints(64);
-  }, [planetDistance, planetInclination]);
+  }, [planetDistanceX, planetDistanceY, planetInclination]);
 
   return (
     <>

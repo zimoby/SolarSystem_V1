@@ -16,7 +16,10 @@ export const useInitiateSolarSystem = () => {
     "siderealOrbitPeriodDays",
     "orbitInclinationDeg",
     "siderealRotationPeriodHrs",
+    "orbitEccentricity"
   ];
+
+  const ignoreToNormalize = ["orbitEccentricity"];
 
   const disableMoons = useSystemStore.getState().disableMoons;
 
@@ -32,7 +35,7 @@ export const useInitiateSolarSystem = () => {
 
     const processCelestialBody = (type, name, data, parentName = null) => {
       const filteredData = filterObjectData(data, usedProperties);
-      const normalizedData = normalizeDataToEarth(filteredData);
+      const normalizedData = normalizeDataToEarth(filteredData, ignoreToNormalize);
       const additionalProcessingParams = {
         ...normalizedData,
         volumetricMeanRadiusKm: normalizedData.volumetricMeanRadiusKm / planetsScaleFactor,
@@ -101,9 +104,12 @@ export const useCelestialBodyUpdates = () => {
 
       if (!celestialBody || !celestialBody.semimajorAxis10_6Km) return;
 
+      // console.log("name", name,  celestialBody.orbitEccentricity);
+
       const t = ((timeSec / yearInSeconds / celestialBody.siderealOrbitPeriodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
-      const recalcDistance = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km, objectsDistance);
-      const newPosition = new THREE.Vector3(Math.cos(t) * recalcDistance, 0, Math.sin(t) * recalcDistance);
+      const recalcDistanceX = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 - celestialBody.orbitEccentricity), objectsDistance);
+      const recalcDistanceY = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 + celestialBody.orbitEccentricity), objectsDistance);
+      const newPosition = new THREE.Vector3(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
       quaternionRef.current.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));
       newPosition.applyQuaternion(quaternionRef.current);
 
