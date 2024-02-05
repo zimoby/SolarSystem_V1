@@ -21,7 +21,7 @@ export const useInitiateSolarSystem = () => {
 
   const ignoreToNormalize = ["orbitEccentricity"];
 
-  const disableMoons = useSystemStore.getState().disableMoons;
+  const {disableMoons, disableRandomObjects} = useSystemStore.getState();
 
   const reorderPlanets = planetsNamesOrder.reduce((acc, planetName) => ({
     ...acc,
@@ -60,6 +60,12 @@ export const useInitiateSolarSystem = () => {
           processCelestialBody("moons", moon.name, moon, planetName);
         });
       }
+
+      if (cosmicObjectsData && !disableRandomObjects) {
+        Object.keys(cosmicObjectsData).forEach((cosmicObjectName) => {
+          processCelestialBody("objects", cosmicObjectName, cosmicObjectsData[cosmicObjectName]);
+        });
+      }
     });
 
     const sunData = starsData["sun"];
@@ -69,7 +75,7 @@ export const useInitiateSolarSystem = () => {
     useSolarSystemStore.getState().batchUpdateProperties(propertiesUpdates);
     useSystemStore.getState().updateSystemSettings({ dataInitialized: true });
 
-    console.log("end init");
+    console.log("end init", propertiesUpdates);
 
     useSystemStore.getState().setInitialized(true);
   }, []);
@@ -86,13 +92,17 @@ export const useCelestialBodyUpdates = () => {
     if (!isInitialized) return;
 
     const { timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = systemState;
-    const { planets, moons } = solarSystemState.celestialBodies;
-    const disableMoons = systemState.disableMoons;
+    const { planets, moons, objects } = solarSystemState.celestialBodies;
+    const {disableMoons, disableRandomObjects} = systemState;
 
     const combinedObjects = {
       ...planets,
       ...(disableMoons ? {} : moons),
+      ...(disableRandomObjects ? {} : objects)
+
     };
+
+    // console.log("combinedObjects", combinedObjects);
 
     const time = state.clock.getElapsedTime();
     const timeSec = time * Math.PI * 2;

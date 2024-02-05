@@ -23,6 +23,7 @@ export const SolarSystem = () => {
   return (
     <>
       <GeneratePlanets />
+			<GenerateObjects />
       <SunComponent />
     </>
   );
@@ -70,3 +71,17 @@ export const GeneratePlanets = () => {
 
   return <>{planetsComposition}</>;
 };
+
+const GenerateObjects = () => {
+	const getObjectsData = useSolarSystemStore((state) => state.celestialBodies.objects);
+	// const getPositions = useSolarSystemStore((state) => state.properties);
+
+	// console.log("objectsData", getPositions);
+
+	const objectsComposition = Object.keys(getObjectsData).map((objectName, index) => {
+		return <PlanetComponent key={index} planetName={objectName} params={getObjectsData[objectName]} />;
+	});
+
+	// return <></>;
+	return <>{objectsComposition}</>;
+}
