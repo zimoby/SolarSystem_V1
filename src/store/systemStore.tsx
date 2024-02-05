@@ -31,6 +31,9 @@ interface SystemState {
 
 export const useSystemStore = create(
   devtools((set) => ({
+    isInitialized: false,
+    disableMoons: true,
+    disableRandomObjects: false,
     dataInitialized: false,
     activeObjectName: "sun",
     timeSpeed: 1,
@@ -40,6 +43,7 @@ export const useSystemStore = create(
     orbitAngleOffset: 0,
 
     updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
+    setInitialized: (isInitialized) => set({ isInitialized }),
   }))
 );
 
@@ -76,6 +80,15 @@ export const useSolarSystemStore = create(
         },
       })),
 
+    // Batch updates
+    batchUpdateCelestialBodies: (updates) =>
+      set((state) => ({
+        celestialBodies: {
+          ...state.celestialBodies,
+          ...updates,
+        },
+      })),
+
     //Real-time data: Properties of celestial bodies
     properties: {},
     addCelestialBodyProperty: (name, property, value) =>
@@ -96,6 +109,13 @@ export const useSolarSystemStore = create(
             ...state.properties[name],
             [property]: value,
           },
+        },
+      })),
+    batchUpdateProperties: (updates) =>
+      set((state) => ({
+        properties: {
+          ...state.properties,
+          ...updates,
         },
       })),
   }))
