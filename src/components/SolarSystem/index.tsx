@@ -1,4 +1,4 @@
-import { useTexture } from "@react-three/drei";
+import { useKeyboardControls, useTexture } from "@react-three/drei";
 import { useCelestialBodyUpdates, useInitiateSolarSystem } from "../../hooks/dataProcessing";
 import { useSolarSystemStore } from "../../store/systemStore";
 
@@ -18,6 +18,8 @@ export const SolarSystem = () => {
   useInitiateSolarSystem();
   useCelestialBodyUpdates();
 
+	// console.log("SolarSystem position", useSolarSystemStore((state) => state.properties));
+
   return (
     <>
       <GeneratePlanets />
@@ -28,6 +30,11 @@ export const SolarSystem = () => {
 
 export const GeneratePlanets = () => {
   const getPlanetsData = useSolarSystemStore((state) => state.celestialBodies.planets);
+
+  // console.log("moonsData", moonsData, getPlanetsData);
+
+  //   console.log("positions", useSolarSystemStore((state) => state.properties["earth"]));
+  //   console.log("positions", useSolarSystemStore((state) => state.properties));
 
   const createEarthTexture = useTexture(earthTexture);
   const createJupiterTexture = useTexture(jupiterTexture);

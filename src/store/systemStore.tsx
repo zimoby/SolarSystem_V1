@@ -31,6 +31,7 @@ interface SystemState {
 
 export const useSystemStore = create(
   devtools((set) => ({
+    dataInitialized: false,
     activeObjectName: "sun",
     timeSpeed: 1,
     timeOffset: 0,

@@ -244,7 +244,47 @@
         "siderealRotationPeriodHrs": 9.925,
         "lengthOfDayHrs": 9.9259,
         "obliquityToOrbitDeg": 3.13,
-        "inclinationOfEquatorDeg": 3.13
+        "inclinationOfEquatorDeg": 3.13,
+        "moons": [
+            {
+                "name": "io",
+                "volumetricMeanRadiusKm": 1821.6,
+                "distanceToPlanetKm": 421700,
+                "semimajorAxis10_6Km": 0.4218,
+                "siderealOrbitPeriodDays": 1.7691,
+                "tropicalOrbitPeriodDays": 1.7691,
+                "perihelion10_6Km": 0.4216,
+                "aphelion10_6Km": 0.4219,
+                "synodicPeriodDays": 1.7691,
+                "meanOrbitalVelocityKmS": 17.334,
+                "maxOrbitalVelocityKmS": 17.334,
+                "minOrbitalVelocityKmS": 17.334,
+                "orbitInclinationDeg": 0.05,
+                "orbitEccentricity": 0.0041,
+                "siderealRotationPeriodHrs": 42.4593,
+                "lengthOfDayHrs": 42.4593,
+                "obliquityToOrbitDeg": 0.05,
+                "inclinationOfEquatorDeg": 0.05
+            },
+            {
+                "name": "europa",
+                "volumetricMeanRadiusKm": 1560.8,
+                "distanceToPlanetKm": 671034,
+                "semimajorAxis10_6Km": 0.6711,
+                "siderealOrbitPeriodDays": 3.5512,
+                "tropicalOrbitPeriodDays": 3.5512,
+                "perihelion10_6Km": 0.6709,
+                "aphelion10_6Km": 0.6713,
+                "synodicPeriodDays": 3.5512,
+                "meanOrbitalVelocityKmS": 13.74,
+                "maxOrbitalVelocityKmS": 13.74,
+                "minOrbitalVelocityKmS": 13.74,
+                "orbitInclinationDeg": 0.471,
+                "orbitEccentricity": 0.0094,
+                "siderealRotationPeriodHrs": 85.222,
+                "lengthOfDayHrs": 85
+            }
+        ]
     },
     "saturn": {
         "mass10_24Kg": 568.34,
@@ -280,7 +320,49 @@
         "orbitEccentricity": 0.0565,
         "siderealRotationPeriodHrs": 10.656,
         "lengthOfDayHrs": 10.656,
-        "obliquityToOrbitDeg": 26.73
+        "obliquityToOrbitDeg": 26.73,
+        "moons": [
+            {
+                "name": "titan",
+                "volumetricMeanRadiusKm": 2575,
+                "distanceToPlanetKm": 1221870,
+                "semimajorAxis10_6Km": 1.2219,
+                "siderealOrbitPeriodDays": 15.945,
+                "tropicalOrbitPeriodDays": 15.945,
+                "perihelion10_6Km": 1.2218,
+                "aphelion10_6Km": 1.222,
+                "synodicPeriodDays": 16.05,
+                "meanOrbitalVelocityKmS": 5.57,
+                "maxOrbitalVelocityKmS": 5.57,
+                "minOrbitalVelocityKmS": 5.57,
+                "orbitInclinationDeg": 0.34854,
+                "orbitEccentricity": 0.0288,
+                "siderealRotationPeriodHrs": 382.68,
+                "lengthOfDayHrs": 382.68,
+                "obliquityToOrbitDeg": 0.33,
+                "inclinationOfEquatorDeg": 0.33
+            },
+            {
+                "name": "rhea",
+                "volumetricMeanRadiusKm": 763.8,
+                "distanceToPlanetKm": 527040,
+                "semimajorAxis10_6Km": 0.527,
+                "siderealOrbitPeriodDays": 4.518,
+                "tropicalOrbitPeriodDays": 4.518,
+                "perihelion10_6Km": 0.5269,
+                "aphelion10_6Km": 0.5271,
+                "synodicPeriodDays": 4.518,
+                "meanOrbitalVelocityKmS": 8.48,
+                "maxOrbitalVelocityKmS": 8.48,
+                "minOrbitalVelocityKmS": 8.48,
+                "orbitInclinationDeg": 0.345,
+                "orbitEccentricity": 0.0013,
+                "siderealRotationPeriodHrs": 108.4,
+                "lengthOfDayHrs": 108.4,
+                "obliquityToOrbitDeg": 0.35,
+                "inclinationOfEquatorDeg": 0.35
+            }
+        ]
     },
     "uranus": {
         "mass10_24Kg": 86.813,

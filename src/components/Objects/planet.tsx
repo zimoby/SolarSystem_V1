@@ -7,8 +7,10 @@ import {
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Line, Sphere, Trail } from "@react-three/drei";
+import { Circle, Line, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
+import { useThree } from "@react-three/fiber";
+import { planetsScaleFactor } from "../../data/solarSystemData";
 
 export const PlanetComponent = ({ planetName, params, planetTexture }) => {
   const planetSize = calculateRelativeScale(
@@ -16,14 +18,44 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
     useSystemStore.getState().objectsRelativeScale
   );
 
+  // const objectsDistance = useRef(useSystemStore.getState().objectsDistance);
+
+  // const planetDistance = useMemo(() => { calculateRelativeDistance( params.semimajorAxis10_6Km, objectsDistance.current);
+  // }, [params.semimajorAxis10_6Km]);
+
+  // console.log("planetName", planetName, params);
+
+  const moons = useMemo(() => { 
+    // if planetName === moonName, take the data 
+    const takeMoons = Object.keys(useSolarSystemStore.getState().celestialBodies.moons).filter((moonName) => {
+      return useSolarSystemStore.getState().celestialBodies.moons[moonName].type === planetName;
+    } ).map((moonName) => {
+      const moonData = useSolarSystemStore.getState().celestialBodies.moons[moonName];
+      return {
+        ...moonData,
+        name: moonName,
+        // semimajorAxis10_6Km: calculateRelativeDistance(moonData.semimajorAxis10_6Km, useSystemStore.getState().objectsDistance),
+        // volumetricMeanRadiusKm: calculateRelativeScale(moonData.volumetricMeanRadiusKm , useSystemStore.getState().objectsRelativeScale),
+      }
+    } );
+
+
+    // console.log("findmoon", takeMoons);
+    return takeMoons;
+   }, [planetName]);
+
   const planetRef = useRef();
+  // const planetPositionRef = useRef();
   const [selected, setSelected] = useState(false);
+
+  // console.log("moons", moons);
 
   useEffect(() => {
     const unsubscribe = useSolarSystemStore.subscribe(
       (state) => {
         planetRef.current.position.copy(state.properties[planetName]?.position);
         planetRef.current.rotation.y = (state.properties[planetName]?.rotation.y);
+        // planetPositionRef.current.position.copy(state.properties[planetName]?.position);
       },
       (state) => state.properties[planetName] // This function selects which part of the state to subscribe to
     );
@@ -35,31 +67,39 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
         <ObjectEllipse params={params} name={planetName} objSelected={selected} />
+        {/* <Trail
+          local
+          width={planetSize * 100}
+          length={5}
+          color={"white"}
+          attenuation={(t) => t * t}
+          target={planetRef}
+        /> */}
         <group ref={planetRef} rotation={[0, 0, 0]}>
-          <Trail
-            local
-            width={planetSize * 100}
-            length={5}
-            color={"white"}
-            attenuation={(t) => t * t}
-            target={planetRef}
-          />
 
-          {/* <group>
-                  {moons.map((moon, index) => {
-                    return <CosmicSphere key={index} planetsPositionCollection={planetsPositionCollection} {...moon} />;
-                  } )}
-                </group> */}
+          <group>
+            {moons.map((moon, index) => {
+              // <PlanetComponent planetName={moon.name} params={moon} planetTexture={planetTexture} />
+              return (
+                <PlanetComponent
+                  key={index}
+                  planetName={moon.name}
+                  params={moon}
+                  planetTexture={planetTexture}
+                />
+              ); 
+            } )}
+          </group>
               {/* create circle if sphere is selected */}
-              {selected && (
-                <mesh rotation={[0, Math.PI / 2, 0]}>
-                  <Line
-                    points={new THREE.EllipseCurve(0, 0, planetSize * 1.5, planetSize * 1.5, 0, Math.PI * 2, false).getPoints(64)}
-                    color={"yellow"}
-                    lineWidth={1}
-                  />
-                </mesh>
-              )}
+          {selected && (
+            <mesh rotation={[0, Math.PI / 2, 0]}>
+              <Line
+                points={new THREE.EllipseCurve(0, 0, planetSize * 1.5, planetSize * 1.5, 0, Math.PI * 2, false).getPoints(64)}
+                color={"yellow"}
+                lineWidth={1}
+              />
+            </mesh>
+          )}
           <Sphere
             args={[planetSize]}
             onClick={() => {
@@ -71,8 +111,25 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
           >
             <meshStandardMaterial map={planetTexture} />
           </Sphere>
+
           {/* </group> */}
         </group>
+        {/* <group ref={planetPositionRef}>
+          {selected && (
+            <mesh rotation={[0, Math.PI / 2, 0]} >
+              <Circle
+                args={[planetSize * 1.5]}
+                color={"yellow"}
+                // lineWidth={1}
+                // rotation={[0, Math.PI / 2, 0]}
+                lookAt={camera.position}
+              >
+                <meshBasicMaterial color={"yellow"} side={THREE.DoubleSide} />
+              </Circle>
+
+            </mesh>
+          )}
+        </group> */}
       </group>
     </>
   );
