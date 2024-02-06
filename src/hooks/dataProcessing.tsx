@@ -27,6 +27,23 @@ export const useInitiateSolarSystem = () => {
     ...acc,
     [planetName]: solarData[planetName],
   }), {});
+
+  const generateRandomObjects = () => {
+    const randomObjects = {};
+    for (let i = 0; i < 60; i++) {
+      randomObjects[`object${i}`] = {
+        volumetricMeanRadiusKm: 100,
+        semimajorAxis10_6Km: Math.random() * 4000,
+        siderealOrbitPeriodDays: (Math.random() * 1000) + 400,
+        orbitInclinationDeg: Math.random() * 360,
+        siderealRotationPeriodHrs: 0,
+        orbitEccentricity: Math.random(),
+      };
+    }
+    return randomObjects;
+  }
+
+  const randomObjects = !disableRandomObjects ? generateRandomObjects() : {};
   
   useEffect(() => {
     console.log("start init");
@@ -61,9 +78,9 @@ export const useInitiateSolarSystem = () => {
         });
       }
 
-      if (cosmicObjectsData && !disableRandomObjects) {
-        Object.keys(cosmicObjectsData).forEach((cosmicObjectName) => {
-          processCelestialBody("objects", cosmicObjectName, cosmicObjectsData[cosmicObjectName]);
+      if (randomObjects && !disableRandomObjects) {
+        Object.keys(randomObjects).forEach((cosmicObjectName) => {
+          processCelestialBody("objects", cosmicObjectName, randomObjects[cosmicObjectName]);
         });
       }
     });
