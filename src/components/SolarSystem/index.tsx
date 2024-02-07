@@ -13,6 +13,7 @@ import venusTexture from "../../assets/2k_venus_surface.jpg";
 import { PlanetComponent } from "../Objects/planet";
 import { SunComponent } from "../Objects/sun";
 import { useEffect, useState } from "react";
+import { ObjectsComponent } from "../Objects/objects";
 // import skyStars from "../../assets/2k_stars_milky_way.jpg";
 
 export const SolarSystem = () => {
@@ -61,7 +62,7 @@ export const GeneratePlanets = () => {
     const planetTexture = mapedTextures[planetName];
     return (
       <PlanetComponent
-        key={index}
+        key={index + "_planets"}
         planetName={planetName}
         params={getPlanetsData[planetName]}
         planetTexture={planetTexture}
@@ -79,7 +80,7 @@ const GenerateObjects = () => {
 	// console.log("objectsData", getPositions);
 
 	const objectsComposition = Object.keys(getObjectsData).map((objectName, index) => {
-		return <PlanetComponent key={index} planetName={objectName} params={getObjectsData[objectName]} />;
+		return <ObjectsComponent key={index + "_objects"} planetName={objectName} params={getObjectsData[objectName]} />;
 	});
 
 	// return <></>;
