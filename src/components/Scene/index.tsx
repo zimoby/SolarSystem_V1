@@ -1,4 +1,5 @@
 import { GizmoHelper, GizmoViewport, Grid, PerspectiveCamera, Stars } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import {
   ToneMapping,
   Bloom,
@@ -7,9 +8,11 @@ import {
   SSAO,
   Vignette,
 } from "@react-three/postprocessing";
+import { useRef } from "react";
+import { useSystemStore } from "../../store/systemStore";
 
 export const SceneSetup = () => {
-  const cameraDistance = 10;
+  
 
   const { gridSize, ...gridConfig } = {
     gridSize: [10, 10],
@@ -24,12 +27,20 @@ export const SceneSetup = () => {
     followCamera: false,
     infiniteGrid: true,
   };
+  
+
+  // useFrame(() => {
+  //   const newPosition = useSystemStore.getState().celestialBodies.objects[activeObjectName]?.position;
+  //   if (newPosition) {
+  //     refCamera.current.position.copy(newPosition);
+  //   }
+  // });
 
   return (
     <>
       <color args={["#111111"]} attach="background" />
 
-      <PerspectiveCamera makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10} />
+      
       <hemisphereLight groundColor={"#000000"} intensity={Math.PI / 2} />
       <spotLight position={[2, 2, 2]} angle={0.2} penumbra={1} intensity={Math.PI * 2} />
       <ambientLight intensity={0.4} />

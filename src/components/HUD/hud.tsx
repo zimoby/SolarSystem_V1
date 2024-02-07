@@ -1,63 +1,63 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import * as THREE from "three";
-import { Html, Line } from "@react-three/drei";
+import { Html, Line, Sphere } from "@react-three/drei";
+import { invalidate, useFrame, extend } from "@react-three/fiber";
+
+extend({ Line });
+
+export const DynamicLine = ({ start, end }) => {
+  const lineRef = useRef();
+
+  useFrame(() => {
+    const positions = new Float32Array([start.x, start.y, start.z, end.x, end.y, end.z]);
+    lineRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    lineRef.current.geometry.attributes.position.needsUpdate = true;
+  });
+
+  return (
+    <line ref={lineRef}>
+      <bufferGeometry attach="geometry" />
+      <lineBasicMaterial attach="material" color={'white'} />
+    </line>
+  );
+};
 
 export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, typeOfObject = "" }) => {
-  const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0)); // Assuming initial position
-  const [updateTrigger, setUpdateTrigger] = useState(0); // Trigger state for re-rendering
+  const planetHuiRef = useRef();
+  const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
+  // const lineRef1 = useRef();
+  const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
 
-  useEffect(() => {
-    const unsubscribe = useSolarSystemStore.subscribe(
-      (state) => {
-        const newPosition = state.properties[planetName]?.position;
-        if (newPosition) {
-          planetPositionRef.current = newPosition; // Update position reference
-          setUpdateTrigger((prev) => (prev + 1) % 100); // Trigger re-render
-        }
-      },
-      (state) => state.properties[planetName]
-    );
-    return unsubscribe;
-  }, [planetName]);
+  useFrame(() => {
+    const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;
+    if (newPosition) {
+      planetPositionRef.current.copy(newPosition);
+      lineRef2.current.copy(new THREE.Vector3(newPosition.x, 0, newPosition.z));
+      planetHuiRef.current.position.copy(new THREE.Vector3(newPosition.x, newPosition.y - planetSize, newPosition.z));
+    }
+  });
 
-  const lineFromZeroOrbitToPlanet = [new THREE.Vector3(0, 0, 0), planetPositionRef.current];
-  const lineFromZeroOrbitToPlanet2 = [
-    new THREE.Vector3(planetPositionRef.current.x, 0, planetPositionRef.current.z),
-    planetPositionRef.current,
-  ];
+  const startPosition = new THREE.Vector3(0, 0, 0); // Example start position
+  const startPositionOrbit = lineRef2.current; // Example start position
+  const endPosition = planetPositionRef.current; // The dynamic end position
 
   return (
     <>
       <InfoAboutObject
-        position={[
-          planetPositionRef.current.x,
-          planetPositionRef.current.y,
-          planetPositionRef.current.z,
-        ]}
+        ref={planetHuiRef}
         offset={planetSize}
         params={{ name: planetName, extendData}}
         typeOfObject={typeOfObject}
       />
-      <Line
-        points={lineFromZeroOrbitToPlanet}
-        color="white"
-        lineWidth={1}
-        transparent={true}
-        opacity={0.3}
-      />
-      <Line
-        points={lineFromZeroOrbitToPlanet2}
-        color="white"
-        lineWidth={1}
-        transparent={true}
-        opacity={0.3}
-      />
+      <DynamicLine start={startPositionOrbit} end={endPosition} />
+      <DynamicLine start={startPosition} end={endPosition} />
     </>
   );
 };
 
-export const InfoAboutObject = ({ position, offset, params, typeOfObject = "" }) => {
+export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, params, typeOfObject = "" }, ref) => {
+// export const InfoAboutObject = ({ position, offset, params, typeOfObject = "" }) => {
 
   let textStyle;
   let bgStyle;
@@ -81,23 +81,67 @@ export const InfoAboutObject = ({ position, offset, params, typeOfObject = "" })
       break;
   }
 
+  const positionTextRef = useRef<HTMLParagraphElement>(null);
+  const objectRef = useRef();
+
+  // const seconds = useRef<HTMLParagraphElement>(null);
+  // useFrame((_, delta) => {
+  //   if (seconds.current) {
+  //     seconds.current.innerText = (Number(seconds.current.innerText) + delta).toFixed(1);
+  //   }
+  // });
+
+  useFrame(() => {
+    const newPosition = useSolarSystemStore.getState().properties[params.name]?.position;
+    // objectRef.current.position.copy({ x: newPosition.x, y: newPosition.y, z: newPosition.z});
+    if (newPosition && positionTextRef.current) {
+      positionTextRef.current.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`;
+    }
+  });
+  
+  // useEffect(() => {
+  //   const unsubscribe = useSolarSystemStore.subscribe(
+  //     (state) => {
+  //       const newPosition = state.properties[params.name]?.position;
+  //       if (newPosition && positionTextRef.current) {
+  //         positionTextRef.current.innerText = newPosition.x.toFixed(2) + " " + newPosition.y.toFixed(2) + " " + newPosition.z.toFixed(2);
+  //         // positionTextRef.current?.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`
+  //         // console.log("positionTextRef", positionTextRef.current);
+  //       }
+  //     },
+  //     (state) => state.properties[params.name]
+  //   );
+  //   return unsubscribe;
+  // }, [params.name]);
+
   
   return (
-    <Html position={[position[0], position[1] - offset, position[2]]} center>
-      <div
-        className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
-        style={{ transform: "translate(50%, 75%)" }}
-        onClick={() => {
-          useSystemStore.getState().updateSystemSettings({ activeObjectName: params.name });
-        }}
-      >
-        <div className={`${textStyle} text-base`}>{params.name}</div>
-        {params.extendData && (
-          <div className="font-mono text-3xs whitespace-nowrap">
-            {position[0].toFixed(2)} {position[1].toFixed(2)} {position[2].toFixed(2)}
+    <>
+      <group ref={ref} >
+        {/* <Sphere args={[1]}>
+          <meshStandardMaterial attach="material" color={"white"} />
+        </Sphere> */}
+        <Html center>
+        {/* <Html ref={ref} position={[position[0], position[1] - offset, position[2]]} center> */}
+          <div
+            className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
+            style={{ transform: "translate(50%, 75%)" }}
+            onClick={() => {
+              useSystemStore.getState().updateSystemSettings({ activeObjectName: params.name });
+            }}
+          >
+            <div className={`${textStyle} text-base`}>{params.name}</div>
+            {params.extendData && (
+              // <div className="font-mono text-3xs whitespace-nowrap">
+              //   {position[0].toFixed(2)} {position[1].toFixed(2)} {position[2].toFixed(2)}
+              // </div>
+              // <p ref={positionTextRef} className="font-mono text-3xs whitespace-nowrap">0,0,0</p>
+              <p className="font-mono text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
+            )}
           </div>
-        )}
-      </div>
-    </Html>
+        </Html>
+
+      </group>
+    </>
   );
-};
+});

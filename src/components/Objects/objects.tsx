@@ -18,14 +18,16 @@ export const ObjectsComponent = ({ planetName, params, planetTexture = null }) =
     useSystemStore.getState().objectsRelativeScale
   );
 
-  const planetRef = useRef();
+  // console.log("planetName", planetName, params);
+
+  const objectRef = useRef();
   const [selected, setSelected] = useState(false);
 
   useEffect(() => {
     const unsubscribe = useSolarSystemStore.subscribe(
       (state) => {
-        planetRef.current.position.copy(state.properties[planetName]?.position);
-        planetRef.current.rotation.y = (state.properties[planetName]?.rotation.y);
+        objectRef.current.position.copy(state.properties[planetName]?.position);
+        objectRef.current.rotation.y = (state.properties[planetName]?.rotation.y);
         // planetPositionRef.current.position.copy(state.properties[planetName]?.position);
       },
       (state) => state.properties[planetName] // This function selects which part of the state to subscribe to
@@ -48,9 +50,12 @@ export const ObjectsComponent = ({ planetName, params, planetTexture = null }) =
           length={5}
           color={"white"}
           attenuation={(t) => t * t}
-          target={planetRef}
+          target={objectRef}
         /> */}
-        <group ref={planetRef} rotation={[0, 0, 0]}>
+        <group ref={objectRef} rotation={[0, 0, 0]}>
+          <Sphere args={[0.4]} position={[0, 0, 0]}>
+            <meshStandardMaterial attach="material" color={randomColor} />
+          </Sphere>
         </group>
       </group>
     </>
