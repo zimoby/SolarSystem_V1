@@ -12,7 +12,7 @@ import { ObjectEllipse } from "../HUD/ellipsis";
 import { useThree } from "@react-three/fiber";
 import { planetsScaleFactor } from "../../data/solarSystemData";
 
-export const ObjectsComponent = ({ planetName, params, planetTexture }) => {
+export const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
   const planetSize = calculateRelativeScale(
     params.volumetricMeanRadiusKm,
     useSystemStore.getState().objectsRelativeScale
@@ -33,42 +33,24 @@ export const ObjectsComponent = ({ planetName, params, planetTexture }) => {
     return unsubscribe;
   }, []);
 
+  const colors = ["red", "green", "blue", "yellow", "purple", "orange", "pink", "brown", "grey", "white"];
+  const typeOfObject = "object";
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
   return (
     <>
-      <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
+      <PlanetHUDComponent planetName={planetName} planetSize={planetSize} extendData={false} typeOfObject={typeOfObject} />
       <group>
-        <ObjectEllipse params={params} name={planetName} objSelected={selected} />
-        <Trail
+        <ObjectEllipse params={params} name={planetName} objSelected={selected} color={randomColor} opacity={0.3} />
+        {/* <Trail
           local
           width={planetSize * 100}
           length={5}
           color={"white"}
           attenuation={(t) => t * t}
           target={planetRef}
-        />
+        /> */}
         <group ref={planetRef} rotation={[0, 0, 0]}>
-          {selected && (
-            <mesh rotation={[0, Math.PI / 2, 0]}>
-              <Line
-                points={new THREE.EllipseCurve(0, 0, planetSize * 1.5, planetSize * 1.5, 0, Math.PI * 2, false).getPoints(64)}
-                color={"yellow"}
-                lineWidth={1}
-              />
-            </mesh>
-          )}
-          <Sphere
-            args={[planetSize]}
-            onClick={() => {
-              // console.log("clicked on planet", planetName);
-              useSystemStore.getState().updateSystemSettings({ activeObjectName: planetName });
-            }}
-            onPointerOver={() => setSelected(true)}
-            onPointerOut={() => setSelected(false)}
-          >
-            <meshStandardMaterial map={planetTexture} />
-          </Sphere>
-
-          {/* </group> */}
         </group>
       </group>
     </>

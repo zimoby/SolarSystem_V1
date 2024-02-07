@@ -12,20 +12,20 @@ import { ObjectEllipse } from "../HUD/ellipsis";
 import { useThree } from "@react-three/fiber";
 import { planetsScaleFactor } from "../../data/solarSystemData";
 
-export const PlanetComponent = ({ planetName, params, planetTexture }) => {
+export const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   const planetSize = calculateRelativeScale(
     params.volumetricMeanRadiusKm,
     useSystemStore.getState().objectsRelativeScale
   );
 
   // const objectsDistance = useRef(useSystemStore.getState().objectsDistance);
-
+  const typeOfObject = "planet";
   // const planetDistance = useMemo(() => { calculateRelativeDistance( params.semimajorAxis10_6Km, objectsDistance.current);
   // }, [params.semimajorAxis10_6Km]);
 
   // console.log("planetName", planetName, params);
 
-  const moons = useMemo(() => { 
+  const moons = useMemo(() => {
     // if planetName === moonName, take the data 
     const takeMoons = Object.keys(useSolarSystemStore.getState().celestialBodies.moons).filter((moonName) => {
       return useSolarSystemStore.getState().celestialBodies.moons[moonName].type === planetName;
@@ -34,13 +34,9 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
       return {
         ...moonData,
         name: moonName,
-        // semimajorAxis10_6Km: calculateRelativeDistance(moonData.semimajorAxis10_6Km, useSystemStore.getState().objectsDistance),
-        // volumetricMeanRadiusKm: calculateRelativeScale(moonData.volumetricMeanRadiusKm , useSystemStore.getState().objectsRelativeScale),
       }
     } );
 
-
-    // console.log("findmoon", takeMoons);
     return takeMoons;
    }, [planetName]);
 
@@ -66,20 +62,18 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
     <>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
-        <ObjectEllipse params={params} name={planetName} objSelected={selected} />
-        {/* <Trail
+        <ObjectEllipse params={params} name={planetName} objSelected={selected} typeOfObject={typeOfObject} />
+        <Trail
           local
           width={planetSize * 100}
           length={5}
           color={"white"}
           attenuation={(t) => t * t}
           target={planetRef}
-        /> */}
+        />
         <group ref={planetRef} rotation={[0, 0, 0]}>
-
           <group>
             {moons.map((moon, index) => {
-              // <PlanetComponent planetName={moon.name} params={moon} planetTexture={planetTexture} />
               return (
                 <PlanetComponent
                   key={index}
@@ -114,22 +108,6 @@ export const PlanetComponent = ({ planetName, params, planetTexture }) => {
 
           {/* </group> */}
         </group>
-        {/* <group ref={planetPositionRef}>
-          {selected && (
-            <mesh rotation={[0, Math.PI / 2, 0]} >
-              <Circle
-                args={[planetSize * 1.5]}
-                color={"yellow"}
-                // lineWidth={1}
-                // rotation={[0, Math.PI / 2, 0]}
-                lookAt={camera.position}
-              >
-                <meshBasicMaterial color={"yellow"} side={THREE.DoubleSide} />
-              </Circle>
-
-            </mesh>
-          )}
-        </group> */}
       </group>
     </>
   );
