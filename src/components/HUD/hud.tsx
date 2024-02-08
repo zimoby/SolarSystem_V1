@@ -8,39 +8,57 @@ extend({ Line });
 
 export const DynamicLine = ({ start, end }) => {
   const lineRef = useRef();
+  const positionsRef = useRef(); // Ref to store the positions array
+
+  useEffect(() => {
+    // Initialize the geometry and material only once
+    const positions = new Float32Array(6); // 2 points x 3 coordinates
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    lineRef.current.geometry = geometry;
+
+    const material = new THREE.LineBasicMaterial({ color: 'white' });
+    lineRef.current.material = material;
+
+    positionsRef.current = positions; // Store the positions array for later updates
+  }, []);
 
   useFrame(() => {
-    const positions = new Float32Array([start.x, start.y, start.z, end.x, end.y, end.z]);
-    lineRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    lineRef.current.geometry.attributes.position.needsUpdate = true;
+    // Update positions directly, avoiding new allocations
+    const positions = positionsRef.current;
+    if (positions) {
+      positions.set([start.x, start.y, start.z, end.x, end.y, end.z]);
+      lineRef.current.geometry.attributes.position.needsUpdate = true;
+    }
   });
 
-  return (
-    <line ref={lineRef}>
-      <bufferGeometry attach="geometry" />
-      <lineBasicMaterial attach="material" color={'white'} />
-    </line>
-  );
+  return <line ref={lineRef} />;
 };
 
 export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, typeOfObject = "" }) => {
+  const { vec3 } = useSystemStore.getState(); 
   const planetHuiRef = useRef();
   const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
   // const lineRef1 = useRef();
   const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
+  // const vec3 = new THREE.Vector3();
+
+  const startPosition = new THREE.Vector3(0, 0, 0); // Example start position
+  const startPositionOrbit = lineRef2.current; // Example start position
+  // const endPosition = planetPositionRef.current; // The dynamic end position
+
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;
     if (newPosition) {
       planetPositionRef.current.copy(newPosition);
-      lineRef2.current.copy(new THREE.Vector3(newPosition.x, 0, newPosition.z));
-      planetHuiRef.current.position.copy(new THREE.Vector3(newPosition.x, newPosition.y - planetSize, newPosition.z));
+      // lineRef2.current.copy(new THREE.Vector3(newPosition.x, 0, newPosition.z));
+      lineRef2.current.copy(vec3.set(newPosition.x, 0, newPosition.z));
+      // planetHuiRef.current.position.copy(new THREE.Vector3(newPosition.x, newPosition.y - planetSize, newPosition.z));
+      planetHuiRef.current.position.copy(vec3.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
     }
   });
 
-  const startPosition = new THREE.Vector3(0, 0, 0); // Example start position
-  const startPositionOrbit = lineRef2.current; // Example start position
-  const endPosition = planetPositionRef.current; // The dynamic end position
 
   return (
     <>
@@ -50,8 +68,8 @@ export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, 
         params={{ name: planetName, extendData}}
         typeOfObject={typeOfObject}
       />
-      <DynamicLine start={startPositionOrbit} end={endPosition} />
-      <DynamicLine start={startPosition} end={endPosition} />
+      <DynamicLine start={startPositionOrbit} end={planetPositionRef.current} />
+      <DynamicLine start={startPosition} end={planetPositionRef.current} />
     </>
   );
 };

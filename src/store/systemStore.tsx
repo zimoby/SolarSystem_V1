@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
+import * as THREE from "three";
 
 interface CelestialBody {
   [key: string]: any; // Replace `any` with a more specific type based on your data structure
@@ -31,6 +32,7 @@ interface SystemState {
 
 export const useSystemColorsStore = create(
   devtools((set) => ({
+    uiRandomColors: ["red", "green", "blue", "yellow", "purple", "orange", "pink", "brown", "grey", "white"],
     hudColors: {
       background: "#000000",
       text: "#ffffff",
@@ -56,6 +58,8 @@ export const useSystemColorsStore = create(
 
 export const useSystemStore = create(
   devtools((set) => ({
+    vec3: new THREE.Vector3(0,0,0),
+
     isInitialized: false,
     disableMoons: true,
     disableRandomObjects: false,
@@ -72,6 +76,39 @@ export const useSystemStore = create(
   }))
 );
 
+const objectNumber = 60;
+
+const generateRandomObjects = () => {
+  const randomObjects = {};
+  for (let i = 0; i < objectNumber; i++) {
+    randomObjects[`object${i}`] = {
+      volumetricMeanRadiusKm: 100,
+      semimajorAxis10_6Km: Math.random() * 4000,
+      siderealOrbitPeriodDays: (Math.random() * 1000) + 400,
+      orbitInclinationDeg: Math.random() * 360,
+      siderealRotationPeriodHrs: 0,
+      orbitEccentricity: Math.random(),
+    };
+  }
+  return randomObjects;
+}
+
+// const generateLinesGeometry = (objectNumber) => {
+//   const lines = {};
+//   for (let i = 0; i < objectNumber; i++) {
+//     const pointsArray = new Float32Array(6); // 2 points x 3 coordinates (start and end)
+//     const bufferGeometry = new THREE.BufferGeometry();
+//     bufferGeometry.setAttribute('position', new THREE.BufferAttribute(pointsArray, 3));
+//     lines[`line${i}`] = {
+//       material: new THREE.LineBasicMaterial({ color: 0xffffff }),
+//       bufferGeometry: bufferGeometry,
+//       pointsArray: pointsArray,
+//     };
+//   }
+//   return lines;
+// };
+
+
 export const useSolarSystemStore = create(
   devtools((set) => ({
     // Static data: Basic information about celestial bodies
@@ -80,8 +117,11 @@ export const useSolarSystemStore = create(
       planets: {},
       moons: {},
       asteroids: {},
-      objects: {},
+      objects: generateRandomObjects(), // Add the generated random objects here
     },
+
+    // objectLines: generateLinesGeometry(objectNumber),
+
     // Function to add celestial bodies dynamically
     addCelestialBody: (type, name, data) =>
       set((state) => ({

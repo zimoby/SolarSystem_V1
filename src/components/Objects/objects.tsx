@@ -31,15 +31,13 @@ export const ObjectsComponent = ({ planetName, params, planetTexture = null }) =
   //   // objectRef.current.rotation.y = state.properties[planetName]?.rotation.y;
   // });
 
-  const colors = ["red", "green", "blue", "yellow", "purple", "orange", "pink", "brown", "grey", "white"];
   const typeOfObject = "object";
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
   return (
     <>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} extendData={false} typeOfObject={typeOfObject} />
       <group>
-        <ObjectEllipse params={params} name={planetName} objSelected={selected} color={randomColor} opacity={0.3} />
+        <ObjectEllipse params={params} name={planetName} objSelected={selected} color={params.color} opacity={0.3} />
         {/* <Trail
           local
           width={planetSize * 100}
