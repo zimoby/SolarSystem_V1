@@ -12,7 +12,6 @@ import { useRef } from "react";
 import { useSystemStore } from "../../store/systemStore";
 
 export const SceneSetup = () => {
-  
 
   const { gridSize, ...gridConfig } = {
     gridSize: [10, 10],
@@ -29,12 +28,6 @@ export const SceneSetup = () => {
   };
   
 
-  // useFrame(() => {
-  //   const newPosition = useSystemStore.getState().celestialBodies.objects[activeObjectName]?.position;
-  //   if (newPosition) {
-  //     refCamera.current.position.copy(newPosition);
-  //   }
-  // });
 
   return (
     <>
@@ -51,18 +44,6 @@ export const SceneSetup = () => {
         <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
       </GizmoHelper>
 
-      {/* <EffectComposer> */}
-      {/* <Bloom height={200} mipmapBlur/> */}
-      {/* <SSAO /> */}
-      {/* <Noise opacity={0.2} 
-            blendFunction={BlendFunction.MULTIPLY}
-          />
-          <Vignette  offset={0.3} darkness={0.5} /> */}
-      {/* <ToneMapping /> */}
-      {/* </EffectComposer> */}
-
-      {/* <Environment background files={[skyStars]} /> */}
-      {/* <Environment preset="sunset"  /> */}
     </>
   );
 };

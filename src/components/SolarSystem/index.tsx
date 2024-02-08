@@ -62,7 +62,7 @@ export const GeneratePlanets = () => {
     const planetTexture = mapedTextures[planetName];
     return (
       <PlanetComponent
-        key={index + "_planets"}
+        key={planetName}
         planetName={planetName}
         params={getPlanetsData[planetName]}
         planetTexture={planetTexture}

@@ -9,6 +9,8 @@ import { calculateRelativeDistance, degreesToRadians } from "../utils/calculatio
 import * as THREE from "three";
 import { cosmicObjectsData } from "../data/cosmicObjects";
 
+import throttle from "lodash/throttle";
+
 export const useInitiateSolarSystem = () => {
   const usedProperties = [
     "volumetricMeanRadiusKm",
@@ -30,7 +32,7 @@ export const useInitiateSolarSystem = () => {
 
   const generateRandomObjects = () => {
     const randomObjects = {};
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 30; i++) {
       randomObjects[`object${i}`] = {
         volumetricMeanRadiusKm: 100,
         semimajorAxis10_6Km: Math.random() * 4000,
@@ -104,20 +106,21 @@ export const useCelestialBodyUpdates = () => {
   const solarSystemState = useSolarSystemStore.getState();
   const quaternionRef = useRef(new THREE.Quaternion());
 
+  const isInitialized = useSystemStore.getState().isInitialized;
+
+  const { timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = systemState;
+  const { planets, moons, objects } = solarSystemState.celestialBodies;
+  const {disableMoons, disableRandomObjects} = systemState;
+
+  const combinedObjects = {
+    ...planets,
+    ...(disableMoons ? {} : moons),
+    ...(disableRandomObjects ? {} : objects)
+  };
+
   useFrame((state, delta) => {
-    const isInitialized = useSystemStore.getState().isInitialized;
+  // useFrame(throttle((state, delta) => {
     if (!isInitialized) return;
-
-    const { timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = systemState;
-    const { planets, moons, objects } = solarSystemState.celestialBodies;
-    const {disableMoons, disableRandomObjects} = systemState;
-
-    const combinedObjects = {
-      ...planets,
-      ...(disableMoons ? {} : moons),
-      ...(disableRandomObjects ? {} : objects)
-
-    };
 
     // console.log("combinedObjects", combinedObjects);
 
@@ -148,4 +151,5 @@ export const useCelestialBodyUpdates = () => {
 
     useSolarSystemStore.getState().batchUpdateProperties(updatedObjectsData);
   });
+  // }, 40));
 };

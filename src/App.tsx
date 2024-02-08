@@ -2,13 +2,8 @@ import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo } from "react";
 
-// import solarData from "./data/data.json";
-// import starsData from "./data/starsData.json";
-import { useControls } from "leva";
-
 import { BlendFunction } from "postprocessing";
 
-import { useSystemStore } from "./store/systemStore";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "./components/ThreeJsMisc";
 import { SolarSystem } from "./components/SolarSystem";
 import { SceneSetup } from "./components/Scene";
@@ -37,7 +32,6 @@ function App() {
 
   return (
     <KeyboardControls map={map}>
-      {/* <div className="w-full h-full flex flex-col items-center justify-center bg-black"> */}
         <Canvas orthographic gl={{ antialias: true }}>
           <AppStatsPerformance />
           <SceneSetup />
@@ -47,7 +41,6 @@ function App() {
           <ControlComponent />
           <KeyboardInit />
         </Canvas>
-      {/* </div> */}
     </KeyboardControls>
   );
 }

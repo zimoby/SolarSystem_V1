@@ -38,7 +38,7 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
   );
 
   const points = useMemo(() => 
-    new THREE.EllipseCurve(0, 0, planetDistanceX, planetDistanceY, 0, Math.PI * 2, false).getPoints(64 * 3),
+    new THREE.EllipseCurve(0, 0, planetDistanceX, planetDistanceY, 0, Math.PI * 2, false).getPoints(64 * 1),
     [planetDistanceX, planetDistanceY]
   );
 

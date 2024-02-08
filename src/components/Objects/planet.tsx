@@ -9,7 +9,7 @@ import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
 import { Circle, Line, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { planetsScaleFactor } from "../../data/solarSystemData";
 
 export const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
@@ -46,17 +46,12 @@ export const PlanetComponent = ({ planetName, params, planetTexture = null }) =>
 
   // console.log("moons", moons);
 
-  useEffect(() => {
-    const unsubscribe = useSolarSystemStore.subscribe(
-      (state) => {
-        planetRef.current.position.copy(state.properties[planetName]?.position);
-        planetRef.current.rotation.y = (state.properties[planetName]?.rotation.y);
-        // planetPositionRef.current.position.copy(state.properties[planetName]?.position);
-      },
-      (state) => state.properties[planetName] // This function selects which part of the state to subscribe to
-    );
-    return unsubscribe;
-  }, []);
+
+  useFrame(() => {
+    const state = useSolarSystemStore.getState();
+    planetRef.current.position.copy(state.properties[planetName]?.position);
+    // planetRef.current.rotation.y = state.properties[planetName]?.rotation.y;
+  });
 
   return (
     <>
