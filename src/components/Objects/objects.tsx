@@ -12,7 +12,7 @@ import { ObjectEllipse } from "../HUD/ellipsis";
 import { useFrame, useThree } from "@react-three/fiber";
 import { planetsScaleFactor } from "../../data/solarSystemData";
 
-export const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
+const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
   const planetSize = calculateRelativeScale(
     params.volumetricMeanRadiusKm,
     useSystemStore.getState().objectsRelativeScale
@@ -55,3 +55,5 @@ export const ObjectsComponent = ({ planetName, params, planetTexture = null }) =
     </>
   );
 };
+
+export default ObjectsComponent;
