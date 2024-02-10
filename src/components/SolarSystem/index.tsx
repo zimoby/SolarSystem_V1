@@ -1,4 +1,4 @@
-import { useKeyboardControls, useTexture } from "@react-three/drei";
+import { Instance, Instances, Point, PointMaterial, Points, Stars, useKeyboardControls, useTexture } from "@react-three/drei";
 import {
   useCelestialBodyUpdates,
   useInitiateSolarSystem,
@@ -13,9 +13,13 @@ import saturnTexture from "../../assets/2k_saturn.jpg";
 import uranusTexture from "../../assets/2k_uranus.jpg";
 import venusTexture from "../../assets/2k_venus_surface.jpg";
 import { SunComponent } from "../objects/sun";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import RandomObjects from "../controls/randomObjects";
 import SolarSystemPlanets from "../controls/solarSystemPlanets";
+import { Euler, MathUtils } from "three";
+import { useFrame } from "@react-three/fiber";
+import { generateTrash } from "../../utils/generators";
+import { TrashComponent } from "../Objects/trash";
 // import skyStars from "../../assets/2k_stars_milky_way.jpg";
 
 export const SolarSystem = () => {
@@ -49,12 +53,13 @@ export const SolarSystem = () => {
     venus: createVenusTexture,
   };
 
-
   return (
     <>
+      <TrashComponent />
       <SolarSystemPlanets planetsData={getPlanetsData} planetsTexture={mapedTextures} />
       <RandomObjects objectsData={getObjectsData} />
       <SunComponent />
     </>
   );
 };
+

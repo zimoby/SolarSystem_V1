@@ -68,12 +68,14 @@ export const useSystemStore = create(
     isInitialized: false,
     dataInitialized: false,
 
+    disablePlanets: false,
     disableMoons: true,
     disableRandomObjects: false,
+    disableTrash: false,
     
     activeObjectName: "sun",
 
-    solarScale: 1,
+    solarScale: 3,
     timeSpeed: 1,
     timeOffset: 0,
     objectsDistance: 1,
@@ -90,9 +92,11 @@ const objectNumber = 10;
 const generateRandomObjects = () => {
   const randomObjects = {};
   for (let i = 0; i < objectNumber; i++) {
+    const randomDistance = Math.random() * 4000;
     randomObjects[`object${i}`] = {
       volumetricMeanRadiusKm: 100,
-      semimajorAxis10_6Km: Math.random() * 4000,
+      semimajorAxis10_6Km: randomDistance,
+      anchorXYOffset: { x: 0, y: (Math.random() -0.5) * (randomDistance / 2)},
       siderealOrbitPeriodDays: (Math.random() * 1000) + 400,
       orbitInclinationDeg: Math.random() * 360,
       siderealRotationPeriodHrs: 0,
@@ -120,6 +124,7 @@ const generateRandomObjects = () => {
 
 export const useSolarSystemStore = create(
   devtools((set) => ({
+    trashAmount: 1000,
     // Static data: Basic information about celestial bodies
     celestialBodies: {
       stars: {},
@@ -165,30 +170,38 @@ export const useSolarSystemStore = create(
 
     //Real-time data: Properties of celestial bodies
     properties: {},
-    addCelestialBodyProperty: (name, property, value) =>
-      set((state) => ({
-        properties: {
-          ...state.properties,
-          [name]: {
-            ...state.properties[name],
-            [property]: value,
-          },
-        },
-      })),
-    updateProperty: (name, property, value) =>
-      set((state) => ({
-        properties: {
-          ...state.properties,
-          [name]: {
-            ...state.properties[name],
-            [property]: value,
-          },
-        },
-      })),
+    // addCelestialBodyProperty: (name, property, value) =>
+    //   set((state) => ({
+    //     properties: {
+    //       ...state.properties,
+    //       [name]: {
+    //         ...state.properties[name],
+    //         [property]: value,
+    //       },
+    //     },
+    //   })),
+    // updateProperty: (name, property, value) =>
+    //   set((state) => ({
+    //     properties: {
+    //       ...state.properties,
+    //       [name]: {
+    //         ...state.properties[name],
+    //         [property]: value,
+    //       },
+    //     },
+    //   })),
     batchUpdateProperties: (updates) =>
       set((state) => ({
         properties: {
           ...state.properties,
+          ...updates,
+        },
+      })),
+    additionalProperties: {},
+    batchUpdateAdditionalProperties: (updates) =>
+      set((state) => ({
+        additionalProperties: {
+          ...state.additionalProperties,
           ...updates,
         },
       })),
