@@ -10,3 +10,15 @@ export const calculateRelativeScale = (size, sliderValue) => {
 };
 
 export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
+
+// const xVec3 = new THREE.Vector3(1, 0, 0);
+
+// export caonst calculateObjectsPosition = (time, celestialBody, quaternionRef) => {
+//   const t = ((time / yearInSeconds / celestialBody.siderealOrbitPeriodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
+//   const recalcDistanceX = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 - celestialBody.orbitEccentricity), objectsDistance);
+//   const recalcDistanceY = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 + celestialBody.orbitEccentricity), objectsDistance);
+
+
+
+  
+// }

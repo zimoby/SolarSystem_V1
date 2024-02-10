@@ -159,18 +159,19 @@ export const useCelestialBodyUpdates = () => {
       const recalcDistanceY = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 + celestialBody.orbitEccentricity), objectsDistance);
       // const newPosition = new THREE.Vector3(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
       // const newPosition = vec3.set(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
+      quaternionRef.current.setFromAxisAngle(xVec3, degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));
 
       const newPosition = collectionObjectesVec[name].position.set(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
       
       // quaternionRef.current.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));
-      quaternionRef.current.setFromAxisAngle(xVec3, degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));
       newPosition.applyQuaternion(quaternionRef.current);
 
-      const rotationSpeed = (timeSec / dayInSeconds / celestialBody.siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
+      // const rotationSpeed = (timeSec / dayInSeconds / celestialBody.siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
       // const newRotation = new THREE.Euler(0, rotationSpeed , 0);
-      const newRotation = collectionObjectesVec[name].rotation.set(0, rotationSpeed, 0);
+      // const newRotation = collectionObjectesVec[name].rotation.set(0, rotationSpeed, 0);
 
-      updatedObjectsData[name] = { position: newPosition, rotation: newRotation };
+      updatedObjectsData[name] = { position: newPosition };
+      // updatedObjectsData[name] = { position: newPosition, rotation: newRotation };
     });
 
     useSolarSystemStore.getState().batchUpdateProperties(updatedObjectsData);

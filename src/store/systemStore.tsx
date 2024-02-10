@@ -32,25 +32,28 @@ interface SystemState {
 
 export const useSystemColorsStore = create(
   devtools((set) => ({
-    uiRandomColors: ["red", "green", "blue", "yellow", "purple", "orange", "pink", "brown", "grey", "white"],
+    uiRandomColors: ["red", "green", "blue", "yellow", "purple", "orange", "pink"],
     hudColors: {
-      background: "#000000",
-      text: "#ffffff",
-      border: "#ffffff",
+      // background: "#000000",
+      // text: "#ffffff",
+      // border: "#ffffff",
+      lineUnderOrbit: {color: "green", opacity: 1},
+      lineBelowOrbit: {color: "red", opacity: 1},
+      directLine: {color: "white", opacity: 1},
     },
-    objectDefaultColors: {
-      sun: "#ffcc00",
-      mercury: "#a9a9a9",
-      venus: "#d4a017",
-      earth: "#1e90ff",
-      mars: "#ff6347",
-      jupiter: "#f0e68c",
-      saturn: "#c2b280",
-      uranus: "#add8e6",
-      neptune: "#add8e6",
-      pluto: "#a9a9a9",
-      moon: "#f0f0f0",
-    },
+    // objectDefaultColors: {
+    //   sun: "#ffcc00",
+    //   mercury: "#a9a9a9",
+    //   venus: "#d4a017",
+    //   earth: "#1e90ff",
+    //   mars: "#ff6347",
+    //   jupiter: "#f0e68c",
+    //   saturn: "#c2b280",
+    //   uranus: "#add8e6",
+    //   neptune: "#add8e6",
+    //   pluto: "#a9a9a9",
+    //   moon: "#f0f0f0",
+    // },
     updateColors: (updates) => set({ colors: { ...colors, ...updates } }),
   }))
 );
@@ -76,7 +79,7 @@ export const useSystemStore = create(
   }))
 );
 
-const objectNumber = 60;
+const objectNumber = 10;
 
 const generateRandomObjects = () => {
   const randomObjects = {};

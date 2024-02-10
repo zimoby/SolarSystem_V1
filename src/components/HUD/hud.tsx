@@ -1,12 +1,17 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Line, Sphere } from "@react-three/drei";
 import { invalidate, useFrame, extend } from "@react-three/fiber";
 
 extend({ Line });
 
-export const DynamicLine = ({ start, end }) => {
+const lineMaterial = (color, opacity) => {
+  return new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: opacity });
+};
+
+export const DynamicLine = ({ start, end, axisColor = false }) => {
+  const { lineUnderOrbit, lineBelowOrbit, directLine } = useSystemColorsStore.getState().hudColors;
   const lineRef = useRef();
   const positionsRef = useRef(); // Ref to store the positions array
 
@@ -17,8 +22,10 @@ export const DynamicLine = ({ start, end }) => {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     lineRef.current.geometry = geometry;
 
-    const material = new THREE.LineBasicMaterial({ color: 'white' });
-    lineRef.current.material = material;
+    // const material = new THREE.LineBasicMaterial({ color: 'white' });
+    // lineRef.current.material = new THREE.LineBasicMaterial({ color: directLine.color, transparent: true, opacity: directLine.opacity});
+    // lineRef.current.material = lineMaterial(directLine.color, directLine.opacity);
+    lineRef.current.material = lineMaterial(directLine.color, directLine.opacity);
 
     positionsRef.current = positions; // Store the positions array for later updates
   }, []);
@@ -29,6 +36,11 @@ export const DynamicLine = ({ start, end }) => {
     if (positions) {
       positions.set([start.x, start.y, start.z, end.x, end.y, end.z]);
       lineRef.current.geometry.attributes.position.needsUpdate = true;
+
+      if (axisColor) {
+        const materialColor = end.y > start.y ? lineUnderOrbit.color : lineBelowOrbit.color;
+        lineRef.current.material.color.set(materialColor);
+      }
     }
   });
 
@@ -68,7 +80,7 @@ export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, 
         params={{ name: planetName, extendData}}
         typeOfObject={typeOfObject}
       />
-      <DynamicLine start={startPositionOrbit} end={planetPositionRef.current} />
+      <DynamicLine start={startPositionOrbit} end={planetPositionRef.current} axisColor={true} />
       <DynamicLine start={startPosition} end={planetPositionRef.current} />
     </>
   );

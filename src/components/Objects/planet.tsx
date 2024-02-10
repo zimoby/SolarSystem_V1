@@ -10,13 +10,17 @@ import { PlanetHUDComponent } from "../HUD/hud";
 import { Circle, Line, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
 import { useFrame, useThree } from "@react-three/fiber";
-import { planetsScaleFactor } from "../../data/solarSystemData";
+import { dayInSeconds, objectsRotationSpeed, planetsScaleFactor } from "../../data/solarSystemData";
 
 const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   const planetSize = calculateRelativeScale(
     params.volumetricMeanRadiusKm,
     useSystemStore.getState().objectsRelativeScale
   );
+
+  const systemState = useSystemStore.getState();
+  const { timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = systemState;
+
 
   // const objectsDistance = useRef(useSystemStore.getState().objectsDistance);
   const typeOfObject = "planet";
@@ -47,14 +51,29 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   // console.log("moons", moons);
 
 
-  useFrame(() => {
-    const state = useSolarSystemStore.getState();
-    planetRef.current.position.copy(state.properties[planetName]?.position);
+  useFrame((state) => {
+    // const state = useSolarSystemStore.getState();
+
+    const time = state.clock.getElapsedTime();
+    const timeSec = time * Math.PI * 2;
+
+
+
+    const rotationSpeed = (timeSec / dayInSeconds / useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
+    const newRotation = new THREE.Euler(0, rotationSpeed , 0);
+
+    planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
+    planetRef.current.rotation.y = newRotation.y;
     // planetRef.current.rotation.y = state.properties[planetName]?.rotation.y;
   });
 
   return (
     <>
+      {/* <Sphere args={[1]} position={[0, 0, 0]} */}
+
+      {/* > */}
+        {/* <meshStandardMaterial map={planetTexture} /> */}
+      {/* </Sphere> */}
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
         <ObjectEllipse params={params} name={planetName} objSelected={selected} typeOfObject={typeOfObject} />
@@ -90,6 +109,7 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
             </mesh>
           )}
           <Sphere
+            key={planetName}
             args={[planetSize]}
             onClick={() => {
               // console.log("clicked on planet", planetName);
