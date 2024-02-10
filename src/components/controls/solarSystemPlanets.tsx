@@ -1,4 +1,4 @@
-import PlanetComponent from "../objects/planet";
+import PlanetComponent from "../Objects/planet";
 
 const SolarSystemPlanets = ({ planetsData, planetsTexture }) => {
   return (
