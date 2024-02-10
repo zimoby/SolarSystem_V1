@@ -3,8 +3,14 @@ import { useEffect } from "react";
 import { useSystemStore } from "../store/systemStore";
 
 export const useSyncControlsWithStore = () => {
-  const { timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, orbitAngleOffset } =
+  const { solarScale, timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, orbitAngleOffset } =
     useControls({
+      solarScale: {
+        value: 1,
+        min: 1,
+        max: 10,
+        step: 1,
+      },
       timeSpeed: {
         value: 50,
         min: 1,
@@ -41,6 +47,7 @@ export const useSyncControlsWithStore = () => {
 
   useEffect(() => {
     updateSystemSettings({
+      solarScale,
       timeSpeed: timeSpeed === 1 ? 1 : timeSpeed * 100000,
       timeOffset,
       objectsDistance,
@@ -48,6 +55,7 @@ export const useSyncControlsWithStore = () => {
       orbitAngleOffset,
     });
   }, [
+    solarScale,
     timeSpeed,
     timeOffset,
     objectsDistance,
