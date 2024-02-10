@@ -1,7 +1,12 @@
-export const calculateRelativeDistance = (distance, sliderValue) => {
+import { dayInSeconds, objectsRotationSpeed } from "../data/solarSystemData";
+import { useSystemStore } from "../store/systemStore";
+
+export const calculateRelativeDistanceXY = (semimajorAxis10_6Km, orbitEccentricity, sliderValue) => {
   const offset = 0.75;
-  return Math.pow((distance + offset), 1 / sliderValue) - offset;
-};
+  const distanceX = Math.pow(((semimajorAxis10_6Km * (1 - orbitEccentricity)) + offset), 1 / sliderValue) - offset;
+  const distanceY = Math.pow(((semimajorAxis10_6Km * (1 + orbitEccentricity)) + offset), 1 / sliderValue) - offset;
+  return { x: distanceX, y: distanceY };
+}
 
 export const calculateRelativeScale = (size, sliderValue) => {
   const offset = 0.75;
@@ -22,3 +27,8 @@ export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 
   
 // }
+
+export const calculateObjectsRotation = (time, periodHrs) => {
+  // (timeSec / dayInSeconds / useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
+  return ((time * Math.PI * 2) / dayInSeconds / periodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed ) % (Math.PI * 2);
+}

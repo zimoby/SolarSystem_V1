@@ -6,6 +6,7 @@ import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import { Controls } from "../../types";
 import { planetsNamesOrder } from "../../data/solarSystemData";
 import { useFrame, useThree } from "@react-three/fiber";
+import { updateActiveName } from "../../hooks/storeProcessing";
 
 export const AppStatsPerformance = () => {
   return (
@@ -29,9 +30,9 @@ export const KeyboardInit = () => {
     if (!rightPressed && !leftPressed) { return; }
     const findActivePlanet = planetsNamesOrder.findIndex((planetName) => planetName === activeObjectName);
     if (rightPressed) {
-      useSystemStore.getState().updateSystemSettings({ activeObjectName: planetsNamesOrder[(findActivePlanet + 1) % planetsNamesOrder.length] });
+      updateActiveName(planetsNamesOrder[(findActivePlanet + 1) % planetsNamesOrder.length]);
     } else if (leftPressed) {
-      useSystemStore.getState().updateSystemSettings({ activeObjectName: planetsNamesOrder[(findActivePlanet - 1 + planetsNamesOrder.length) % planetsNamesOrder.length] });
+      updateActiveName(planetsNamesOrder[(findActivePlanet - 1 + planetsNamesOrder.length) % planetsNamesOrder.length]);
     }
   }, [rightPressed, leftPressed, activeObjectName]);
 

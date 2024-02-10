@@ -62,12 +62,18 @@ export const useSystemColorsStore = create(
 export const useSystemStore = create(
   devtools((set) => ({
     vec3: new THREE.Vector3(0,0,0),
+    rotVec3: new THREE.Vector3(0,0,0),
+    ellipseCurve: new THREE.EllipseCurve(0, 0, 1, 1, 0, Math.PI * 2, false, 0),
 
     isInitialized: false,
+    dataInitialized: false,
+
     disableMoons: true,
     disableRandomObjects: false,
-    dataInitialized: false,
+    
     activeObjectName: "sun",
+
+    solarScale: 1,
     timeSpeed: 1,
     timeOffset: 0,
     objectsDistance: 1,

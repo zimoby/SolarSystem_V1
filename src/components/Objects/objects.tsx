@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import {
-  calculateRelativeDistance,
   calculateRelativeScale,
-  degreesToRadians,
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";

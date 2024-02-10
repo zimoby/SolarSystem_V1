@@ -5,9 +5,8 @@ import { dayInSeconds, objectsRotationSpeed, planetsNamesOrder, planetsScaleFact
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
 import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
-import { calculateRelativeDistance, degreesToRadians } from "../utils/calculations";
+import { calculateRelativeDistanceXY, degreesToRadians } from "../utils/calculations";
 import * as THREE from "three";
-import { cosmicObjectsData } from "../data/cosmicObjects";
 
 import throttle from "lodash/throttle";
 
@@ -100,7 +99,6 @@ export const useCelestialBodyUpdates = () => {
   const systemState = useSystemStore.getState();
   const solarSystemState = useSolarSystemStore.getState();
   const quaternionRef = useRef(new THREE.Quaternion());
-  const vec3 = new THREE.Vector3();
   const xVec3 = new THREE.Vector3(1, 0, 0);
 
   const isInitialized = useSystemStore.getState().isInitialized;
@@ -155,8 +153,12 @@ export const useCelestialBodyUpdates = () => {
       // console.log("name", name,  celestialBody.orbitEccentricity);
 
       const t = ((timeSec / yearInSeconds / celestialBody.siderealOrbitPeriodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
-      const recalcDistanceX = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 - celestialBody.orbitEccentricity), objectsDistance);
-      const recalcDistanceY = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 + celestialBody.orbitEccentricity), objectsDistance);
+
+      const {
+        x: recalcDistanceX,
+        y: recalcDistanceY
+      } = calculateRelativeDistanceXY(celestialBody.semimajorAxis10_6Km, celestialBody.orbitEccentricity, objectsDistance);
+
       // const newPosition = new THREE.Vector3(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
       // const newPosition = vec3.set(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
       quaternionRef.current.setFromAxisAngle(xVec3, degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));

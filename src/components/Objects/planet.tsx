@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import {
-  calculateRelativeDistance,
+  calculateObjectsRotation,
   calculateRelativeScale,
-  degreesToRadians,
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
@@ -11,23 +10,30 @@ import { Circle, Line, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
 import { useFrame, useThree } from "@react-three/fiber";
 import { dayInSeconds, objectsRotationSpeed, planetsScaleFactor } from "../../data/solarSystemData";
+import { updateActiveName } from "../../hooks/storeProcessing";
+
+
 
 const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
-  const planetSize = calculateRelativeScale(
-    params.volumetricMeanRadiusKm,
-    useSystemStore.getState().objectsRelativeScale
-  );
+  
+  const {
+    ellipseCurve,
 
-  const systemState = useSystemStore.getState();
-  const { timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = systemState;
+    rotVec3,
+    solarScale,
+    objectsRelativeScale
+  } = useSystemStore.getState(); 
 
+  const planetSize = useMemo(() => {
+    return calculateRelativeScale(
+      params.volumetricMeanRadiusKm ?? 0.1,
+      objectsRelativeScale
+    ) * solarScale;
+  }, [params, solarScale, objectsRelativeScale]);
 
-  // const objectsDistance = useRef(useSystemStore.getState().objectsDistance);
+  // console.log("planetSize", planetSize, solarScale);
+
   const typeOfObject = "planet";
-  // const planetDistance = useMemo(() => { calculateRelativeDistance( params.semimajorAxis10_6Km, objectsDistance.current);
-  // }, [params.semimajorAxis10_6Km]);
-
-  // console.log("planetName", planetName, params);
 
   const moons = useMemo(() => {
     // if planetName === moonName, take the data 
@@ -45,35 +51,32 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
    }, [planetName]);
 
   const planetRef = useRef();
-  // const planetPositionRef = useRef();
   const [selected, setSelected] = useState(false);
 
-  // console.log("moons", moons);
+  const planetEllipseRotation = useMemo(() => {
+    const curve = new THREE.EllipseCurve(
+      0, 0,
+      planetSize * 1.5, planetSize * 1.5,
+      0, 2 * Math.PI,
+      false,
+      0
+    );
 
+    return curve.getPoints(64); // Adjust the number of points as needed
+  }, [planetSize]);
 
   useFrame((state) => {
-    // const state = useSolarSystemStore.getState();
-
     const time = state.clock.getElapsedTime();
-    const timeSec = time * Math.PI * 2;
+    const rotationSpeed = calculateObjectsRotation(time, useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs);
 
-
-
-    const rotationSpeed = (timeSec / dayInSeconds / useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
-    const newRotation = new THREE.Euler(0, rotationSpeed , 0);
+    const newRotation = rotVec3.set(0, rotationSpeed, 0);
 
     planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
     planetRef.current.rotation.y = newRotation.y;
-    // planetRef.current.rotation.y = state.properties[planetName]?.rotation.y;
   });
 
   return (
     <>
-      {/* <Sphere args={[1]} position={[0, 0, 0]} */}
-
-      {/* > */}
-        {/* <meshStandardMaterial map={planetTexture} /> */}
-      {/* </Sphere> */}
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
         <ObjectEllipse params={params} name={planetName} objSelected={selected} typeOfObject={typeOfObject} />
@@ -99,29 +102,26 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
             } )}
           </group>
               {/* create circle if sphere is selected */}
-          {selected && (
-            <mesh rotation={[0, Math.PI / 2, 0]}>
-              <Line
-                points={new THREE.EllipseCurve(0, 0, planetSize * 1.5, planetSize * 1.5, 0, Math.PI * 2, false).getPoints(64)}
-                color={"yellow"}
-                lineWidth={1}
-              />
-            </mesh>
-          )}
+        
+          <mesh rotation={[0, Math.PI / 2, 0]}>
+            <Line
+              points={planetEllipseRotation}
+              color={"yellow"}
+              lineWidth={1}
+            />
+          </mesh>
+
           <Sphere
             key={planetName}
             args={[planetSize]}
             onClick={() => {
-              // console.log("clicked on planet", planetName);
-              useSystemStore.getState().updateSystemSettings({ activeObjectName: planetName });
+              updateActiveName(planetName);
             }}
             onPointerOver={() => setSelected(true)}
             onPointerOut={() => setSelected(false)}
           >
             <meshStandardMaterial map={planetTexture} />
           </Sphere>
-
-          {/* </group> */}
         </group>
       </group>
     </>

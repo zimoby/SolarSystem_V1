@@ -1,37 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import {
-  calculateRelativeDistance,
-  calculateRelativeScale,
+  calculateRelativeDistanceXY,
   degreesToRadians,
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { Circle, Line } from "@react-three/drei";
 
-
 export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opacity = 1, typeOfObject = ""}) => {
   const [selected, setSelected] = useState(false);
 
-  // console.log("objSelected", color);
-
   useEffect(() => {
-    // if (objSelected) {
       setSelected(objSelected);
-    // }
   }, [objSelected]);
 
-  // const activeObjectName = useSystemStore(state => state.activeObjectName);
-  const objectsDistance = useSystemStore.getState().objectsDistance;
-  // if 
-
-  const planetDistanceX = calculateRelativeDistance(
-    params.semimajorAxis10_6Km * (1 - params.orbitEccentricity),
-    objectsDistance
-  );
-  const planetDistanceY = calculateRelativeDistance(
-    params.semimajorAxis10_6Km * (1 + params.orbitEccentricity),
-    objectsDistance
-  );
+  const {
+    x: planetDistanceX,
+    y: planetDistanceY
+  } = calculateRelativeDistanceXY(
+    params.semimajorAxis10_6Km,
+    params.orbitEccentricity,
+    useSystemStore.getState().objectsDistance);
 
   const planetInclination = degreesToRadians(
     params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
