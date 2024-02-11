@@ -11,25 +11,11 @@ export const calculateRelativeDistanceXY = (semimajorAxis10_6Km, orbitEccentrici
 export const calculateRelativeScale = (size, sliderValue) => {
   const offset = 0.75;
   return Math.pow(size, 1 / sliderValue) / sliderValue;
-  // return Math.pow(size, 1 / sliderValue) / sliderValue - (sliderValue - 1) * 0.007;
 };
 
 export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 
-// const xVec3 = new THREE.Vector3(1, 0, 0);
-
-// export caonst calculateObjectsPosition = (time, celestialBody, quaternionRef) => {
-//   const t = ((time / yearInSeconds / celestialBody.siderealOrbitPeriodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
-//   const recalcDistanceX = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 - celestialBody.orbitEccentricity), objectsDistance);
-//   const recalcDistanceY = calculateRelativeDistance(celestialBody.semimajorAxis10_6Km * (1 + celestialBody.orbitEccentricity), objectsDistance);
-
-
-
-  
-// }
-
 export const calculateObjectsRotation = (time, periodHrs) => {
-  // (timeSec / dayInSeconds / useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
   return ((time * Math.PI * 2) / dayInSeconds / periodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed ) % (Math.PI * 2);
 }
 

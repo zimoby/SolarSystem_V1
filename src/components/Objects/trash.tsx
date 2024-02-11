@@ -73,9 +73,8 @@ const PointsComponentDistribution = ({ points, text = false }) => {
 };
 
 export const TrashComponent = () => {
-	const { disableTrash } = useSystemStore((state) => state);
-  const trashInner = useSolarSystemStore((state) => state.trashAmount);
-  const { solarScale } = useSystemStore((state) => state);
+	const { disableTrash, objectsDistance, solarScale } = useSystemStore((state) => state);
+  const { trashInnerAmount, trashMiddleAmount, trashOuterAmount } = useSolarSystemStore((state) => state);
 
 	// if (disableTrash) { return }
 
@@ -83,37 +82,41 @@ export const TrashComponent = () => {
 	const generateMiddleTrash = true;
 	const generateOuterTrash = true;
 
+	const innerSpeed = 10;
+	const outerSpeed = 100;
+
   const trashInner1 = useMemo(() => {
-    return generateTrash(trashInner, 1, 0.2, solarScale);
-  }, [solarScale, trashInner]);
+		console.log("trashInnerAmount", trashInnerAmount);
+    return generateTrash(trashInnerAmount, 1, 0.2, solarScale, "inner circle");
+  }, [solarScale, trashInnerAmount]);
 
   const trashInner2 = useMemo(() => {
-    return generateTrash(trashInner, 1, 0.2, solarScale);
-  }, [solarScale, trashInner]);
+    return generateTrash(trashInnerAmount, 1, 0.2, solarScale, "inner circle");
+  }, [solarScale, trashInnerAmount]);
 
   const trashInner3 = useMemo(() => {
-    return generateTrash(3000, 3.5, 1, solarScale);
-  }, [solarScale]);
+    return generateTrash(trashOuterAmount, 3.5, 1, solarScale, "outer circle");
+  }, [solarScale, trashOuterAmount]);
 
   const trashInner4 = useMemo(() => {
-    return generateTrash(1000, 2, 1.7, solarScale);
-  }, [solarScale]);
+    return generateTrash(trashMiddleAmount, 2, 1.7, solarScale, "middle circle");
+  }, [solarScale, trashMiddleAmount]);
 
   const trashInner5Text = useMemo(() => {
-    return generateTrash(20, 2, 1.7, solarScale);
-  }, [solarScale]);
+    return generateTrash(Math.round(trashMiddleAmount / 50), 2, 1.7, solarScale, "middle circle");
+  }, [solarScale, trashMiddleAmount]);
 
   const ref1 = useRef();
   const ref2 = useRef();
   const ref3 = useRef();
   //   const ref4 = useRef()
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
 		if (generateInnerTrash) {
-			ref1.current.rotation.z = ref1.current.rotation.z + delta / 10;
-			ref2.current.rotation.z = ref2.current.rotation.z + delta / 20;
+			ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
+			ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
 		}
 		if (generateOuterTrash) {
-			ref3.current.rotation.z = ref3.current.rotation.z + delta / 100;
+			ref3.current.rotation.z = ref3.current.rotation.z + delta / outerSpeed;
 		}
     // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
   });
@@ -122,14 +125,22 @@ export const TrashComponent = () => {
     <>
       {generateInnerTrash && 
 				<>
-					<Instances ref={ref1} limit={trashInner1.length} rotation={new Euler(Math.PI / 2, 0, 0)}>
+					<Instances
+						ref={ref1}
+						limit={trashInner1.length}
+						rotation={new Euler(Math.PI / 2, 0, 0)}
+					>
 						<icosahedronGeometry />
 						<meshStandardMaterial />
 						{trashInner1.map((props, index) => (
 							<Instance key={index} {...props} />
 						))}
 					</Instances>
-					<Instances ref={ref2} limit={trashInner2.length} rotation={new Euler(Math.PI / 2, 0, 0)}>
+					<Instances
+						ref={ref2}
+						limit={trashInner2.length}
+						rotation={new Euler(Math.PI / 2, 0, 0)}
+					>
 						<icosahedronGeometry />
 						<meshStandardMaterial />
 						{trashInner2.map((props, index) => (
@@ -140,7 +151,11 @@ export const TrashComponent = () => {
 			}
 
       {generateOuterTrash && 
-				<Points limit={trashInner3.length} rotation={new Euler(Math.PI / 2, 0, 0)} ref={ref3}>
+				<Points
+					limit={trashInner3.length}
+					rotation={new Euler(Math.PI / 2, 0, 0)}
+					ref={ref3}
+				>
 					<PointMaterial
 						vertexColors
 						size={2}

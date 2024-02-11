@@ -1,7 +1,9 @@
-export const generateTrash = (amount, radius = 1, destr = 0.2, scale = 1) => {
+export const generateTrash = (amount, radius = 1, destr = 0.2, scale = 1, name = "") => {
     const trash = [];
     const angleIncrement = (2 * Math.PI) / amount;
     const ring = 5;
+
+    console.log("generate trash: " + name + ": ", amount);
 
     for (let i = 0; i < amount; i++) {
         const angle = i * angleIncrement;

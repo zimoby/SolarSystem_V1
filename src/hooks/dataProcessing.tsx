@@ -57,22 +57,8 @@ export const useInitiateSolarSystem = () => {
         rotation: new THREE.Euler(0, 0, 0),
       };
 
-      // console.log("additionalProcessingParams", uiRandomColors);
-
       additionalProcessingParams['type'] = parentName;
-      // additionalProcessingParams['test'] = "some txt"
       additionalProcessingParams['color'] = uiRandomColors[Math.floor(Math.random() * uiRandomColors.length)];
-      // additionalProcessingParams['color'] = "red";
-
-      // const {
-      //   x: planetDistanceX,
-      //   y: planetDistanceY
-      // } = calculateRelativeDistanceXY(
-      //   additionalProcessingParams.semimajorAxis10_6Km,
-      //   additionalProcessingParams.orbitEccentricity,
-      //   useSystemStore.getState().objectsDistance);
-
-      // additionalProcessingParams['orbit'] = new THREE.EllipseCurve(0, 0, planetDistanceX, planetDistanceY, 0, Math.PI * 2, false).getPoints(64);
     };
 
     Object.keys(reorderPlanets).forEach((planetName) => {

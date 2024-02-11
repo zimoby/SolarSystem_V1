@@ -75,7 +75,7 @@ export const useSystemStore = create(
     
     activeObjectName: "sun",
 
-    solarScale: 3,
+    solarScale: 1,
     timeSpeed: 1,
     timeOffset: 0,
     objectsDistance: 1,
@@ -124,7 +124,9 @@ const generateRandomObjects = () => {
 
 export const useSolarSystemStore = create(
   devtools((set) => ({
-    trashAmount: 1000,
+    trashInnerAmount: 1000,
+    trashMiddleAmount: 1000,
+    trashOuterAmount: 3000,
     // Static data: Basic information about celestial bodies
     celestialBodies: {
       stars: {},

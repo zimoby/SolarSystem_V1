@@ -23,7 +23,7 @@ import { TrashComponent } from "../Objects/trash";
 // import skyStars from "../../assets/2k_stars_milky_way.jpg";
 
 export const SolarSystem = () => {
-  const isInitialized = useSystemStore((state) => state.isInitialized);
+  const { isInitialized, disableTrash } = useSystemStore((state) => state);
   useInitiateSolarSystem();
   useCelestialBodyUpdates();
   const getObjectsData = useSolarSystemStore(
@@ -55,7 +55,7 @@ export const SolarSystem = () => {
 
   return (
     <>
-      <TrashComponent />
+      {!disableTrash && <TrashComponent />}
       <SolarSystemPlanets planetsData={getPlanetsData} planetsTexture={mapedTextures} />
       <RandomObjects objectsData={getObjectsData} />
       <SunComponent />
