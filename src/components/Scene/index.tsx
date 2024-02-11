@@ -5,7 +5,8 @@ import { useRef } from "react";
 import { useSystemStore } from "../../store/systemStore";
 import galaxy from "../../assets/2k_stars_milky_way.jpg";
 import { DoubleSide } from "three";
-import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 
 export const SceneSetup = () => {
 
@@ -28,6 +29,16 @@ export const SceneSetup = () => {
   return (
     <>
       <color args={["#111111"]} attach="background" />
+
+      {/* <EffectComposer> */}
+        {/* <Bloom height={200} mipmapBlur/> */}
+        {/* <Noise opacity={0.2} blendFunction={BlendFunction.MULTIPLY}/> */}
+        {/* <Vignette  offset={0.3} darkness={0.5} /> */}
+        {/* <ToneMapping /> */}
+      {/* </EffectComposer> */}
+
+      {/* <Environment background files={[skyStars]} /> */}
+      {/* <Environment preset="sunset"  /> */}
 
       {/* <EffectComposer>
         <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
