@@ -6,9 +6,9 @@ import {
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Circle, Line, Sphere, Trail } from "@react-three/drei";
+import { Circle, Line, Sparkles, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
-import { useFrame, useThree } from "@react-three/fiber";
+import { extend, useFrame, useThree } from "@react-three/fiber";
 import { dayInSeconds, objectsRotationSpeed, planetsScaleFactor } from "../../data/solarSystemData";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
@@ -17,7 +17,7 @@ import { updateActiveName } from "../../hooks/storeProcessing";
 const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   
   const {
-    ellipseCurve,
+    // ellipseCurve,
 
     rotVec3,
     solarScale,
@@ -77,6 +77,11 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
 
   return (
     <>
+
+        {/* <Sphere args={[1]} position={[0, 0, 0]}>
+          <meshStandardMaterial map={planetTexture} />
+        </Sphere> */}
+
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
       <group>
         <ObjectEllipse params={params} name={planetName} objSelected={selected} typeOfObject={typeOfObject} />
@@ -110,6 +115,19 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
               lineWidth={1}
             />
           </mesh>
+{/* 
+          <Sphere
+            key={planetName}
+            args={[planetSize]}
+            onClick={() => {
+              updateActiveName(planetName);
+            }}
+            onPointerOver={() => setSelected(true)}
+            onPointerOut={() => setSelected(false)}
+          >
+            <meshStandardMaterial map={planetTexture} />
+          </Sphere> */}
+
 
           <Sphere
             key={planetName}

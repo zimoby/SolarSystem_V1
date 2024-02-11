@@ -6,7 +6,18 @@ export const normalizeDataToEarth = (objData, ignoreToNormalize) => {
     const planetValue = objData[key];
     const earthValue = earthData[key];
 
-    if (
+    // console.log("planetValue", earthData.semimajorAxis10_6Km);
+
+    if (key === "anchorXYOffset") {
+      // console.log("planetValue", planetValue, earthData.semimajorAxis10_6Km);
+      return {
+        ...acc,
+        [key]: {
+          x: planetValue.x / earthData.semimajorAxis10_6Km,
+          y: planetValue.y / earthData.semimajorAxis10_6Km,
+        },
+      };
+    } else if (
       typeof planetValue !== "number" ||
       typeof earthValue !== "number" ||
       earthValue === 0 ||
@@ -26,6 +37,8 @@ export const normalizeDataToEarth = (objData, ignoreToNormalize) => {
       [key]: normalizedValue,
     };
   }, {});
+
+
   return normalizedData;
 };
 

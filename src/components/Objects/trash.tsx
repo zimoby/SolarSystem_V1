@@ -56,7 +56,7 @@ const PointsComponentDistribution = ({ points, text = false }) => {
 								{/* <div className={`rotate-45`}> */}
 									<div className="flex flex-raw">
 										{/* <div className={`size-4 border`} /> */}
-										<p className="text-white text-xs -mt-2 ml-5">{dot.name.toUpperCase()}</p>
+										<p className="text-white text-xs -mt-2 ml-3 select-none">{dot.name.toUpperCase()}</p>
 									</div>
 								{/* </div> */}
 							</Html>
@@ -77,7 +77,11 @@ export const TrashComponent = () => {
   const trashInner = useSolarSystemStore((state) => state.trashAmount);
   const { solarScale } = useSystemStore((state) => state);
 
-	if (disableTrash) { return }
+	// if (disableTrash) { return }
+
+	const generateInnerTrash = true;
+	const generateMiddleTrash = true;
+	const generateOuterTrash = true;
 
   const trashInner1 = useMemo(() => {
     return generateTrash(trashInner, 1, 0.2, solarScale);
@@ -104,44 +108,59 @@ export const TrashComponent = () => {
   const ref3 = useRef();
   //   const ref4 = useRef()
   useFrame((state, delta) => {
-    ref1.current.rotation.z = ref1.current.rotation.z + delta / 10;
-    ref2.current.rotation.z = ref2.current.rotation.z + delta / 20;
-    ref3.current.rotation.z = ref3.current.rotation.z + delta / 100;
+		if (generateInnerTrash) {
+			ref1.current.rotation.z = ref1.current.rotation.z + delta / 10;
+			ref2.current.rotation.z = ref2.current.rotation.z + delta / 20;
+		}
+		if (generateOuterTrash) {
+			ref3.current.rotation.z = ref3.current.rotation.z + delta / 100;
+		}
     // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
   });
 
   return (
     <>
-      <Instances ref={ref1} limit={trashInner1.length} rotation={new Euler(Math.PI / 2, 0, 0)}>
-        <icosahedronGeometry />
-        <meshStandardMaterial />
-        {trashInner1.map((props, index) => (
-          <Instance key={index} {...props} />
-        ))}
-      </Instances>
-      <Instances ref={ref2} limit={trashInner2.length} rotation={new Euler(Math.PI / 2, 0, 0)}>
-        <icosahedronGeometry />
-        <meshStandardMaterial />
-        {trashInner2.map((props, index) => (
-          <Instance key={index} {...props} />
-        ))}
-      </Instances>
+      {generateInnerTrash && 
+				<>
+					<Instances ref={ref1} limit={trashInner1.length} rotation={new Euler(Math.PI / 2, 0, 0)}>
+						<icosahedronGeometry />
+						<meshStandardMaterial />
+						{trashInner1.map((props, index) => (
+							<Instance key={index} {...props} />
+						))}
+					</Instances>
+					<Instances ref={ref2} limit={trashInner2.length} rotation={new Euler(Math.PI / 2, 0, 0)}>
+						<icosahedronGeometry />
+						<meshStandardMaterial />
+						{trashInner2.map((props, index) => (
+							<Instance key={index} {...props} />
+						))}
+					</Instances>
+				</>
+			}
 
-      <Points limit={trashInner3.length} rotation={new Euler(Math.PI / 2, 0, 0)} ref={ref3}>
-        <PointMaterial
-          vertexColors
-          size={2}
-          sizeAttenuation={false}
-          depthWrite={false}
-          toneMapped={false}
-        />
-        {trashInner3.map((dot, i) => (
-          <Point key={i} index={i} position={dot.position} />
-        ))}
-      </Points>
+      {generateOuterTrash && 
+				<Points limit={trashInner3.length} rotation={new Euler(Math.PI / 2, 0, 0)} ref={ref3}>
+					<PointMaterial
+						vertexColors
+						size={2}
+						sizeAttenuation={false}
+						depthWrite={false}
+						toneMapped={false}
+					/>
+					{trashInner3.map((dot, i) => (
+						<Point key={i} index={i} position={dot.position} />
+					))}
+				</Points>
+			}
 
-      <PointsComponentDistribution points={trashInner4} />
-      <PointsComponentDistribution points={trashInner5Text} text={true} />
+			{generateMiddleTrash && 
+				<>
+					<PointsComponentDistribution points={trashInner4} />
+					<PointsComponentDistribution points={trashInner5Text} text={true} />
+				</>
+			}
+
     </>
   );
 };

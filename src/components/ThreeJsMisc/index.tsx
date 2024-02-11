@@ -41,7 +41,7 @@ export const KeyboardInit = () => {
 
 export const ControlComponent = () => {
 
-  const cameraDistance = 12;
+  const cameraDistance = 20;
 
   const refCamera = useRef();
 
@@ -91,21 +91,22 @@ export const ControlComponent = () => {
 
   // useFrame((state) => {
   //   const newPosition = useSolarSystemStore.getState().properties[activeObjectNameAct]?.position;
-  //   // if (newPosition) {
-  //   //   refCamera.current = newPosition;
-  //   // }
-  //   if (!newPosition) { return; }
+  //   if (newPosition) {
+  //     refCamera.current.position.copy(newPosition);
+  //     refCamera.current.position.z += cameraDistance;
+  //   }
+  //   // if (!newPosition) { return; }
     
-  //   lookAtVec.set(newPosition.x, newPosition.y, newPosition.z);
-  //   cameraVector.lerp(lookAtVec, 0.1);
-  //   state.camera.lookAt(cameraVector);
-  //   state.camera.updateProjectionMatrix();
+  //   // lookAtVec.set(newPosition.x, newPosition.y, newPosition.z);
+  //   // cameraVector.lerp(lookAtVec, 0.1);
+  //   // state.camera.lookAt(cameraVector);
+  //   // state.camera.updateProjectionMatrix();
   // });
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
-      <OrbitControls
+      <PerspectiveCamera  makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
+      <OrbitControls 
         // ref={activeItemPositionRec2}
         // makeDefault
         // enablePan={true}

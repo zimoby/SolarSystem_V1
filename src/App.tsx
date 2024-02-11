@@ -32,7 +32,7 @@ function App() {
 
   return (
     <KeyboardControls map={map}>
-        <Canvas orthographic gl={{ antialias: true }}>
+        <Canvas orthographic gl={{ antialias: true }} dpr={[1, 2]}>
           <AppStatsPerformance />
           <SceneSetup />
           <Suspense fallback={null}>

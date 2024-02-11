@@ -48,9 +48,10 @@ export const DynamicLine = ({ start, end, axisColor = false }) => {
   return <line ref={lineRef} />;
 };
 
-export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, typeOfObject = "" }) => {
+export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData = true, typeOfObject = "" }) => {
   const { vec3 } = useSystemStore.getState(); 
   const planetHuiRef = useRef();
+  const planetHuiRefCenter = useRef();
   const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
   // const lineRef1 = useRef();
   const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
@@ -60,6 +61,7 @@ export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, 
   // const startPositionOrbit = lineRef2.current; // Example start position
   // const endPosition = planetPositionRef.current; // The dynamic end position
 
+  // console.log("planetName", planetName, params);
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;
@@ -72,6 +74,7 @@ export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, 
       lineRef2.current.copy(vec3.set(newPosition.x, 0, newPosition.z));
       // planetHuiRef.current.position.copy(new THREE.Vector3(newPosition.x, newPosition.y - planetSize, newPosition.z));
       planetHuiRef.current.position.copy(vec3.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
+      planetHuiRefCenter.current.position.copy(vec3.set(newPosition.x, newPosition.y, newPosition.z));
     }
   });
 
@@ -83,6 +86,11 @@ export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, 
   //   dashSize: 0,
   // };
 
+  let selectionType = ""
+  if (typeOfObject === "object") {
+    selectionType = "border border-dashed ";
+  }
+
 
   return (
     <>
@@ -92,6 +100,18 @@ export const PlanetHUDComponent = ({ planetName, planetSize, extendData = true, 
         params={{ name: planetName, extendData}}
         typeOfObject={typeOfObject}
       />
+      <group ref={planetHuiRefCenter}>
+        <Html center>
+          <div className={`rotate-45`}>
+            <div className={`animate-ping size-5 ${selectionType} `} />
+          </div>
+        </Html>
+        <Html center>
+          <div className={`rotate-45`}>
+            <div className={`size-5 ${selectionType} `} />
+          </div>
+        </Html>
+      </group>
       {/* <Segments
         limit={1000}
         lineWidth={1.0}

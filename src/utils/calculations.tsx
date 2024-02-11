@@ -1,4 +1,4 @@
-import { dayInSeconds, objectsRotationSpeed } from "../data/solarSystemData";
+import { dayInSeconds, objectsRotationSpeed, yearInSeconds } from "../data/solarSystemData";
 import { useSystemStore } from "../store/systemStore";
 
 export const calculateRelativeDistanceXY = (semimajorAxis10_6Km, orbitEccentricity, sliderValue) => {
@@ -31,4 +31,9 @@ export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 export const calculateObjectsRotation = (time, periodHrs) => {
   // (timeSec / dayInSeconds / useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
   return ((time * Math.PI * 2) / dayInSeconds / periodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed ) % (Math.PI * 2);
+}
+
+export const calculateTime = (time, periodDays) => {
+  const { timeSpeed, timeOffset } = useSystemStore.getState();
+  return (((time * Math.PI * 2) / yearInSeconds / periodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
 }

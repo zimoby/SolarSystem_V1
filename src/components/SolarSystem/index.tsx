@@ -1,4 +1,4 @@
-import { Instance, Instances, Point, PointMaterial, Points, Stars, useKeyboardControls, useTexture } from "@react-three/drei";
+import { Circle, GradientTexture, GradientType, Instance, Instances, Plane, Point, PointMaterial, Points, Stars, useKeyboardControls, useTexture } from "@react-three/drei";
 import {
   useCelestialBodyUpdates,
   useInitiateSolarSystem,
@@ -16,7 +16,7 @@ import { SunComponent } from "../objects/sun";
 import { useEffect, useMemo, useRef, useState } from "react";
 import RandomObjects from "../controls/randomObjects";
 import SolarSystemPlanets from "../controls/solarSystemPlanets";
-import { Euler, MathUtils } from "three";
+import { DoubleSide, Euler, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
 import { generateTrash } from "../../utils/generators";
 import { TrashComponent } from "../Objects/trash";
@@ -59,6 +59,22 @@ export const SolarSystem = () => {
       <SolarSystemPlanets planetsData={getPlanetsData} planetsTexture={mapedTextures} />
       <RandomObjects objectsData={getObjectsData} />
       <SunComponent />
+
+      {/* <Circle args={[10, 64]} position={[0, 0, 0]} rotation={[Math.PI/2, 0, 0] }>
+        <meshBasicMaterial side={DoubleSide} transparent={true} opacity={0.3}>
+          <GradientTexture
+            stops={[0, 0.3, 1]} // As many stops as you want
+            colors={['yellow', 'purple', 'black']} // Colors need to match the number of stops
+            size={1024} // Size (height) is optional, default = 1024
+            width={1024} // Width of the canvas producing the texture, default = 16
+            type={GradientType.Radial} // The type of the gradient, default = GradientType.Linear
+            innerCircleRadius={0} // Optional, the radius of the inner circle of the gradient, default = 0
+            outerCircleRadius={'auto'} // Optional, the radius of the outer circle of the gradient, default = auto
+          />
+        </meshBasicMaterial>
+      </Circle> */}
+          
+
     </>
   );
 };

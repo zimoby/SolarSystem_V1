@@ -5,7 +5,7 @@ import { dayInSeconds, objectsRotationSpeed, planetsNamesOrder, planetsScaleFact
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
 import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
-import { calculateRelativeDistanceXY, degreesToRadians } from "../utils/calculations";
+import { calculateRelativeDistanceXY, calculateTime, degreesToRadians } from "../utils/calculations";
 import * as THREE from "three";
 
 import throttle from "lodash/throttle";
@@ -17,13 +17,14 @@ export const useInitiateSolarSystem = () => {
     "siderealOrbitPeriodDays",
     "orbitInclinationDeg",
     "siderealRotationPeriodHrs",
-    "orbitEccentricity"
+    "orbitEccentricity",
+    "anchorXYOffset"
   ];
 
   const ignoreToNormalize = ["orbitEccentricity"];
 
   const { uiRandomColors } = useSystemColorsStore.getState();
-  const {disableMoons, disableRandomObjects} = useSystemStore.getState();
+  const {disablePlanets, disableMoons, disableRandomObjects} = useSystemStore.getState();
 
   const reorderPlanets = planetsNamesOrder.reduce((acc, planetName) => ({
     ...acc,
@@ -62,11 +63,24 @@ export const useInitiateSolarSystem = () => {
       // additionalProcessingParams['test'] = "some txt"
       additionalProcessingParams['color'] = uiRandomColors[Math.floor(Math.random() * uiRandomColors.length)];
       // additionalProcessingParams['color'] = "red";
+
+      // const {
+      //   x: planetDistanceX,
+      //   y: planetDistanceY
+      // } = calculateRelativeDistanceXY(
+      //   additionalProcessingParams.semimajorAxis10_6Km,
+      //   additionalProcessingParams.orbitEccentricity,
+      //   useSystemStore.getState().objectsDistance);
+
+      // additionalProcessingParams['orbit'] = new THREE.EllipseCurve(0, 0, planetDistanceX, planetDistanceY, 0, Math.PI * 2, false).getPoints(64);
     };
 
     Object.keys(reorderPlanets).forEach((planetName) => {
       const planetData = reorderPlanets[planetName];
-      processCelestialBody("planets", planetName, planetData, "sun");
+
+      if (!disablePlanets) {
+        processCelestialBody("planets", planetName, planetData, "sun");
+      }
 
       if (planetData.moons && !disableMoons) {
         planetData.moons.forEach((moon) => {
@@ -96,16 +110,14 @@ export const useInitiateSolarSystem = () => {
 
 export const useCelestialBodyUpdates = () => {
 
-  const systemState = useSystemStore.getState();
-  const solarSystemState = useSolarSystemStore.getState();
   const quaternionRef = useRef(new THREE.Quaternion());
   const xVec3 = new THREE.Vector3(1, 0, 0);
 
   const isInitialized = useSystemStore.getState().isInitialized;
+  const testData = useSolarSystemStore.getState().additionalProperties;
 
-  const { timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = systemState;
-  const { planets, moons, objects } = solarSystemState.celestialBodies;
-  const {disableMoons, disableRandomObjects} = systemState;
+  const { solarScale, timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = useSystemStore.getState();
+  const { planets, moons, objects } = useSolarSystemStore.getState().celestialBodies;
 
   // console.log("planets", planets, moons, objects);
 
@@ -118,10 +130,12 @@ export const useCelestialBodyUpdates = () => {
   const combinedObjects = useMemo(() => {
     return {
       ...planets,
-      ...(disableMoons ? {} : moons),
-      ...(disableRandomObjects ? {} : objects)
+      ...moons,
+      ...objects
     };
-  }, [planets, moons, objects, disableMoons, disableRandomObjects]);
+  }, [planets, moons, objects]);
+
+  // console.log("combinedObjects", combinedObjects);
 
   const collectionObjectesVec = useMemo(() => {
     const collection = {};
@@ -134,46 +148,69 @@ export const useCelestialBodyUpdates = () => {
     return collection;
   }, [combinedObjects]);
 
-  useFrame((state, delta) => {
-  // useFrame(throttle((state, delta) => {
-    if (!isInitialized) return;
-
-    // console.log("combinedObjects", combinedObjects);
-
-    const time = state.clock.getElapsedTime();
-    const timeSec = time * Math.PI * 2;
-
-    const updatedObjectsData = {};
-
-    Object.keys(combinedObjects).forEach((name, index) => {
+  const objectsSupportData = useMemo(() => {
+    const collection = {};
+    Object.keys(combinedObjects).forEach((name) => {
       const celestialBody = combinedObjects[name];
-
-      if (!celestialBody || !celestialBody.semimajorAxis10_6Km) return;
-
-      // console.log("name", name,  celestialBody.orbitEccentricity);
-
-      const t = ((timeSec / yearInSeconds / celestialBody.siderealOrbitPeriodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
 
       const {
         x: recalcDistanceX,
         y: recalcDistanceY
       } = calculateRelativeDistanceXY(celestialBody.semimajorAxis10_6Km, celestialBody.orbitEccentricity, objectsDistance);
 
-      // const newPosition = new THREE.Vector3(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
-      // const newPosition = vec3.set(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
-      quaternionRef.current.setFromAxisAngle(xVec3, degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));
+      collection[name] = {
+        distanceXY : { x: recalcDistanceX, y: recalcDistanceY },
+        angleRad: degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset)
+      };
+    });
 
-      const newPosition = collectionObjectesVec[name].position.set(Math.cos(t) * recalcDistanceX, 0, Math.sin(t) * recalcDistanceY);
+    // useSolarSystemStore.getState().batchUpdateAdditionalProperties(collection);
+    // console.log("objectsSupportData", collection);
+    return collection;
+  }, [combinedObjects, objectsDistance, orbitAngleOffset]);
+
+  // useEffect(() => {
+    // console.log("objectsSupportData", objectsSupportData);
+    // useSolarSystemStore.getState().batchUpdateAdditionalProperties(objectsSupportData);
+  // }, [objectsSupportData]);
+
+  // useEffect(() => {
+  //   console.log("testData", testData);
+  // }, [testData]);
+
+
+  useFrame((state) => {
+  // useFrame(throttle((state, delta) => {
+    if (!isInitialized) return;
+
+    // console.log("combinedObjects", combinedObjects);
+
+    const time = state.clock.getElapsedTime();
+
+    const updatedObjectsData = {};
+
+    Object.keys(combinedObjects).forEach((name, index) => {
+      const celestialBody = combinedObjects[name];
+      const supportData = objectsSupportData[name];
+
+      if (!celestialBody || !celestialBody.semimajorAxis10_6Km) return;
+
+      // console.log("name", name,  celestialBody.orbitEccentricity);
+
+      const t = calculateTime(time, celestialBody.siderealOrbitPeriodDays);
+
+      // (celestialBody.anchorXYOffset?.y ?? 0)
       
-      // quaternionRef.current.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset));
+      const newPosition = collectionObjectesVec[name].position.set(
+        Math.cos(t) * supportData.distanceXY.x * solarScale,
+        0,
+        Math.sin(t) * supportData.distanceXY.y * solarScale
+      );
+
+      quaternionRef.current.setFromAxisAngle(xVec3, supportData.angleRad);
       newPosition.applyQuaternion(quaternionRef.current);
 
-      // const rotationSpeed = (timeSec / dayInSeconds / celestialBody.siderealRotationPeriodHrs * objectsRotationSpeed * timeSpeed) % (Math.PI * 2);
-      // const newRotation = new THREE.Euler(0, rotationSpeed , 0);
-      // const newRotation = collectionObjectesVec[name].rotation.set(0, rotationSpeed, 0);
-
       updatedObjectsData[name] = { position: newPosition };
-      // updatedObjectsData[name] = { position: newPosition, rotation: newRotation };
     });
 
     useSolarSystemStore.getState().batchUpdateProperties(updatedObjectsData);
