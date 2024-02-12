@@ -1,10 +1,5 @@
 import { Environment, GizmoHelper, GizmoViewport, Grid, PerspectiveCamera, Stars, useTexture } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
-
-import { useRef } from "react";
-import { useSystemStore } from "../../store/systemStore";
 import galaxy from "../../assets/2k_stars_milky_way.jpg";
-import { DoubleSide } from "three";
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 
@@ -28,14 +23,14 @@ export const SceneSetup = () => {
 
   return (
     <>
-      <color args={["#111111"]} attach="background" />
-
-      {/* <EffectComposer> */}
-        {/* <Bloom height={200} mipmapBlur/> */}
-        {/* <Noise opacity={0.2} blendFunction={BlendFunction.MULTIPLY}/> */}
-        {/* <Vignette  offset={0.3} darkness={0.5} /> */}
-        {/* <ToneMapping /> */}
-      {/* </EffectComposer> */}
+      
+{/* 
+      <EffectComposer>
+        <Bloom height={200} mipmapBlur/>
+        <Noise opacity={0.2} blendFunction={BlendFunction.MULTIPLY}/>
+        <Vignette  offset={0.3} darkness={0.5} />
+        <ToneMapping />
+      </EffectComposer> */}
 
       {/* <Environment background files={[skyStars]} /> */}
       {/* <Environment preset="sunset"  /> */}
@@ -55,7 +50,7 @@ export const SceneSetup = () => {
       <ambientLight intensity={0.4} />
       <Stars />
 
-      <Grid position={[0, 0, 0]} args={gridSize} {...gridConfig} />
+      <Grid position={[0, 0.3, 0]} args={gridSize} {...gridConfig} />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
         <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
       </GizmoHelper>

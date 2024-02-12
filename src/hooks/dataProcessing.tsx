@@ -8,7 +8,7 @@ import { useFrame } from "@react-three/fiber";
 import { calculateRelativeDistanceXY, calculateTime, degreesToRadians } from "../utils/calculations";
 import * as THREE from "three";
 
-import throttle from "lodash/throttle";
+// import throttle from "lodash/throttle";
 
 export const useInitiateSolarSystem = () => {
   const usedProperties = [
@@ -94,112 +94,76 @@ export const useInitiateSolarSystem = () => {
   }, []);
 };
 
+
 export const useCelestialBodyUpdates = () => {
-
+  const positionVectorsRef = useRef({});
+  const axisVectorRef = useRef(new THREE.Vector3(1, 0, 0));
   const quaternionRef = useRef(new THREE.Quaternion());
-  const xVec3 = new THREE.Vector3(1, 0, 0);
+  const objectsSupportDataRef = useRef({});
 
-  const isInitialized = useSystemStore.getState().isInitialized;
-  const testData = useSolarSystemStore.getState().additionalProperties;
-
-  const { solarScale, timeSpeed, timeOffset, objectsDistance, orbitAngleOffset } = useSystemStore.getState();
+  const { isInitialized, isInitialized2, timeSpeed, timeOffset, solarScale, objectsDistance, orbitAngleOffset } = useSystemStore.getState();
   const { planets, moons, objects } = useSolarSystemStore.getState().celestialBodies;
 
-  // console.log("planets", planets, moons, objects);
-
-  // const combinedObjects = {
-  //   ...planets,
-  //   ...(disableMoons ? {} : moons),
-  //   ...(disableRandomObjects ? {} : objects)
-  // };
+  // console.log("useCelestialBodyUpdates", isInitialized);
 
   const combinedObjects = useMemo(() => {
+
+    if (!isInitialized) return {};
+    // console.log("combinedObjects", planets, moons, objects);
     return {
       ...planets,
       ...moons,
       ...objects
     };
-  }, [planets, moons, objects]);
+  }, [isInitialized, planets, moons, objects]);
 
-  // console.log("combinedObjects", combinedObjects);
+  useEffect(() => {
 
-  const collectionObjectesVec = useMemo(() => {
-    const collection = {};
-    Object.keys(combinedObjects).forEach((name) => {
-      collection[name] = {
-        position: new THREE.Vector3(0, 0, 0),
-        rotation: new THREE.Euler(0, 0, 0),
+    if (!isInitialized) return;
+    const supportData = {};
+    Object.keys(combinedObjects).forEach(name => {
+      const { semimajorAxis10_6Km, orbitEccentricity, orbitInclinationDeg } = combinedObjects[name];
+      supportData[name] = {
+        distanceXY: calculateRelativeDistanceXY(semimajorAxis10_6Km, orbitEccentricity, objectsDistance), // Use Vector2 for 2D distances
+        angleRad: degreesToRadians(orbitInclinationDeg + orbitAngleOffset),
       };
+
+      if (!positionVectorsRef.current[name]) {
+        positionVectorsRef.current[name] = new THREE.Vector3();
+      }
+
     });
-    return collection;
-  }, [combinedObjects]);
-
-  const objectsSupportData = useMemo(() => {
-    const collection = {};
-    Object.keys(combinedObjects).forEach((name) => {
-      const celestialBody = combinedObjects[name];
-
-      const {
-        x: recalcDistanceX,
-        y: recalcDistanceY
-      } = calculateRelativeDistanceXY(celestialBody.semimajorAxis10_6Km, celestialBody.orbitEccentricity, objectsDistance);
-
-      collection[name] = {
-        distanceXY : { x: recalcDistanceX, y: recalcDistanceY },
-        angleRad: degreesToRadians(celestialBody.orbitInclinationDeg + orbitAngleOffset)
-      };
-    });
-
-    // useSolarSystemStore.getState().batchUpdateAdditionalProperties(collection);
-    // console.log("objectsSupportData", collection);
-    return collection;
-  }, [combinedObjects, objectsDistance, orbitAngleOffset]);
-
-  // useEffect(() => {
-    // console.log("objectsSupportData", objectsSupportData);
-    // useSolarSystemStore.getState().batchUpdateAdditionalProperties(objectsSupportData);
-  // }, [objectsSupportData]);
-
-  // useEffect(() => {
-  //   console.log("testData", testData);
-  // }, [testData]);
-
+    objectsSupportDataRef.current = supportData;
+    useSystemStore.getState().setInitialized2(true);
+    useSolarSystemStore.getState().batchUpdateAdditionalProperties(supportData);
+    console.log("update supportData", supportData);
+  }, [isInitialized, combinedObjects, objectsDistance, orbitAngleOffset]);
 
   useFrame((state) => {
-  // useFrame(throttle((state, delta) => {
     if (!isInitialized) return;
 
-    // console.log("combinedObjects", combinedObjects);
-
     const time = state.clock.getElapsedTime();
-
     const updatedObjectsData = {};
 
-    Object.keys(combinedObjects).forEach((name, index) => {
+    Object.keys(combinedObjects).forEach(name => {
       const celestialBody = combinedObjects[name];
-      const supportData = objectsSupportData[name];
+      const supportData = objectsSupportDataRef.current[name];
+      const t = calculateTime(time, celestialBody.siderealOrbitPeriodDays, timeSpeed, timeOffset);
 
-      if (!celestialBody || !celestialBody.semimajorAxis10_6Km) return;
-
-      // console.log("name", name,  celestialBody.orbitEccentricity);
-
-      const t = calculateTime(time, celestialBody.siderealOrbitPeriodDays);
-
-      // (celestialBody.anchorXYOffset?.y ?? 0)
-      
-      const newPosition = collectionObjectesVec[name].position.set(
+      const position = positionVectorsRef.current[name];
+      position.set(
         Math.cos(t) * supportData.distanceXY.x * solarScale,
         0,
         Math.sin(t) * supportData.distanceXY.y * solarScale
       );
 
-      quaternionRef.current.setFromAxisAngle(xVec3, supportData.angleRad);
-      newPosition.applyQuaternion(quaternionRef.current);
+      quaternionRef.current.setFromAxisAngle(axisVectorRef.current, supportData.angleRad);
+      position.applyQuaternion(quaternionRef.current);
 
-      updatedObjectsData[name] = { position: newPosition };
+      updatedObjectsData[name] = { position };
     });
 
     useSolarSystemStore.getState().batchUpdateProperties(updatedObjectsData);
   });
-  // }, 40));
+
 };

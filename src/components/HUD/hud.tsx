@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSystemColorsStore, useSystemObjectsStore, useSystemStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Line, Segment, Segments, Sphere } from "@react-three/drei";
 import { invalidate, useFrame, extend } from "@react-three/fiber";
@@ -14,7 +14,7 @@ const lineMaterial = (color, opacity) => {
 export const DynamicLine = ({ start, end, axisColor = false }) => {
   const { lineUnderOrbit, lineBelowOrbit, directLine } = useSystemColorsStore.getState().hudColors;
   const lineRef = useRef();
-  const positionsRef = useRef(); // Ref to store the positions array
+  const positionsRef = useRef();
 
   useEffect(() => {
     // Initialize the geometry and material only once
@@ -33,9 +33,8 @@ export const DynamicLine = ({ start, end, axisColor = false }) => {
 
   useFrame(() => {
     // Update positions directly, avoiding new allocations
-    const positions = positionsRef.current;
-    if (positions) {
-      positions.set([start.x, start.y, start.z, end.x, end.y, end.z]);
+    if (positionsRef.current) {
+      positionsRef.current.set([start.x, start.y, start.z, end.x, end.y, end.z]);
       lineRef.current.geometry.attributes.position.needsUpdate = true;
 
       if (axisColor) {
@@ -48,52 +47,41 @@ export const DynamicLine = ({ start, end, axisColor = false }) => {
   return <line ref={lineRef} />;
 };
 
+// const line1EndPos = new THREE.Vector3(0,0,0),
+const line2EndPos = new THREE.Vector3(0,0,0);
+const planetHui1Pos = new THREE.Vector3(0,0,0);
+const planetHui2Pos = new THREE.Vector3(0,0,0);
+const startPosition = new THREE.Vector3(0,0,0);
+
 export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData = true, typeOfObject = "" }) => {
-  const { vec3 } = useSystemStore.getState(); 
+
   const planetHuiRef = useRef();
   const planetHuiRefCenter = useRef();
   const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
-  // const lineRef1 = useRef();
   const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
-  // const vec3 = new THREE.Vector3();
+  
+  // const [planetPosition] = useState({x: 0, y: 0, z: 0}) 
 
-  const startPosition = new THREE.Vector3(0, 0, 0); // Example start position
-  // const startPositionOrbit = lineRef2.current; // Example start position
-  // const endPosition = planetPositionRef.current; // The dynamic end position
 
-  // console.log("planetName", planetName, params);
+  // console.log("PlanetHUDComponent", planetName, params);
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;
     if (newPosition) {
       planetPositionRef.current.copy(newPosition);
-      // lineRef.current.start.set(0,0,0);
-      // lineRef.current.end.set(newPosition.x, newPosition.y, newPosition.z);
-      // console.log("lineRef.current", lineRef.current);
-      // lineRef2.current.copy(new THREE.Vector3(newPosition.x, 0, newPosition.z));
-      lineRef2.current.copy(vec3.set(newPosition.x, 0, newPosition.z));
-      // planetHuiRef.current.position.copy(new THREE.Vector3(newPosition.x, newPosition.y - planetSize, newPosition.z));
-      planetHuiRef.current.position.copy(vec3.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
-      planetHuiRefCenter.current.position.copy(vec3.set(newPosition.x, newPosition.y, newPosition.z));
+      lineRef2.current.copy(line2EndPos.set(newPosition.x, 0, newPosition.z));
+      planetHuiRef.current.position.copy(planetHui1Pos.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
+      planetHuiRefCenter.current.position.copy(planetHui2Pos.set(newPosition.x, newPosition.y, newPosition.z));
     }
   });
-
-  // const materialProps = {
-  //   color: "red",
-  //   linewidth: 1,
-  //   dashed: false,
-  //   gapSize: 0,
-  //   dashSize: 0,
-  // };
 
   let selectionType = ""
   if (typeOfObject === "object") {
     selectionType = "border border-dashed ";
   }
 
-
   return (
-    <>
+    <group>
       <InfoAboutObject
         ref={planetHuiRef}
         offset={planetSize}
@@ -122,7 +110,7 @@ export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData 
       </Segments> */}
       <DynamicLine start={lineRef2.current} end={planetPositionRef.current} axisColor={true} />
       <DynamicLine start={startPosition} end={planetPositionRef.current} />
-    </>
+    </group>
   );
 };
 
@@ -186,32 +174,27 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
 
   
   return (
-    <>
-      <group ref={ref} >
-        {/* <Sphere args={[1]}>
-          <meshStandardMaterial attach="material" color={"white"} />
-        </Sphere> */}
-        <Html center>
-        {/* <Html ref={ref} position={[position[0], position[1] - offset, position[2]]} center> */}
-          <div
-            className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
-            style={{ transform: "translate(50%, 75%)" }}
-            onClick={() => {
-              updateActiveName(params.name);
-            }}
-          >
-            <div className={`${textStyle} text-base`}>{params.name}</div>
-            {params.extendData && (
-              // <div className="font-mono text-3xs whitespace-nowrap">
-              //   {position[0].toFixed(2)} {position[1].toFixed(2)} {position[2].toFixed(2)}
-              // </div>
-              // <p ref={positionTextRef} className="font-mono text-3xs whitespace-nowrap">0,0,0</p>
-              <p className="font-mono text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
-            )}
-          </div>
-        </Html>
+    <group ref={ref} >
+      <Html center>
+      {/* <Html ref={ref} position={[position[0], position[1] - offset, position[2]]} center> */}
+        <div
+          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
+          style={{ transform: "translate(50%, 75%)" }}
+          onClick={() => {
+            updateActiveName(params.name);
+          }}
+        >
+          <div className={`${textStyle} text-base`}>{params.name}</div>
+          {params.extendData && (
+            // <div className="font-mono text-3xs whitespace-nowrap">
+            //   {position[0].toFixed(2)} {position[1].toFixed(2)} {position[2].toFixed(2)}
+            // </div>
+            // <p ref={positionTextRef} className="font-mono text-3xs whitespace-nowrap">0,0,0</p>
+            <p className="font-mono text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
+          )}
+        </div>
+      </Html>
 
-      </group>
-    </>
+    </group>
   );
 });

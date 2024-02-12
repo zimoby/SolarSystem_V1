@@ -1,15 +1,21 @@
 import React from "react";
 import ObjectsComponent from "../objects/objects";
+import { useSolarSystemStore } from "../../store/systemStore";
 
-const RandomObjects = ({ objectsData }) => {
+const RandomObjects = () => {
+
+  const getObjectsData = useSolarSystemStore(
+    (state) => state.celestialBodies.objects
+  );
+
   return (
     <>
-      {Object.keys(objectsData).map((objectName, index) => {
+      {Object.keys(getObjectsData).map((objectName, index) => {
         return (
           <ObjectsComponent
             key={index + "_objects"}
             planetName={objectName}
-            params={objectsData[objectName]}
+            params={getObjectsData[objectName]}
           />
         );
       })}

@@ -2,6 +2,7 @@ import { dayInSeconds, objectsRotationSpeed, yearInSeconds } from "../data/solar
 import { useSystemStore } from "../store/systemStore";
 
 export const calculateRelativeDistanceXY = (semimajorAxis10_6Km, orbitEccentricity, sliderValue) => {
+  // console.log("calculateRelativeDistanceXY", semimajorAxis10_6Km, orbitEccentricity, sliderValue);
   const offset = 0.75;
   const distanceX = Math.pow(((semimajorAxis10_6Km * (1 - orbitEccentricity)) + offset), 1 / sliderValue) - offset;
   const distanceY = Math.pow(((semimajorAxis10_6Km * (1 + orbitEccentricity)) + offset), 1 / sliderValue) - offset;
@@ -19,7 +20,6 @@ export const calculateObjectsRotation = (time, periodHrs) => {
   return ((time * Math.PI * 2) / dayInSeconds / periodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed ) % (Math.PI * 2);
 }
 
-export const calculateTime = (time, periodDays) => {
-  const { timeSpeed, timeOffset } = useSystemStore.getState();
+export const calculateTime = (time, periodDays, timeSpeed, timeOffset) => {
   return (((time * Math.PI * 2) / yearInSeconds / periodDays) * timeSpeed + (timeOffset * (Math.PI * 2)) / 365) % (Math.PI * 2);
-}
+};

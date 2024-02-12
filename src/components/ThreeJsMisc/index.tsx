@@ -10,10 +10,10 @@ import { updateActiveName } from "../../hooks/storeProcessing";
 
 export const AppStatsPerformance = () => {
   return (
-    <>
+    <group>
       <Stats />
       <Perf position="bottom-left" />
-    </>
+    </group>
   );
 };
 
@@ -41,17 +41,17 @@ export const KeyboardInit = () => {
 
 export const ControlComponent = () => {
 
-  const cameraDistance = 20;
+  const cameraDistance = 100;
 
-  const refCamera = useRef();
+  // const refCamera = useRef();
 
-  const lookAtVec = (new THREE.Vector3(0, 0, 0));
-  const cameraVector = (new THREE.Vector3(0, 0, 0));
+  // const lookAtVec = (new THREE.Vector3(0, 0, 0));
+  // const cameraVector = (new THREE.Vector3(0, 0, 0));
 
-  const activeObjectName = useSystemStore.getState().activeObjectName;
-  const activeObjectNameAct = useMemo(() => activeObjectName, [activeObjectName]);
+  // const activeObjectName = useSystemStore.getState().activeObjectName;
+  // const activeObjectNameAct = useMemo(() => activeObjectName, [activeObjectName]);
 
-  const { camera } = useThree();
+  // const { camera } = useThree();
 
   // console.log(camera)
 
@@ -105,7 +105,7 @@ export const ControlComponent = () => {
 
   return (
     <>
-      <PerspectiveCamera  makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
+      {/* <PerspectiveCamera  makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  /> */}
       <OrbitControls 
         // ref={activeItemPositionRec2}
         // makeDefault

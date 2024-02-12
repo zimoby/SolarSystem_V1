@@ -12,17 +12,23 @@ import { extend, useFrame, useThree } from "@react-three/fiber";
 import { dayInSeconds, objectsRotationSpeed, planetsScaleFactor } from "../../data/solarSystemData";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
-
-
 const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
-  
   const {
-    // ellipseCurve,
-
-    rotVec3,
     solarScale,
     objectsRelativeScale
-  } = useSystemStore.getState(); 
+  } = useSystemStore.getState();
+  
+  const planetRef = useRef();
+  const planetRotationRef = useRef();
+  const [selected, setSelected] = useState(false);
+
+
+  const typeOfObject = "planet";
+
+  // console.log("PlanetComponent", planetName, params);
+
+
+  //--------- processings size
 
   const planetSize = useMemo(() => {
     return calculateRelativeScale(
@@ -31,9 +37,20 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
     ) * solarScale;
   }, [params, solarScale, objectsRelativeScale]);
 
-  // console.log("planetSize", planetSize, solarScale);
+  const planetEllipseRotation = useMemo(() => {
+    const curve = new THREE.EllipseCurve(
+      0, 0,
+      planetSize * 1.5, planetSize * 1.5,
+      0, 2 * Math.PI,
+      false,
+      0
+    );
 
-  const typeOfObject = "planet";
+    return curve.getPoints(64); // Adjust the number of points as needed
+  }, [planetSize]);
+
+  //--------- processings size
+
 
   const moons = useMemo(() => {
     // if planetName === moonName, take the data 
@@ -50,84 +67,58 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
     return takeMoons;
    }, [planetName]);
 
-  const planetRef = useRef();
-  const [selected, setSelected] = useState(false);
-
-  const planetEllipseRotation = useMemo(() => {
-    const curve = new THREE.EllipseCurve(
-      0, 0,
-      planetSize * 1.5, planetSize * 1.5,
-      0, 2 * Math.PI,
-      false,
-      0
-    );
-
-    return curve.getPoints(64); // Adjust the number of points as needed
-  }, [planetSize]);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
-    const rotationSpeed = calculateObjectsRotation(time, useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs);
-
-    const newRotation = rotVec3.set(0, rotationSpeed, 0);
-
     planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
-    planetRef.current.rotation.y = newRotation.y;
+    planetRotationRef.current.rotation.y = calculateObjectsRotation(time, useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs);
   });
 
   return (
-    <>
-
-        {/* <Sphere args={[1]} position={[0, 0, 0]}>
-          <meshStandardMaterial map={planetTexture} />
-        </Sphere> */}
-
+    <group>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} />
-      <group>
-        <ObjectEllipse params={params} name={planetName} objSelected={selected} typeOfObject={typeOfObject} />
-        <Trail
-          local
-          width={planetSize * 100}
-          length={5}
-          color={"white"}
-          attenuation={(t) => t * t}
-          target={planetRef}
-        />
-        <group ref={planetRef} rotation={[0, 0, 0]}>
-          <group>
-            {moons.map((moon, index) => {
-              return (
-                <PlanetComponent
-                  key={index}
-                  planetName={moon.name}
-                  params={moon}
-                  planetTexture={planetTexture}
-                />
-              ); 
-            } )}
-          </group>
-              {/* create circle if sphere is selected */}
-        
-          <mesh rotation={[0, Math.PI / 2, 0]}>
+      <ObjectEllipse params={params} name={planetName} objSelected={selected} typeOfObject={typeOfObject} />
+      <Trail
+        local
+        width={planetSize * 100}
+        length={5}
+        color={"white"}
+        attenuation={(t) => t * t}
+        target={planetRef}
+      />
+      <group ref={planetRef}>
+        <group>
+          {moons.map((moon, index) => {
+            return (
+              <PlanetComponent
+                key={index}
+                planetName={moon.name}
+                params={moon}
+                planetTexture={planetTexture}
+              />
+            ); 
+          } )}
+        </group>
+            {/* create circle if sphere is selected */}
+        {/* <Sphere
+          key={planetName + "wireframe"}
+          args={[planetSize * 1.5, 8, 8]}
+          onClick={() => {
+            updateActiveName(planetName);
+          }}
+          onPointerOver={() => setSelected(true)}
+          onPointerOut={() => setSelected(false)}
+        >
+          <meshStandardMaterial wireframe transparent={true} opacity={0.1} />
+        </Sphere> */}
+        <group ref={planetRotationRef}>
+          <mesh rotation-y={Math.PI / 2}>
             <Line
               points={planetEllipseRotation}
               color={"yellow"}
               lineWidth={1}
             />
           </mesh>
-{/* 
-          <Sphere
-            key={planetName}
-            args={[planetSize]}
-            onClick={() => {
-              updateActiveName(planetName);
-            }}
-            onPointerOver={() => setSelected(true)}
-            onPointerOut={() => setSelected(false)}
-          >
-            <meshStandardMaterial map={planetTexture} />
-          </Sphere> */}
-
 
           <Sphere
             key={planetName}
@@ -140,9 +131,10 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
           >
             <meshStandardMaterial map={planetTexture} />
           </Sphere>
+
         </group>
       </group>
-    </>
+    </group>
   );
 };
 

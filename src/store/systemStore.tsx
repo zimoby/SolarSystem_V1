@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import * as THREE from "three";
+import { generateRandomObjects, generateTrash } from "../utils/generators";
 
 interface CelestialBody {
   [key: string]: any; // Replace `any` with a more specific type based on your data structure
@@ -58,14 +59,10 @@ export const useSystemColorsStore = create(
   }))
 );
 
-
 export const useSystemStore = create(
   devtools((set) => ({
-    vec3: new THREE.Vector3(0,0,0),
-    rotVec3: new THREE.Vector3(0,0,0),
-    ellipseCurve: new THREE.EllipseCurve(0, 0, 1, 1, 0, Math.PI * 2, false, 0),
-
     isInitialized: false,
+    isInitialized2: false,
     dataInitialized: false,
 
     disablePlanets: false,
@@ -84,27 +81,11 @@ export const useSystemStore = create(
 
     updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
     setInitialized: (isInitialized) => set({ isInitialized }),
+    setInitialized2: (isInitialized2) => set({ isInitialized2 }),
   }))
 );
 
-const objectNumber = 10;
 
-const generateRandomObjects = () => {
-  const randomObjects = {};
-  for (let i = 0; i < objectNumber; i++) {
-    const randomDistance = Math.random() * 4000;
-    randomObjects[`object${i}`] = {
-      volumetricMeanRadiusKm: 100,
-      semimajorAxis10_6Km: randomDistance,
-      anchorXYOffset: { x: 0, y: (Math.random() -0.5) * (randomDistance / 2)},
-      siderealOrbitPeriodDays: (Math.random() * 1000) + 400,
-      orbitInclinationDeg: Math.random() * 360,
-      siderealRotationPeriodHrs: 0,
-      orbitEccentricity: Math.random(),
-    };
-  }
-  return randomObjects;
-}
 
 // const generateLinesGeometry = (objectNumber) => {
 //   const lines = {};
@@ -121,45 +102,61 @@ const generateRandomObjects = () => {
 //   return lines;
 // };
 
+export const useSolarAmounOfItems = create(
+  devtools(() => ({
+
+  }))
+);
+
+const trashInnerAmount = 1000;
+const trashMiddleAmount = 1000;
+const trashOuterAmount = 3000;
+
 
 export const useSolarSystemStore = create(
   devtools((set) => ({
-    trashInnerAmount: 1000,
-    trashMiddleAmount: 1000,
-    trashOuterAmount: 3000,
     // Static data: Basic information about celestial bodies
     celestialBodies: {
       stars: {},
       planets: {},
       moons: {},
       asteroids: {},
-      objects: generateRandomObjects(), // Add the generated random objects here
+      objects: generateRandomObjects(),
+      trash: {
+        trashInner1: generateTrash(trashInnerAmount, 1, 0.2, 1, "inner circle"),
+        trashInner2: generateTrash(trashInnerAmount, 1, 0.2, 1, "inner circle"),
+
+        trashMiddle1: generateTrash(trashMiddleAmount, 2, 1.7, 1, "middle circle"),
+        trashMiddle2: generateTrash(trashMiddleAmount/50, 2, 1.7, 1, "middle circle"),
+        
+        trashOuter1: generateTrash(trashOuterAmount, 3.5, 1, 1, "outer circle"),
+      },
     },
 
     // objectLines: generateLinesGeometry(objectNumber),
 
-    // Function to add celestial bodies dynamically
-    addCelestialBody: (type, name, data) =>
-      set((state) => ({
-        celestialBodies: {
-          ...state.celestialBodies,
-          [type]: {
-            ...state.celestialBodies[type],
-            [name]: data,
-          },
-        },
-      })),
-    // Dynamic data: User-controllable properties (e.g., sliders for size and distance)
-    updateCelestialBody: (type, name, updates) =>
-      set((state) => ({
-        celestialBodies: {
-          ...state.celestialBodies,
-          [type]: {
-            ...state.celestialBodies[type],
-            [name]: { ...state.celestialBodies[type][name], ...updates },
-          },
-        },
-      })),
+    // // Function to add celestial bodies dynamically
+    // addCelestialBody: (type, name, data) =>
+    //   set((state) => ({
+    //     celestialBodies: {
+    //       ...state.celestialBodies,
+    //       [type]: {
+    //         ...state.celestialBodies[type],
+    //         [name]: data,
+    //       },
+    //     },
+    //   })),
+    // // Dynamic data: User-controllable properties (e.g., sliders for size and distance)
+    // updateCelestialBody: (type, name, updates) =>
+    //   set((state) => ({
+    //     celestialBodies: {
+    //       ...state.celestialBodies,
+    //       [type]: {
+    //         ...state.celestialBodies[type],
+    //         [name]: { ...state.celestialBodies[type][name], ...updates },
+    //       },
+    //     },
+    //   })),
 
     // Batch updates
     batchUpdateCelestialBodies: (updates) =>
@@ -199,13 +196,17 @@ export const useSolarSystemStore = create(
           ...updates,
         },
       })),
+      
     additionalProperties: {},
+
     batchUpdateAdditionalProperties: (updates) =>
-      set((state) => ({
+      {
+        console.log("batchUpdateAdditionalProperties", updates);
+        set((state) => ({
         additionalProperties: {
           ...state.additionalProperties,
           ...updates,
         },
-      })),
+      }))},
   }))
 );

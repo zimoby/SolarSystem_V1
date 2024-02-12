@@ -1,24 +1,19 @@
-import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo } from "react";
-
-import { BlendFunction } from "postprocessing";
+import { useMemo } from "react";
 
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "./components/ThreeJsMisc";
 import { SolarSystem } from "./components/SolarSystem";
 import { SceneSetup } from "./components/Scene";
 import { useSyncControlsWithStore } from "./hooks/controls";
-import { KeyboardControls } from "@react-three/drei";
+import { KeyboardControls, KeyboardControlsEntry } from "@react-three/drei";
 import { Controls } from "./types";
-
-type KeyboardControlsEntry<T extends string = string> = {
-  name: T
-  keys: string[]
-  up?: boolean
-}
+import { useSystemStore } from "./store/systemStore";
 
 function App() {
+  const { isInitialized, isInitialized2 } = useSystemStore((state) => state);
   useSyncControlsWithStore();
+
+  const cameraDistance = 100;
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
@@ -30,17 +25,19 @@ function App() {
     ], []
   );
 
+
+
   return (
     <KeyboardControls map={map}>
-        <Canvas orthographic gl={{ antialias: true }} dpr={[1, 2]}>
-          <AppStatsPerformance />
-          <SceneSetup />
-          <Suspense fallback={null}>
-            <SolarSystem />
-          </Suspense>
-          <ControlComponent />
-          <KeyboardInit />
-        </Canvas>
+      <Canvas gl={{ alpha: false }} camera={{ near: 0.01, far: 500, fov: 10, position: [0, 100, 100 * 2] }}>
+        <color args={["#111111"]} attach="background" />
+        
+        <AppStatsPerformance />
+        <SceneSetup />
+        <SolarSystem />
+        <ControlComponent />
+        <KeyboardInit />
+      </Canvas>
     </KeyboardControls>
   );
 }

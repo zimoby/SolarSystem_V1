@@ -5,17 +5,21 @@ import {
   degreesToRadians,
 } from "../../utils/calculations";
 import * as THREE from "three";
-import { Circle, CycleRaycast, GradientTexture, GradientType, Line } from "@react-three/drei";
+import { Circle, CycleRaycast, GradientTexture, GradientType, Line, useCursor } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
 export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opacity = 1, typeOfObject = ""}) => {
   const [selected, setSelected] = useState(false);
-  // const addCalcs = useSolarSystemStore.getState().additionalProperties[name];
+  const {distanceXY} = useSolarSystemStore.getState().additionalProperties[name] || { distanceXY: { x: 0, y: 0 } };
   const { solarScale } = useSystemStore.getState();
 
   const dashOffsetRef = useRef(0);
 
-  // console.log("additionalCalculationsStore", addCalcs);
+  // const pointsRef = useRef(new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1));
+
+  // useEffect(() => {
+  //   console.log("ObjectEllipse init", distanceXY);
+  // }, [distanceXY]);
 
   color = "white"
 
@@ -23,13 +27,13 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
       setSelected(objSelected);
   }, [objSelected]);
 
-  const {
-    x: planetDistanceX,
-    y: planetDistanceY
-  } = calculateRelativeDistanceXY(
-    params.semimajorAxis10_6Km,
-    params.orbitEccentricity,
-    useSystemStore.getState().objectsDistance);
+  // const {
+  //   x: planetDistanceX,
+  //   y: planetDistanceY
+  // } = calculateRelativeDistanceXY(
+  //   params.semimajorAxis10_6Km,
+  //   params.orbitEccentricity,
+  //   useSystemStore.getState().objectsDistance);
 
   const planetInclination = degreesToRadians(
     params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
@@ -46,8 +50,8 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
 
 
   const points = useMemo(() => 
-    new THREE.EllipseCurve(0, 0, planetDistanceX * solarScale, planetDistanceY * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1),
-    [planetDistanceX, planetDistanceY, solarScale]
+    new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1),
+    [distanceXY.x, distanceXY.y, solarScale]
   );
 
   
@@ -56,27 +60,43 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
     return new THREE.EllipseCurve(
       0,
       0,
-      planetDistanceX * solarScale, // Major axis remains unchanged
-      planetDistanceY * Math.cos(planetInclination) * solarScale,     // Adjusted minor axis based on inclination
+      distanceXY.x * solarScale, // Major axis remains unchanged
+      distanceXY.y * Math.cos(planetInclination) * solarScale,     // Adjusted minor axis based on inclination
       0,
       Math.PI * 2,
       false
     ).getPoints(64);
-  }, [planetDistanceX, planetDistanceY, planetInclination, solarScale]);
-
-  // const lineMaterial = useMemo(() => {
-  //   return new THREE.LineDashedMaterial({ color: color });
-  // }, [color, opacity]);
+  }, [distanceXY.x, distanceXY.y, planetInclination, solarScale]);
 
   const randomZposition = useMemo(() => {
     const decr = 4;
+    // console.log("randomZposition", Math.random() / decr - 0.08);
     return ((Math.random()) / decr - 0.08);
   }, []);
 
+  useCursor(selected);
+
   return (
-    <>
+    <group>
+      <mesh position={[0, randomZposition - 0.5, 0]} rotation-x={Math.PI / 2} scale={solarScale}>
+        <Circle args={[distanceXY.x, 64]}>
+          <meshBasicMaterial side={THREE.DoubleSide} transparent={true} opacity={0.1} depthWrite={false}>
+            <GradientTexture
+              stops={[0, 0.5, 1]} // As many stops as you want
+              colors={['yellow', 'purple', 'blue']} // Colors need to match the number of stops
+              size={1024} // Size (height) is optional, default = 1024
+              width={1024} // Width of the canvas producing the texture, default = 16
+              type={GradientType.Radial} // The type of the gradient, default = GradientType.Linear
+              innerCircleRadius={0} // Optional, the radius of the inner circle of the gradient, default = 0
+              outerCircleRadius={'auto'} // Optional, the radius of the outer circle of the gradient, default = auto
+            />
+          </meshBasicMaterial>
+        </Circle>
+        {/* <CycleRaycast preventDefault={true} /> */}
+      </mesh>
       <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(objSelected || false)}>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
+        
+        <mesh rotation-x={Math.PI / 2}>
           <Line
             ref={dashOffsetRef}
             position={[0, 0, 0]}
@@ -93,27 +113,10 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
             {/* {lineMaterial} */}
           </Line>
         </mesh>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <Circle args={[planetDistanceX, 64]} position={[0, 0, randomZposition]} rotation={[0, 0, 0] }>
-            <meshBasicMaterial side={THREE.DoubleSide} transparent={true} opacity={0.1}>
-              <GradientTexture
-                stops={[0, 0.5, 1]} // As many stops as you want
-                colors={['yellow', 'purple', 'blue']} // Colors need to match the number of stops
-                size={1024} // Size (height) is optional, default = 1024
-                width={1024} // Width of the canvas producing the texture, default = 16
-                type={GradientType.Radial} // The type of the gradient, default = GradientType.Linear
-                innerCircleRadius={0} // Optional, the radius of the inner circle of the gradient, default = 0
-                outerCircleRadius={'auto'} // Optional, the radius of the outer circle of the gradient, default = auto
-              />
-            </meshBasicMaterial>
-          </Circle>
-          {/* <CycleRaycast preventDefault={true} /> */}
-        </mesh>
-
         {/* (params.anchorXYOffset?.x ?? 0), (params.anchorXYOffset?.y ?? 0) */}
 
         {/* <mesh rotation={[Math.PI / 2 , 0, 0]}> */}
-        <mesh rotation={[Math.PI / 2 + planetInclination, 0, 0]}>
+        <mesh rotation-x={Math.PI / 2 + planetInclination}>
           <Line
             position={[0, 0, 0]} // (params.anchorXYOffset?.y ?? 0)
             points={points}
@@ -124,6 +127,6 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
           />
         </mesh>
       </group>
-    </>
+    </group>
   );
 };
