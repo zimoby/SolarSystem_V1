@@ -115,15 +115,14 @@ export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData 
 };
 
 export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, params, typeOfObject = "" }, ref) => {
-// export const InfoAboutObject = ({ position, offset, params, typeOfObject = "" }) => {
 
   let textStyle;
   let bgStyle;
   switch (typeOfObject) {
     case "object":
       // bgStyle = "bg-red-600/70";
-      bgStyle = "bg-black/70";
-      textStyle = " text-xs";
+      bgStyle = "ml-3 mb-2";
+      textStyle = "uppercase text-2xs";
       break;
     case "star":
       bgStyle = "bg-yellow-600/70";
@@ -140,43 +139,17 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
   }
 
   const positionTextRef = useRef<HTMLParagraphElement>(null);
-  const objectRef = useRef();
-
-  // const seconds = useRef<HTMLParagraphElement>(null);
-  // useFrame((_, delta) => {
-  //   if (seconds.current) {
-  //     seconds.current.innerText = (Number(seconds.current.innerText) + delta).toFixed(1);
-  //   }
-  // });
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[params.name]?.position;
-    // objectRef.current.position.copy({ x: newPosition.x, y: newPosition.y, z: newPosition.z});
     if (newPosition && positionTextRef.current) {
       positionTextRef.current.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`;
     }
   });
   
-  // useEffect(() => {
-  //   const unsubscribe = useSolarSystemStore.subscribe(
-  //     (state) => {
-  //       const newPosition = state.properties[params.name]?.position;
-  //       if (newPosition && positionTextRef.current) {
-  //         positionTextRef.current.innerText = newPosition.x.toFixed(2) + " " + newPosition.y.toFixed(2) + " " + newPosition.z.toFixed(2);
-  //         // positionTextRef.current?.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`
-  //         // console.log("positionTextRef", positionTextRef.current);
-  //       }
-  //     },
-  //     (state) => state.properties[params.name]
-  //   );
-  //   return unsubscribe;
-  // }, [params.name]);
-
-  
   return (
     <group ref={ref} >
       <Html center>
-      {/* <Html ref={ref} position={[position[0], position[1] - offset, position[2]]} center> */}
         <div
           className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
           style={{ transform: "translate(50%, 75%)" }}
@@ -184,17 +157,12 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
             updateActiveName(params.name);
           }}
         >
-          <div className={`${textStyle} text-base`}>{params.name}</div>
+        <div className={`${textStyle}`}>{params.name}</div>
           {params.extendData && (
-            // <div className="font-mono text-3xs whitespace-nowrap">
-            //   {position[0].toFixed(2)} {position[1].toFixed(2)} {position[2].toFixed(2)}
-            // </div>
-            // <p ref={positionTextRef} className="font-mono text-3xs whitespace-nowrap">0,0,0</p>
             <p className="font-mono text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
           )}
         </div>
       </Html>
-
     </group>
   );
 });
