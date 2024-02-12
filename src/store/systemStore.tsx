@@ -127,7 +127,7 @@ export const useSolarSystemStore = create(
         trashInner2: generateTrash(trashInnerAmount, 1, 0.2, 1, "inner circle"),
 
         trashMiddle1: generateTrash(trashMiddleAmount, 2, 1.7, 1, "middle circle"),
-        trashMiddle2: generateTrash(trashMiddleAmount/50, 2, 1.7, 1, "middle circle"),
+        trashMiddle2: generateTrash(trashMiddleAmount / 50, 2, 1.7, 1, "middle circle"),
         
         trashOuter1: generateTrash(trashOuterAmount, 3.5, 1, 1, "outer circle"),
       },

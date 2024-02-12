@@ -13,28 +13,22 @@ const PointsComponentDistribution = ({ points, text = false, name }) => {
   const baseSpeed = 0.02;
   const extraMultiply = 3;
 
-	// useEffect(() => {
-	// 	console.log("PointsComponentDistribution", points);
-	// }, []);
-
-	const dotsSpeedMultiplier = useMemo(() => {
-		const mult = text ? extraMultiply + MathUtils.randFloatSpread(4) : extraMultiply;
-		return points.map((dot) => 1 / (dot.distance - 1) * mult);
-
-	}, [points]);
+  const dotsSpeedMultiplier = useMemo(() => {
+    const mult = text ? extraMultiply + MathUtils.randFloatSpread(4) : extraMultiply;
+    return points.map((dot) => (1 / (dot.distance - 1)) * mult);
+  }, [points, text]);
 
   useFrame((state, delta) => {
     const t = state.clock.getElapsedTime() * Math.PI * 2;
 
     points.forEach((dot, i) => {
-
       // const speedMultiplier = 1 / (dot.distance - 1) * 3;
       const currentRef = pointRefs.current[i];
       if (currentRef) {
-				const newAngle = dot.angle + baseSpeed * t * dotsSpeedMultiplier[i];
+        const newAngle = dot.angle + baseSpeed * t * dotsSpeedMultiplier[i];
 
-				const newX = dot.distance * Math.cos(newAngle);
-				const newY = dot.distance * Math.sin(newAngle);
+        const newX = dot.distance * Math.cos(newAngle);
+        const newY = dot.distance * Math.sin(newAngle);
 
         currentRef.position.x = newX;
         currentRef.position.y = newY;
@@ -43,7 +37,7 @@ const PointsComponentDistribution = ({ points, text = false, name }) => {
   });
 
   return (
-    <Points key={name} limit={points.length} rotation-x={ Math.PI / 2 }>
+    <Points limit={points.length} rotation-x={Math.PI / 2}>
       <PointMaterial
         vertexColors
         size={text ? 3 : 1}
@@ -52,40 +46,34 @@ const PointsComponentDistribution = ({ points, text = false, name }) => {
         toneMapped={false}
       />
       {points.map((dot, i) => (
-          <Point ref={(el) => (pointRefs.current[i] = el)} key={name + i}>
+        <group key={name + i}>
+          <Point ref={(el) => (pointRefs.current[i] = el)} key={i}>
             {text && (
               <group>
                 <Html center>
-                  {/* <div className={`rotate-45`}> */}
-                  {/* <div className="flex flex-raw"> */}
                   <div className={`size-4 border`} />
-                  {/* <p className="text-white text-xs ml-3">{123}</p> */}
-                  {/* </div> */}
-                  {/* </div> */}
                 </Html>
                 <Html>
-                  {/* <div className={`rotate-45`}> */}
                   <div className="flex flex-raw">
-                    {/* <div className={`size-4 border`} /> */}
                     <p className="text-white text-xs -mt-2 ml-3 select-none">
                       {dot.name.toUpperCase()}
                     </p>
                   </div>
-                  {/* </div> */}
                 </Html>
               </group>
             )}
           </Point>
+        </group>
       ))}
     </Points>
   );
 };
 
 export const TrashComponent = () => {
-//   const { disableTrash, objectsDistance, solarScale } = useSystemStore((state) => state);
-//   const trashInnerAmount = useSolarAmounOfItems((state) => state.trashInnerAmount);
-//   const trashMiddleAmount = useSolarAmounOfItems((state) => state.trashMiddleAmount);
-//   const trashOuterAmount = useSolarAmounOfItems((state) => state.trashOuterAmount);
+  //   const { disableTrash, objectsDistance, solarScale } = useSystemStore((state) => state);
+  //   const trashInnerAmount = useSolarAmounOfItems((state) => state.trashInnerAmount);
+  //   const trashMiddleAmount = useSolarAmounOfItems((state) => state.trashMiddleAmount);
+  //   const trashOuterAmount = useSolarAmounOfItems((state) => state.trashOuterAmount);
 
   const trashInner1 = useSolarSystemStore((state) => state.celestialBodies.trash.trashInner1);
   const trashInner2 = useSolarSystemStore((state) => state.celestialBodies.trash.trashInner2);
@@ -125,19 +113,23 @@ export const TrashComponent = () => {
     <>
       {generateInnerTrash && (
         <>
-          <Instances scale={solarScale} limit={trashInner1.length + trashInner2.length} rotation-x={Math.PI / 2}>
+          <Instances
+            scale={solarScale}
+            limit={trashInner1.length + trashInner2.length}
+            rotation-x={Math.PI / 2}
+          >
             <icosahedronGeometry />
             <meshStandardMaterial />
-						<group ref={ref1}>
-							{trashInner1.map((props, index) => (
-								<Instance key={index} {...props} />
-							))}
-						</group>
-						<group ref={ref2}>
-							{trashInner2.map((props, index) => (
-								<Instance key={index} {...props} />
-							))}
-						</group>
+            <group ref={ref1}>
+              {trashInner1.map((props, index) => (
+                <Instance key={index} {...props} />
+              ))}
+            </group>
+            <group ref={ref2}>
+              {trashInner2.map((props, index) => (
+                <Instance key={index} {...props} />
+              ))}
+            </group>
           </Instances>
         </>
       )}
@@ -158,10 +150,10 @@ export const TrashComponent = () => {
       )}
 
       {generateMiddleTrash && (
-				<group scale={solarScale}>
-					<PointsComponentDistribution points={trashMiddle1} name={"dots"} />
-					<PointsComponentDistribution points={trashMiddle2} text={true} name={"identDots"} />
-				</group>
+        <group scale={solarScale}>
+          <PointsComponentDistribution points={trashMiddle1} name={"dots"} />
+          <PointsComponentDistribution points={trashMiddle2} text={true} name={"identDots"} />
+        </group>
       )}
     </>
   );
