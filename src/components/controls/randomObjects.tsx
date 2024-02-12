@@ -1,16 +1,13 @@
-import React from "react";
-import ObjectsComponent from "../objects/objects";
-import { useSolarSystemStore } from "../../store/systemStore";
+import ObjectsComponent from "../Objects/objects";
+import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 
 const RandomObjects = () => {
-
-  const getObjectsData = useSolarSystemStore(
-    (state) => state.celestialBodies.objects
-  );
+  const getObjectsData = useSolarSystemStore((state) => state.celestialBodies.objects);
+  const { disableRandomObjects } = useSystemStore((state) => state)
 
   return (
     <>
-      {Object.keys(getObjectsData).map((objectName, index) => {
+      {!disableRandomObjects && Object.keys(getObjectsData).map((objectName, index) => {
         return (
           <ObjectsComponent
             key={index + "_objects"}
