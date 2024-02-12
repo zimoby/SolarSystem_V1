@@ -159,7 +159,7 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
         >
         <div className={`${textStyle}`}>{params.name}</div>
           {params.extendData && (
-            <p className="font-mono text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
+            <p className="text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
           )}
         </div>
       </Html>
