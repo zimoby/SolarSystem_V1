@@ -13,7 +13,7 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
   const {distanceXY} = useSolarSystemStore.getState().additionalProperties[name] || { distanceXY: { x: 0, y: 0 } };
   const { solarScale } = useSystemStore.getState();
 
-  const dashOffsetRef = useRef(0);
+  const dashOffsetRef = useRef();
 
   // const pointsRef = useRef(new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1));
 
@@ -39,15 +39,10 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
     params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
   );
 
-  // useFrame((state) => {
-    // const time = state.clock.getElapsedTime() * Math.PI * 2;
-    // dashOffsetRef.current.dashOffset = (time/10) % 1000;
-    // dashOffsetRef.current.geometry.attributes.position.needsUpdate = true;
-    // dashOffsetRef.current.needsUpdate = true;
-  // }); 
-
-  // console.log("dashOffsetRef", dashOffsetRef);
-
+  useFrame((state) => {
+    const time = state.clock.getElapsedTime() * Math.PI * 2;
+    dashOffsetRef.current.material.dashOffset = -(time) % Math.PI * 2;
+  }); 
 
   const points = useMemo(() => 
     new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1),
@@ -125,6 +120,18 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
             transparent={true}
             opacity={opacity}
           />
+          {/* <Line
+            position={[0, 0, 0]} // (params.anchorXYOffset?.y ?? 0)
+            points={points}
+            color={!selected ? color : "yellow"}
+            lineWidth={5}
+            transparent={true}
+            dashed
+            // dashSize={0.2}
+            dashScale={3}
+            dashSize={0.2}
+            opacity={opacity}
+          /> */}
         </mesh>
       </group>
     </group>
