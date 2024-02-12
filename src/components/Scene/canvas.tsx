@@ -4,7 +4,7 @@ import { Controls } from "../../types";
 import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
-import { SolarSystem } from "../SolarSystem";
+import { SolarSystem } from "./solarSystem";
 
 const cameraDistance = 100;
 

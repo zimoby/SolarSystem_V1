@@ -20,15 +20,8 @@ import { useSolarSystemStore } from "../../store/systemStore";
 //   )
 // }
 
-
-
 const SolarSystemPlanets = () => {
-
-
-  const getPlanetsData = useSolarSystemStore(
-    (state) => state.celestialBodies.planets
-  );
-
+  const getPlanetsData = useSolarSystemStore((state) => state.celestialBodies.planets);
 
   const createEarthTexture = useTexture(earthTexture);
   const createJupiterTexture = useTexture(jupiterTexture);
@@ -50,20 +43,19 @@ const SolarSystemPlanets = () => {
     venus: createVenusTexture,
   };
 
-
   return (
     <>
       {Object.keys(getPlanetsData).map((planetName, index) => {
         return (
           // <Bounds fit clip observe margin={1.2}>
           //   <SelectToZoom>
-              <PlanetComponent
-                key={planetName + index}
-                planetName={planetName}
-                params={getPlanetsData[planetName]}
-                planetTexture={ mapedTextures[planetName] }
-              />
-            // </SelectToZoom>
+          <PlanetComponent
+            key={planetName + index}
+            planetName={planetName}
+            params={getPlanetsData[planetName]}
+            planetTexture={mapedTextures[planetName]}
+          />
+          // </SelectToZoom>
           // </Bounds>
         );
       })}
@@ -72,5 +64,3 @@ const SolarSystemPlanets = () => {
 };
 
 export default SolarSystemPlanets;
-
-

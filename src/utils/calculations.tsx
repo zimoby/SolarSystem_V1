@@ -16,7 +16,7 @@ export const calculateRelativeScale = (size, sliderValue) => {
 
 export const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 
-export const calculateObjectsRotation = (time, periodHrs) => {
+export const calculateObjectsRotation = (time, periodHrs, timeSpeed) => {
   return ((time * Math.PI * 2) / dayInSeconds / periodHrs * objectsRotationSpeed * useSystemStore.getState().timeSpeed ) % (Math.PI * 2);
 }
 

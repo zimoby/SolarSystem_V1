@@ -17,8 +17,7 @@ export const DynamicLine = ({ start, end, axisColor = false }) => {
   const positionsRef = useRef();
 
   useEffect(() => {
-    // Initialize the geometry and material only once
-    const positions = new Float32Array(6); // 2 points x 3 coordinates
+    const positions = new Float32Array(6);
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     lineRef.current.geometry = geometry;
@@ -28,11 +27,10 @@ export const DynamicLine = ({ start, end, axisColor = false }) => {
     // lineRef.current.material = lineMaterial(directLine.color, directLine.opacity);
     lineRef.current.material = lineMaterial(directLine.color, directLine.opacity);
 
-    positionsRef.current = positions; // Store the positions array for later updates
+    positionsRef.current = positions;
   }, []);
 
   useFrame(() => {
-    // Update positions directly, avoiding new allocations
     if (positionsRef.current) {
       positionsRef.current.set([start.x, start.y, start.z, end.x, end.y, end.z]);
       lineRef.current.geometry.attributes.position.needsUpdate = true;
@@ -47,23 +45,16 @@ export const DynamicLine = ({ start, end, axisColor = false }) => {
   return <line ref={lineRef} />;
 };
 
-// const line1EndPos = new THREE.Vector3(0,0,0),
 const line2EndPos = new THREE.Vector3(0,0,0);
 const planetHui1Pos = new THREE.Vector3(0,0,0);
 const planetHui2Pos = new THREE.Vector3(0,0,0);
 const startPosition = new THREE.Vector3(0,0,0);
 
 export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData = true, typeOfObject = "" }) => {
-
   const planetHuiRef = useRef();
   const planetHuiRefCenter = useRef();
   const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
   const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
-  
-  // const [planetPosition] = useState({x: 0, y: 0, z: 0}) 
-
-
-  // console.log("PlanetHUDComponent", planetName, params);
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;

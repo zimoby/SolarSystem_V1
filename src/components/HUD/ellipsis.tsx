@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import {
-  calculateRelativeDistanceXY,
   degreesToRadians,
 } from "../../utils/calculations";
 import * as THREE from "three";
@@ -15,25 +14,11 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
 
   const dashOffsetRef = useRef();
 
-  // const pointsRef = useRef(new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1));
-
-  // useEffect(() => {
-  //   console.log("ObjectEllipse init", distanceXY);
-  // }, [distanceXY]);
-
   color = "white"
 
   useEffect(() => {
       setSelected(objSelected);
   }, [objSelected]);
-
-  // const {
-  //   x: planetDistanceX,
-  //   y: planetDistanceY
-  // } = calculateRelativeDistanceXY(
-  //   params.semimajorAxis10_6Km,
-  //   params.orbitEccentricity,
-  //   useSystemStore.getState().objectsDistance);
 
   const planetInclination = degreesToRadians(
     params.orbitInclinationDeg + useSystemStore.getState().orbitAngleOffset
@@ -48,15 +33,13 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
     new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1),
     [distanceXY.x, distanceXY.y, solarScale]
   );
-
   
   const pointsDependOnInclination = useMemo(() => {
-    // Adjusting the minor axis based on inclination
     return new THREE.EllipseCurve(
       0,
       0,
-      distanceXY.x * solarScale, // Major axis remains unchanged
-      distanceXY.y * Math.cos(planetInclination) * solarScale,     // Adjusted minor axis based on inclination
+      distanceXY.x * solarScale,
+      distanceXY.y * Math.cos(planetInclination) * solarScale,    
       0,
       Math.PI * 2,
       false
@@ -65,7 +48,6 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
 
   const randomZposition = useMemo(() => {
     const decr = 4;
-    // console.log("randomZposition", Math.random() / decr - 0.08);
     return ((Math.random()) / decr - 0.08);
   }, []);
 
@@ -77,17 +59,16 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
         <Circle args={[distanceXY.x, 64]}>
           <meshBasicMaterial side={THREE.DoubleSide} transparent={true} opacity={0.1} depthWrite={false}>
             <GradientTexture
-              stops={[0, 0.5, 1]} // As many stops as you want
-              colors={['yellow', 'purple', 'blue']} // Colors need to match the number of stops
-              size={1024} // Size (height) is optional, default = 1024
-              width={1024} // Width of the canvas producing the texture, default = 16
-              type={GradientType.Radial} // The type of the gradient, default = GradientType.Linear
-              innerCircleRadius={0} // Optional, the radius of the inner circle of the gradient, default = 0
-              outerCircleRadius={'auto'} // Optional, the radius of the outer circle of the gradient, default = auto
+              stops={[0, 0.5, 1]}
+              colors={['yellow', 'purple', 'blue']}
+              size={1024}
+              width={1024}
+              type={GradientType.Radial}
+              innerCircleRadius={0}
+              outerCircleRadius={'auto'}
             />
           </meshBasicMaterial>
         </Circle>
-        {/* <CycleRaycast preventDefault={true} /> */}
       </mesh>
       <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(objSelected || false)}>
         

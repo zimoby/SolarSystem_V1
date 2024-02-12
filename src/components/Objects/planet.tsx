@@ -15,18 +15,19 @@ import { updateActiveName } from "../../hooks/storeProcessing";
 const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   const {
     solarScale,
-    objectsRelativeScale
+    objectsRelativeScale,
+    timeSpeed
   } = useSystemStore.getState();
-  
+
+  const {
+    siderealRotationPeriodHrs
+  } = useSolarSystemStore.getState().celestialBodies.planets[planetName];
+    
   const planetRef = useRef();
   const planetRotationRef = useRef();
   const [selected, setSelected] = useState(false);
 
-
   const typeOfObject = "planet";
-
-  // console.log("PlanetComponent", planetName, params);
-
 
   //--------- processings size
 
@@ -51,7 +52,6 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
 
   //--------- processings size
 
-
   const moons = useMemo(() => {
     // if planetName === moonName, take the data 
     const takeMoons = Object.keys(useSolarSystemStore.getState().celestialBodies.moons).filter((moonName) => {
@@ -67,11 +67,10 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
     return takeMoons;
    }, [planetName]);
 
-
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
     planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
-    planetRotationRef.current.rotation.y = calculateObjectsRotation(time, useSolarSystemStore.getState().celestialBodies.planets[planetName].siderealRotationPeriodHrs);
+    planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs, timeSpeed);
   });
 
   return (

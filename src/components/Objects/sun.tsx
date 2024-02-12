@@ -11,39 +11,21 @@ import { updateActiveName } from "../../hooks/storeProcessing";
 export const SunComponent = () => {
   const createSunTexture = useTexture(sunTexture);
   const sunData = useSolarSystemStore((state) => state.celestialBodies.stars.sun);
-  const { solarScale, objectsRelativeScale } = useSystemStore.getState();
+  const { solarScale, objectsRelativeScale, timeSpeed } = useSystemStore.getState();
 
-  
   const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1) / starsScaleFactor * solarScale;
-  // console.log("sunData", {sunData, sunSize, solarScale, objectsRelativeScale} );
   const calculatedSunSize = calculateRelativeScale(sunSize, objectsRelativeScale);
 
-  // console.log("sunData", sunSize);
-
   const sunRef = useRef();
-  // const planetRef = useRef();
-  // // const planetRotationRef = useRef();
 
-  // useEffect(() => {
-  //   const unsubscribe = useSolarSystemStore.subscribe(
-  //     (state) => {
-  //       planetRef.current.position.copy(state.properties[planetName]?.position);
-  //       planetRef.current.rotation.y = (state.properties[planetName]?.rotation.y);
-  //     },
-  //     (state) => state.properties[planetName] // This function selects which part of the state to subscribe to
-  //   );
-  //   return unsubscribe;
-  // }, []);
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const time = state.clock.getElapsedTime();
     const timeSec = time * Math.PI * 2;
     if (sunRef.current) {
-      sunRef.current.rotation.y = calculateObjectsRotation(timeSec, sunData?.siderealRotationPeriodHrs || 100);
+      sunRef.current.rotation.y = calculateObjectsRotation(timeSec, sunData?.siderealRotationPeriodHrs || 100, timeSpeed);
       sunRef.current.position.set(0, 0, 0);
     }
   });
-
 
   return (
     <group>
