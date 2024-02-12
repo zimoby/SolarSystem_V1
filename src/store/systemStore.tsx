@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import * as THREE from "three";
-import { generateRandomObjects, generateTrash } from "../utils/generators";
+import { generateCrossingObjects, generateRandomObjects, generateTrash } from "../utils/generators";
 
 interface CelestialBody {
   [key: string]: any; // Replace `any` with a more specific type based on your data structure
@@ -110,7 +110,8 @@ export const useSolarAmounOfItems = create(
 
 const trashInnerAmount = 1000;
 const trashMiddleAmount = 1000;
-const trashOuterAmount = 3000;
+const trashOuterAmount = 2000;
+const trashCross = 100;
 
 
 export const useSolarSystemStore = create(
@@ -130,6 +131,8 @@ export const useSolarSystemStore = create(
         trashMiddle2: generateTrash(trashMiddleAmount / 50, 2, 1.7, 1, "middle circle"),
         
         trashOuter1: generateTrash(trashOuterAmount, 3.5, 1, 1, "outer circle"),
+
+        trashCross: generateCrossingObjects(trashCross, [10,10,3])
       },
     },
 

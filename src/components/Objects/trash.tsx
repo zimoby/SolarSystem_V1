@@ -1,12 +1,131 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { generateTrash } from "../../utils/generators";
 import { useSolarAmounOfItems, useSolarSystemStore, useSystemStore } from "../../store/systemStore";
-import { Html, Instance, Instances, Point, PointMaterial, Points, Sphere } from "@react-three/drei";
+import { Box, Html, Instance, Instances, Point, PointMaterial, Points, Sphere } from "@react-three/drei";
 
 import { Euler, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
+import { random } from "maath";
 
-const PointsComponentDistribution = ({ points, text = false, name }) => {
+const SimplePointsWrapper = ({ points, rotSpeed, size }) => {
+  const { solarScale } = useSystemStore.getState();
+  const ref1 = useRef();
+
+  useFrame((_, delta) => {
+      ref1.current.rotation.z = ref1.current.rotation.z + delta / rotSpeed;
+  });
+
+  return (
+    <Points scale={solarScale} limit={points.length} rotation-x={Math.PI / 2} ref={ref1}>
+      <PointMaterial
+        vertexColors
+        size={size}
+        sizeAttenuation={false}
+        depthWrite={true}
+        toneMapped={false}
+      />
+      {points.map((dot, i) => (
+        <Point key={i} index={i} position={dot.position} />
+      ))}
+    </Points>
+  )
+}
+
+const wrapIntoBoundaries = (pos, boundary) => {
+  const newPos = { ...pos };
+  if (pos.x > boundary[0]) newPos.x = -boundary[0];
+  if (pos.x < -boundary[0]) newPos.x = boundary[0];
+  if (pos.y > boundary[1]) newPos.y = -boundary[1];
+  if (pos.y < -boundary[1]) newPos.y = boundary[1];
+  if (pos.z > boundary[2]) newPos.z = -boundary[2];
+  if (pos.z < -boundary[2]) newPos.z = boundary[2];
+  return newPos;
+}
+
+const PointsCrossSolarSystem = ({ points }) => {
+  const pointRefs = useRef([]);
+  pointRefs.current = points.map((_, i) => pointRefs.current[i]);
+  const boundary = [10, 10, 3];
+  const allSpeed = 10;
+
+  useEffect(() => {
+    points.forEach((dot, i) => {
+      if (pointRefs.current[i]) {
+        pointRefs.current[i].position.x = dot.position.x;
+        pointRefs.current[i].position.y = dot.position.y;
+        pointRefs.current[i].position.z = dot.position.z;
+      }
+    });
+  }, [points]); 
+
+  useFrame((state, delta) => {
+    // const t = state.clock.getElapsedTime();
+    const speedFactor = delta * allSpeed; // Adjust 'allSpeed' as necessary to ensure movement is visible
+
+    points.forEach((dot, i) => {
+      const currentRef = pointRefs.current[i];
+      if (currentRef) {
+        const newPos = {
+          x: currentRef.position.x + dot.velocity.x * speedFactor,
+          y: currentRef.position.y + dot.velocity.y * speedFactor,
+          z: currentRef.position.z + dot.velocity.z * speedFactor,
+        };
+  
+        const wrappedPos = wrapIntoBoundaries(newPos, boundary);
+  
+        currentRef.position.x = wrappedPos.x;
+        currentRef.position.y = wrappedPos.y;
+        currentRef.position.z = wrappedPos.z;
+      }
+    });
+  });
+
+  const style0 = "" 
+  const style1 = "size-2 border border-red-500 opacity-50";
+  const style2 = "size-2 border rotate-45 border-yellow-500 opacity-50";
+  const style3 = "size-2 border rounded-full border-green-500 opacity-50";
+  const style4 = "size-2 border border-dashed border-blue-500 opacity-50";
+  const style5 = "size-3 border-4 border-double rotate-45 border-pink-500 opacity-50";
+
+  const dotStyles = [style0, style1, style2, style3, style4, style5];
+
+  const selectRandomStyle = () => {
+    return Math.floor(Math.random() * dotStyles.length);
+  }
+
+  return (
+    <>
+      {/* <Box args={[10 * 2, 3 * 2, 10 * 2]}>
+        <PointMaterial
+          vertexColors
+          size={3}
+
+          wireframe
+          toneMapped={false}
+        />
+      </Box> */}
+      <Points limit={points.length} rotation-x={Math.PI / 2}>
+        <PointMaterial
+          vertexColors
+          size={1}
+          sizeAttenuation={false}
+          depthWrite={false}
+          toneMapped={false}
+        />
+        {points.map((dot, i) => (
+          <Point key={i} ref={(el) => (pointRefs.current[i] = el)}>
+            <Html center>
+              <div className={dotStyles[selectRandomStyle()]} />
+            </Html>
+          </Point>
+        ))}
+      </Points>
+    </>
+  );
+};
+
+
+const PointsOrbitRotation = ({ points, text = false, name }) => {
   const pointRefs = useRef([]);
   pointRefs.current = points.map((_, i) => pointRefs.current[i]);
 
@@ -42,7 +161,7 @@ const PointsComponentDistribution = ({ points, text = false, name }) => {
         vertexColors
         size={text ? 3 : 1}
         sizeAttenuation={false}
-        depthWrite={false}
+        depthWrite={true}
         toneMapped={false}
       />
       {points.map((dot, i) => (
@@ -54,9 +173,12 @@ const PointsComponentDistribution = ({ points, text = false, name }) => {
                   <div className={`size-4 border`} />
                 </Html>
                 <Html>
-                  <div className="flex flex-raw">
-                    <p className="text-white text-xs -mt-2 ml-3 select-none">
+                  <div className="ml-3 flex flex-col -space-y-1">
+                    <p className="text-white text-xs -mt-2 select-none">
                       {dot.name.toUpperCase()}
+                    </p>
+                    <p className="text-white text-4xs select-none">
+                      {dot.angle.toFixed(2) + ":" + dot.distance.toFixed(2) + ":" + dot.rotation[2].toFixed(2)}
                     </p>
                   </div>
                 </Html>
@@ -68,6 +190,45 @@ const PointsComponentDistribution = ({ points, text = false, name }) => {
     </Points>
   );
 };
+
+// function Stars(props) {
+//   const ref = useRef()
+//   const [sphere] = useState(() => random.inRect(new Float32Array(5000), { sides: 1 }))
+//   useFrame((state, delta) => {
+//     ref.current.rotation.x -= delta / 10
+//     ref.current.rotation.y -= delta / 15
+//   })
+//   return (
+//     <group rotation={[0, 0, 0]}>
+//       <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}>
+//         <PointMaterial transparent color="#ffa0e0" size={0.5} sizeAttenuation={true} depthWrite={false} />
+//       </Points>
+//     </group>
+//   )
+// }
+
+// function Stars(props) {
+//   // const ref = useRef()
+//   // const [sphere] = useState(() => random.inSphere(new Float32Array(5000), { radius: 1.5 }))
+//   // useFrame((state, delta) => {
+//   //   ref.current.rotation.x -= delta / 10
+//   //   ref.current.rotation.y -= delta / 15
+//   // })
+
+//   const pointsRef = useRef([]);
+
+//   // const points = useMemo(
+
+
+
+//   return (
+//     <group rotation={[0, 0, 0]}>
+//        {/* <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}> */}
+//          <PointMaterial transparent color="#ffa0e0" size={1} sizeAttenuation={true} depthWrite={false} />
+//        {/* </Points> */}
+//      </group>
+//   )
+// }
 
 export const TrashComponent = () => {
   //   const { disableTrash, objectsDistance, solarScale } = useSystemStore((state) => state);
@@ -83,6 +244,8 @@ export const TrashComponent = () => {
 
   const trashOuter1 = useSolarSystemStore((state) => state.celestialBodies.trash.trashOuter1);
 
+  const trashCross = useSolarSystemStore((state) => state.celestialBodies.trash.trashCross);
+
   const { solarScale } = useSystemStore.getState();
 
   // console.log("trashInner1", trashInner1);
@@ -90,6 +253,7 @@ export const TrashComponent = () => {
   const generateInnerTrash = true;
   const generateMiddleTrash = true;
   const generateOuterTrash = true;
+  const generateCrossTrash = true;
 
   const innerSpeed = 10;
   const outerSpeed = 100;
@@ -100,20 +264,23 @@ export const TrashComponent = () => {
   //   const ref4 = useRef()
   useFrame((_, delta) => {
     if (generateInnerTrash) {
-      ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
-      ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
+      // ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
+      // ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
     }
     if (generateOuterTrash) {
-      ref3.current.rotation.z = ref3.current.rotation.z + delta / outerSpeed;
+      // ref3.current.rotation.z = ref3.current.rotation.z + delta / outerSpeed;
     }
     // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
   });
 
   return (
     <>
+      {/* <Stars /> */}
       {generateInnerTrash && (
         <>
-          <Instances
+        <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
+        <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } />
+          {/* <Instances
             scale={solarScale}
             limit={trashInner1.length + trashInner2.length}
             rotation-x={Math.PI / 2}
@@ -130,31 +297,24 @@ export const TrashComponent = () => {
                 <Instance key={index} {...props} />
               ))}
             </group>
-          </Instances>
+          </Instances> */}
         </>
       )}
 
       {generateOuterTrash && (
-        <Points scale={solarScale} limit={trashOuter1.length} rotation-x={Math.PI / 2} ref={ref3}>
-          <PointMaterial
-            vertexColors
-            size={1}
-            sizeAttenuation={false}
-            depthWrite={false}
-            toneMapped={false}
-          />
-          {trashOuter1.map((dot, i) => (
-            <Point key={i} index={i} position={dot.position} />
-          ))}
-        </Points>
+        <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } />
       )}
 
       {generateMiddleTrash && (
         <group scale={solarScale}>
-          <PointsComponentDistribution points={trashMiddle1} name={"dots"} />
-          <PointsComponentDistribution points={trashMiddle2} text={true} name={"identDots"} />
+          <PointsOrbitRotation points={trashMiddle1} name={"dots"} />
+          <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
         </group>
       )}
+
+      {generateCrossTrash && <group scale={solarScale}>
+        <PointsCrossSolarSystem points={trashCross} />
+      </group>}
     </>
   );
 };
