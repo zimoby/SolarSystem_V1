@@ -145,6 +145,10 @@ export const useCelestialBodyUpdates = () => {
     const time = state.clock.getElapsedTime();
     const updatedObjectsData = {};
 
+    // const time = state.clock.getElapsedTime();
+    // const timeToFrames = Math.floor(time * 60);
+    // if (timeToFrames % 2 === 0) {
+
     Object.keys(combinedObjects).forEach(name => {
       const celestialBody = combinedObjects[name];
       const supportData = objectsSupportDataRef.current[name];
@@ -164,6 +168,8 @@ export const useCelestialBodyUpdates = () => {
     });
 
     useSolarSystemStore.getState().batchUpdateProperties(updatedObjectsData);
+
+  // }
   });
 
 };

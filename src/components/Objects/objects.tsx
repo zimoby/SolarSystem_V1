@@ -36,7 +36,13 @@ const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
       <ObjectEllipse params={params} name={planetName} objSelected={selected} color={params.color} opacity={0.3} />
       <group ref={objectRef}>
         <Points position={[0, 0, 0]}>
-          <PointMaterial color={"white"} size={2} />
+          <PointMaterial
+            vertexColors
+            size={3}
+            sizeAttenuation={false}
+            depthWrite={true}
+            toneMapped={false}
+          />
           <Point position={[0, 0, 0]} />
         </Points>
         {/* <Trail

@@ -103,7 +103,7 @@ const PointsCrossSolarSystem = ({ points }) => {
     });
   });
 
-  console.log("points", pointsVectorRefs);
+  // console.log("points", pointsVectorRefs);
 
   const style0 = "" 
   const style1 = "size-2 border border-red-500 opacity-50";

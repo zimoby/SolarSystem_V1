@@ -23,7 +23,7 @@ const filterParamsOnlyNumbers = (params) => {
 }
 
 
-const PlanetInfoCircles = ({ planetSize, params }) => {
+const PlanetInfoCircles = ({ planetName, planetSize, params }) => {
   const filteredParams = filterParamsOnlyNumbers(params);
   // console.log("PlanetInfoCircles", planetSize, filteredParams);
 
@@ -60,7 +60,7 @@ const PlanetInfoCircles = ({ planetSize, params }) => {
   // create EllipseCurve for each value
 
   return (
-    <group>
+    <group key={planetName + "hui-info"}>
       {normalizedValuesTo2MathPI.map((circle, index) => {
         const curve = new THREE.EllipseCurve(
           0, 0,
@@ -74,7 +74,7 @@ const PlanetInfoCircles = ({ planetSize, params }) => {
         const points = curve.getPoints(64); // Adjust the number of points as needed
 
         return (
-          <group>
+          <group key={planetName + "hui-info" + index}>
             <Line
               key={index}
               points={points}
@@ -132,7 +132,7 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   const planetEllipseRotation = useMemo(() => {
     const curve = new THREE.EllipseCurve(
       0, 0,
-      planetSize * 1.5, planetSize * 1.5,
+      planetSize * 1.15, planetSize * 1.15,
       0, 2 * Math.PI,
       false,
       0
@@ -159,7 +159,7 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
 
   const { camera } = useThree();
 
-  console.log("camera", camera);
+  // console.log("camera", camera);
 
   // -------
 
@@ -200,7 +200,7 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
       />
       <group ref={planetRef}>
         <mesh ref={guiRef}>
-          <PlanetInfoCircles planetSize={planetSize} params={params} />
+          <PlanetInfoCircles planetName={planetName} planetSize={planetSize} params={params} />
           {/* <Line
             points={testCurveBuffer}
             color={"white"}

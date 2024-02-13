@@ -5,64 +5,32 @@ import { Html, Line, Segment, Segments, Sphere } from "@react-three/drei";
 import { invalidate, useFrame, extend } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
-extend({ Line });
-
-const lineMaterial = (color, opacity) => {
-  return new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: opacity });
-};
-
-export const DynamicLine = ({ start, end, axisColor = false }) => {
-  const { lineUnderOrbit, lineBelowOrbit, directLine } = useSystemColorsStore.getState().hudColors;
-  const lineRef = useRef();
-  const positionsRef = useRef();
-
-  useEffect(() => {
-    const positions = new Float32Array(6);
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    lineRef.current.geometry = geometry;
-
-    // const material = new THREE.LineBasicMaterial({ color: 'white' });
-    // lineRef.current.material = new THREE.LineBasicMaterial({ color: directLine.color, transparent: true, opacity: directLine.opacity});
-    // lineRef.current.material = lineMaterial(directLine.color, directLine.opacity);
-    lineRef.current.material = lineMaterial(directLine.color, directLine.opacity);
-
-    positionsRef.current = positions;
-  }, []);
-
-  useFrame(() => {
-    if (positionsRef.current) {
-      positionsRef.current.set([start.x, start.y, start.z, end.x, end.y, end.z]);
-      lineRef.current.geometry.attributes.position.needsUpdate = true;
-
-      if (axisColor) {
-        const materialColor = end.y > start.y ? lineUnderOrbit.color : lineBelowOrbit.color;
-        lineRef.current.material.color.set(materialColor);
-      }
-    }
-  });
-
-  return <line ref={lineRef} />;
-};
-
-const line2EndPos = new THREE.Vector3(0,0,0);
-const planetHui1Pos = new THREE.Vector3(0,0,0);
-const planetHui2Pos = new THREE.Vector3(0,0,0);
-const startPosition = new THREE.Vector3(0,0,0);
+// extend({ Line });
 
 export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData = true, typeOfObject = "" }) => {
+  const { lineUnderOrbit, lineBelowOrbit, directLine } = useSystemColorsStore.getState().hudColors;
   const planetHuiRef = useRef();
   const planetHuiRefCenter = useRef();
-  const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
-  const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
+  // const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
+  // const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
+  const segmentRef = useRef();
+  const segmentRef2 = useRef();
+
+  // console.log("line", segmentRef.current);
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;
     if (newPosition) {
-      planetPositionRef.current.copy(newPosition);
-      lineRef2.current.copy(line2EndPos.set(newPosition.x, 0, newPosition.z));
-      planetHuiRef.current.position.copy(planetHui1Pos.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
-      planetHuiRefCenter.current.position.copy(planetHui2Pos.set(newPosition.x, newPosition.y, newPosition.z));
+      planetHuiRef.current.position.set(newPosition.x, newPosition.y - planetSize, newPosition.z);
+      planetHuiRefCenter.current.position.set(newPosition.x, newPosition.y, newPosition.z);
+
+      segmentRef.current.start.set(0,0,0);
+      segmentRef.current.end.copy(newPosition);
+
+      segmentRef2.current.start.set(newPosition.x, 0, newPosition.z);
+      segmentRef2.current.end.copy(newPosition);
+
+      segmentRef2.current.color.set( newPosition.y > 0 ? lineUnderOrbit.color : lineBelowOrbit.color );
     }
   });
 
@@ -91,16 +59,10 @@ export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData 
           </div>
         </Html>
       </group>
-      {/* <Segments
-        limit={1000}
-        lineWidth={1.0}
-        // All THREE.LineMaterial props are valid
-        {...materialProps}
-      >
-        <Segment start={[0, 0, 0]} end={lineRef.current.end} color="red" />
-      </Segments> */}
-      <DynamicLine start={lineRef2.current} end={planetPositionRef.current} axisColor={true} />
-      <DynamicLine start={startPosition} end={planetPositionRef.current} />
+      <Segments limit={50} lineWidth={0.3}>
+        <Segment ref={segmentRef} start={[0,0,0]} end={[0,0,0]} color="white" />
+        <Segment ref={segmentRef2} start={[0,0,0]} end={[0,0,0]} color="white" />
+      </Segments>
     </group>
   );
 };
@@ -131,10 +93,16 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
 
   const positionTextRef = useRef<HTMLParagraphElement>(null);
 
-  useFrame(() => {
-    const newPosition = useSolarSystemStore.getState().properties[params.name]?.position;
-    if (newPosition && positionTextRef.current) {
-      positionTextRef.current.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`;
+
+
+  useFrame((state, delta) => {
+    const time = state.clock.getElapsedTime();
+    const timeToFrames = Math.floor(time * 60);
+    if (timeToFrames % 15 === 0) {
+      const newPosition = useSolarSystemStore.getState().properties[params.name]?.position;
+      if (newPosition && positionTextRef.current) {
+        positionTextRef.current.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`;
+      }
     }
   });
   

@@ -66,6 +66,9 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
               type={GradientType.Radial}
               innerCircleRadius={0}
               outerCircleRadius={'auto'}
+              // blending={THREE.CustomBlending}
+              // bleding={THREE.AdditiveBlending}
+              // blendMode={THREE.MultiplyBlending}
             />
           </meshBasicMaterial>
         </Circle>
