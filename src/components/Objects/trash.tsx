@@ -3,9 +3,10 @@ import { generateTrash } from "../../utils/generators";
 import { useSolarAmounOfItems, useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import { Box, Html, Instance, Instances, Point, PointMaterial, Points, Sphere } from "@react-three/drei";
 
-import { Euler, MathUtils } from "three";
+import { Euler, MathUtils, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import { random } from "maath";
+import { NeuralNetwork2 } from "../Scene/neuralTest copy";
 
 const SimplePointsWrapper = ({ points, rotSpeed, size }) => {
   const { solarScale } = useSystemStore.getState();
@@ -44,17 +45,35 @@ const wrapIntoBoundaries = (pos, boundary) => {
 
 const PointsCrossSolarSystem = ({ points }) => {
   const pointRefs = useRef([]);
-  pointRefs.current = points.map((_, i) => pointRefs.current[i]);
+  const pointsVectorRefs = useRef([]);
+  // const pointsForLinesRef = useRef([]);
+  // pointRefs.current = points.map((_, i) => pointRefs.current[i]);
+  // pointsForLinesRef.current = points.map((_, i) => pointsForLinesRef.current[i]);
   const boundary = [10, 10, 3];
   const allSpeed = 10;
 
   useEffect(() => {
+    pointRefs.current = points.map((_, i) => pointRefs.current[i]);
+    pointsVectorRefs.current = points.map((dot, i) => new Vector3(dot.position.x, dot.position.y, dot.position.z));
+
     points.forEach((dot, i) => {
       if (pointRefs.current[i]) {
         pointRefs.current[i].position.x = dot.position.x;
         pointRefs.current[i].position.y = dot.position.y;
         pointRefs.current[i].position.z = dot.position.z;
+        // pointsForLinesRef.current[i].position.x = dot.position.x;
+        // pointsForLinesRef.current[i].position.y = dot.position.y;
+        // pointsForLinesRef.current[i].position.z = dot.position.z;
+
       }
+
+      
+      // if (pointsForLinesRef.current[i]) {
+      //   pointsForLinesRef.current[i].position.x = dot.position.x;
+      //   pointsForLinesRef.current[i].position.y = dot.position.y;
+      //   pointsForLinesRef.current[i].position.z = dot.position.z;
+
+      // }
     });
   }, [points]); 
 
@@ -73,12 +92,18 @@ const PointsCrossSolarSystem = ({ points }) => {
   
         const wrappedPos = wrapIntoBoundaries(newPos, boundary);
   
-        currentRef.position.x = wrappedPos.x;
-        currentRef.position.y = wrappedPos.y;
-        currentRef.position.z = wrappedPos.z;
+        // currentRef.position.x = wrappedPos.x;
+        // currentRef.position.y = wrappedPos.y;
+        // currentRef.position.z = wrappedPos.z;
+
+        currentRef.position.set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
+        pointsVectorRefs.current[i].set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
+        
       }
     });
   });
+
+  console.log("points", pointsVectorRefs);
 
   const style0 = "" 
   const style1 = "size-2 border border-red-500 opacity-50";
@@ -104,6 +129,7 @@ const PointsCrossSolarSystem = ({ points }) => {
           toneMapped={false}
         />
       </Box> */}
+      {/* <NeuralNetwork2 ref={pointsVectorRefs} /> */}
       <Points limit={points.length} rotation-x={Math.PI / 2}>
         <PointMaterial
           vertexColors
@@ -123,7 +149,6 @@ const PointsCrossSolarSystem = ({ points }) => {
     </>
   );
 };
-
 
 const PointsOrbitRotation = ({ points, text = false, name }) => {
   const pointRefs = useRef([]);
