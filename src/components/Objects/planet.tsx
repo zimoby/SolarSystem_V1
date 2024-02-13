@@ -6,11 +6,102 @@ import {
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Circle, Line, Sparkles, Sphere, Trail } from "@react-three/drei";
+import { Circle, Html, Line, Sparkles, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { dayInSeconds, objectsRotationSpeed, planetsScaleFactor } from "../../data/solarSystemData";
 import { updateActiveName } from "../../hooks/storeProcessing";
+
+const filterParamsOnlyNumbers = (params) => {
+  // return object with values that are numbers
+  return Object.fromEntries(
+    Object.entries(params).filter(([key, value]) => {
+      return typeof value === "number";
+    })
+  );
+
+}
+
+
+const PlanetInfoCircles = ({ planetSize, params }) => {
+  const filteredParams = filterParamsOnlyNumbers(params);
+  // console.log("PlanetInfoCircles", planetSize, filteredParams);
+
+  const normalizedValuesTo2MathPI = Object.keys(filteredParams).map((key) => {
+    let circleValue = 0;
+    switch (key) {
+      case "orbitEccentricity":
+        circleValue = filteredParams[key] * 10;
+        // circleValue = filteredParams[key] * 10;
+        break;
+      case "orbitInclinationDeg":
+        circleValue = filteredParams[key] * (2 * Math.PI) / 360;
+        // circleValue = filteredParams[key] * (2 * Math.PI) / 360;
+        break;
+      case "semimajorAxis10_6Km":
+        circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
+        // circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
+        break;
+      case "siderealOrbitPeriodDays":
+        circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
+        // circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
+        break;
+      case "siderealRotationPeriodHrs":
+        circleValue = (filteredParams[key] / 24) * 2 * Math.PI;
+        // circleValue = (filteredParams[key] / 24) * 2 * Math.PI;
+        break;
+      default:
+        circleValue = 0;
+    }
+
+    return {name: key, value: circleValue};
+  });
+
+  // create EllipseCurve for each value
+
+  return (
+    <group>
+      {normalizedValuesTo2MathPI.map((circle, index) => {
+        const curve = new THREE.EllipseCurve(
+          0, 0,
+          planetSize + planetSize * (index + 1) * 0.2, planetSize + planetSize * (index + 1) * 0.2,
+          // planetSize + (index + 1) / 15, planetSize + (index + 1) / 15,
+          0, circle.value,
+          false,
+          0
+        );
+
+        const points = curve.getPoints(64); // Adjust the number of points as needed
+
+        return (
+          <group>
+            <Line
+              key={index}
+              points={points}
+              color={"white"}
+              lineWidth={2}
+            />
+            {/* <group>
+              <Html position-x={planetSize + (index + 1) / 15}>
+                <div className=" text-3xs leading-3 whitespace-nowrap select-none">
+                  {circle.name}
+                </div>
+              </Html>
+            </group> */}
+          </group>
+        );
+      })}
+    </group>
+  );
+
+
+
+  // return (
+  //   <group>
+
+  //   </group>
+  // )
+};
 
 const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   const {
@@ -50,7 +141,27 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
     return curve.getPoints(64); // Adjust the number of points as needed
   }, [planetSize]);
 
+  const guiRef = useRef();
+
   //--------- processings size
+
+  // const testCurveBuffer = useMemo(() => {
+  //   const curve = new THREE.EllipseCurve(
+  //     0, 0,
+  //     planetSize * 1.2, planetSize * 1.2,
+  //     0, params.siderealOrbitPeriodDays / 10,
+  //     false,
+  //     0
+  //   );
+
+  //   return curve.getPoints(32); // Adjust the number of points as needed
+  // }, [planetSize]);
+
+  const { camera } = useThree();
+
+  console.log("camera", camera);
+
+  // -------
 
   const moons = useMemo(() => {
     // if planetName === moonName, take the data 
@@ -71,6 +182,8 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
     const time = state.clock.getElapsedTime();
     planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
     planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs, timeSpeed);
+
+    guiRef.current.lookAt(camera.position);
   });
 
   return (
@@ -86,6 +199,20 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
         target={planetRef}
       />
       <group ref={planetRef}>
+        <mesh ref={guiRef}>
+          <PlanetInfoCircles planetSize={planetSize} params={params} />
+          {/* <Line
+            points={testCurveBuffer}
+            color={"white"}
+            lineWidth={2}
+          >
+          </Line>
+          <Html position-x={planetSize * 1.2}>
+            <div className=" text-3xs leading-3 whitespace-nowrap">
+              Orbit(d)
+            </div>
+          </Html> */}
+        </mesh>
         <group>
           {moons.map((moon, index) => {
             return (
