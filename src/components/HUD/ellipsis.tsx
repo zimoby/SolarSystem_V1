@@ -6,11 +6,12 @@ import {
 import * as THREE from "three";
 import { Circle, CycleRaycast, GradientTexture, GradientType, Line, useCursor } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import { OrbitDisk } from "../Objects/disk";
 
 export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opacity = 1, typeOfObject = ""}) => {
   const [selected, setSelected] = useState(false);
   const {distanceXY} = useSolarSystemStore.getState().additionalProperties[name] || { distanceXY: { x: 0, y: 0 } };
-  const { solarScale } = useSystemStore.getState();
+  // const { solarScale } = useSystemStore.getState();
 
   const dashOffsetRef = useRef();
 
@@ -30,33 +31,34 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
   }); 
 
   const points = useMemo(() => 
-    new THREE.EllipseCurve(0, 0, distanceXY.x * solarScale, distanceXY.y * solarScale, 0, Math.PI * 2, false).getPoints(64 * 1),
-    [distanceXY.x, distanceXY.y, solarScale]
+    new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(64 * 1),
+    [distanceXY.x, distanceXY.y]
   );
   
   const pointsDependOnInclination = useMemo(() => {
     return new THREE.EllipseCurve(
       0,
       0,
-      distanceXY.x * solarScale,
-      distanceXY.y * Math.cos(planetInclination) * solarScale,    
+      distanceXY.x,
+      distanceXY.y * Math.cos(planetInclination),    
       0,
       Math.PI * 2,
       false
     ).getPoints(64);
-  }, [distanceXY.x, distanceXY.y, planetInclination, solarScale]);
+  }, [distanceXY.x, distanceXY.y, planetInclination]);
 
   const randomZposition = useMemo(() => {
-    const decr = 4;
-    return ((Math.random()) / decr - 0.08);
+    const decr = 1;
+    return ((Math.random()) * decr - decr);
   }, []);
 
   useCursor(selected);
 
   return (
     <group>
-      <mesh position={[0, randomZposition - 0.5, 0]} rotation-x={Math.PI / 2} scale={solarScale}>
-        <Circle args={[distanceXY.x, 64]}>
+      <mesh position={[0, randomZposition - 0.5, 0]} >
+        <OrbitDisk size={distanceXY.x} opacity={0.1} positionYoffset={0} />
+        {/* <Circle args={[distanceXY.x, 64]}>
           <meshBasicMaterial side={THREE.DoubleSide} transparent={true} opacity={0.1} depthWrite={false}>
             <GradientTexture
               stops={[0, 0.5, 1]}
@@ -71,7 +73,7 @@ export const ObjectEllipse = ({ params, name, objSelected, color = "grey", opaci
               // blendMode={THREE.MultiplyBlending}
             />
           </meshBasicMaterial>
-        </Circle>
+        </Circle> */}
       </mesh>
       <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(objSelected || false)}>
         
