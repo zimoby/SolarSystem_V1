@@ -411,7 +411,7 @@ const PlanetRing = ({ planetName, planetSize }) => {
   const [ringTextureUranus, alphaTextureUranus] = useTexture([uranusRing, uranusRingAlpha]);
   const ringRef = useRef();
 
-  console.log("planetName", planetName, ringRef.current);
+  // console.log("planetName", planetName, ringRef.current);
 
 
   let extraRotation = 0;

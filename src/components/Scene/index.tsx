@@ -22,7 +22,7 @@ export const SceneSetup = () => {
     infiniteGrid: true,
   };
 
-  const {scene} = useThree();
+  // const {scene} = useThree();
   
   const lightRef = useRef();
 
@@ -60,11 +60,11 @@ export const SceneSetup = () => {
     }
   }, []);
 
-  console.log("lightRef", lightRef);
+  // console.log("lightRef", lightRef);
   // const lightTest = new PointLight(0xffffff, 1, 0);
   // lightTest.position.set(0, 0, 0);
   
-  const createOuterSpaceTexture = useTexture(galaxy);
+  // const createOuterSpaceTexture = useTexture(galaxy);
 
   return (
     <>
@@ -98,8 +98,6 @@ export const SceneSetup = () => {
       {/* <directionalLight intensity={10} /> */}
       <ambientLight intensity={0.4} />
       <Stars />
-
-      
 
       <Grid position={[0, 0.3, 0]} args={gridSize} {...gridConfig} />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
