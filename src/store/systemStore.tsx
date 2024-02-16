@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import * as THREE from "three";
 import { generateCrossingObjects, generateRandomObjects, generateTrash } from "../utils/generators";
+import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
 
 interface CelestialBody {
   [key: string]: any; // Replace `any` with a more specific type based on your data structure
@@ -68,16 +69,19 @@ export const useSystemStore = create(
     disablePlanets: false,
     disableMoons: true,
     disableRandomObjects: false,
-    disableTrash: false,
+    disableTrash: true,
     
     activeObjectName: "sun",
 
-    solarScale: 1,
+    // solarScale: 1,
     timeSpeed: 1,
     timeOffset: 0,
     objectsDistance: 1,
     objectsRelativeScale: 1,
     orbitAngleOffset: 0,
+
+    maxDistance: 100,
+    minDistance: 0.3,
 
     updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
     setInitialized: (isInitialized) => set({ isInitialized }),
@@ -124,11 +128,28 @@ export const useSolarSystemStore = create(
       asteroids: {},
       objects: generateRandomObjects(),
       trash: {
-        trashInner1: generateTrash(trashInnerAmount, 1, 0.2, 1, "inner circle"),
-        trashInner2: generateTrash(trashInnerAmount, 1, 0.2, 1, "inner circle"),
+        trashInner1: {
+          semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
+        },
+        trashInner2: {
+          semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
+        },
+        trashMiddle1: {
+          semimajorAxis10_6Km: distOfEarthToSun10_6Km * 15,
+        },
+        trashMiddle2: {
+          semimajorAxis10_6Km: distOfEarthToSun10_6Km * 15,
+        },
+        trashOuter1: {
+          semimajorAxis10_6Km: distOfEarthToSun10_6Km * 45,
+        },
+      },
+      trashCollection: {
+        trashInner1: generateTrash(trashInnerAmount, 0.9, 0.2, 1, "inner circle"),
+        trashInner2: generateTrash(trashInnerAmount, 0.9, 0.2, 1, "inner circle", 2),
 
-        trashMiddle1: generateTrash(trashMiddleAmount, 2, 1.7, 1, "middle circle"),
-        trashMiddle2: generateTrash(trashMiddleAmount / 50, 2, 1.7, 1, "middle circle"),
+        trashMiddle1: generateTrash(trashMiddleAmount, 6, 1.7, 1, "middle circle"),
+        trashMiddle2: generateTrash(trashMiddleAmount / 50, 6, 1.7, 1, "middle circle"),
         
         trashOuter1: generateTrash(trashOuterAmount, 3.5, 1, 1, "outer circle"),
 
@@ -204,7 +225,7 @@ export const useSolarSystemStore = create(
 
     batchUpdateAdditionalProperties: (updates) =>
       {
-        console.log("batchUpdateAdditionalProperties", updates);
+        // console.log("batchUpdateAdditionalProperties", updates);
         set((state) => ({
         additionalProperties: {
           ...state.additionalProperties,

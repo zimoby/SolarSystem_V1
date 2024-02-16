@@ -25,7 +25,7 @@ export const SolarSystem = () => {
           <SolarSystemPlanets />
           <RandomObjects />
           {!disableTrash && <TrashComponent />}
-          <OrbitDisk />
+          <OrbitDisk size={40} positionYoffset={-2} opacity={0.1} />
         </>
       )}
     </>

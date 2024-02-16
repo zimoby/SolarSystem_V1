@@ -40,6 +40,8 @@ export const ThreeJsCanvas = () => {
   return (
     <KeyboardControls map={map}>
       <Canvas
+				// legacy={true}
+				flat={true}
         gl={{ alpha: false }}
         camera={{ fov: 10, position: [0, cameraDistance, cameraDistance * 2] }}
       >

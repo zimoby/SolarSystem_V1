@@ -8,12 +8,13 @@ import { PlanetHUDComponent } from "../HUD/hud";
 import { Circle, Line, Point, PointMaterial, Points, Sphere, Trail } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
 import { useFrame, useThree } from "@react-three/fiber";
-import { planetsScaleFactor } from "../../data/solarSystemData";
+// import { planetsScaleFactor } from "../../data/solarSystemData";
 
 const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
   const planetSize = calculateRelativeScale(
     params.volumetricMeanRadiusKm,
-    useSystemStore.getState().objectsRelativeScale
+    useSystemStore.getState().objectsRelativeScale,
+    planetName
   );
 
   const [selected, setSelected] = useState(false);

@@ -28,7 +28,7 @@ export const generateCrossingObjects = (amount, boundary = [1,1,1], scale = 1, n
 };
 
 
-export const generateTrash = (amount, radius = 1, destr = 0.2, scale = 1, name = "") => {
+export const generateTrash = (amount, radius = 1, destr = 0.2, scale = 1, name = "", rotate = 0) => {
     const trash = [];
     const angleIncrement = (2 * Math.PI) / amount;
     const ring = 5;
@@ -38,8 +38,8 @@ export const generateTrash = (amount, radius = 1, destr = 0.2, scale = 1, name =
     for (let i = 0; i < amount; i++) {
         const angle = i * angleIncrement;
         const radiusRandom = Math.pow((Math.random() / ring + ring / 2), 1/1) * radius - ring / 3.5;
-        const x = radiusRandom * Math.cos(angle);
-        const y = radiusRandom * Math.sin(angle);
+        const x = radiusRandom * Math.cos(angle + rotate);
+        const y = radiusRandom * Math.sin(angle + rotate);
         const z = (Math.random() * 2 - 1) * 0.05;
 
         // Generate random values from a Gaussian distribution

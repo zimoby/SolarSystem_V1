@@ -5,7 +5,7 @@ import { dayInSeconds, objectsRotationSpeed, planetsNamesOrder, planetsScaleFact
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
 import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
-import { calculateRelativeDistanceXY, calculateTime, degreesToRadians } from "../utils/calculations";
+import { calculateDistanceXY, calculateRelativeDistanceXY, calculateTime, degreesToRadians } from "../utils/calculations";
 import * as THREE from "three";
 
 // import throttle from "lodash/throttle";
@@ -18,13 +18,14 @@ export const useInitiateSolarSystem = () => {
     "orbitInclinationDeg",
     "siderealRotationPeriodHrs",
     "orbitEccentricity",
-    "anchorXYOffset"
+    "anchorXYOffset",
+    "planetaryRingSystem"
   ];
 
   const ignoreToNormalize = ["orbitEccentricity"];
 
   const { uiRandomColors } = useSystemColorsStore.getState();
-  const {disablePlanets, disableMoons, disableRandomObjects} = useSystemStore.getState();
+  const { isInitialized, disablePlanets, disableMoons, disableRandomObjects, disableTrash } = useSystemStore.getState();
 
   const reorderPlanets = planetsNamesOrder.reduce((acc, planetName) => ({
     ...acc,
@@ -34,9 +35,13 @@ export const useInitiateSolarSystem = () => {
 
 
   const randomObjects = !disableRandomObjects ? useSolarSystemStore.getState().celestialBodies.objects : {};
+  const trashObjects = !disableTrash ? useSolarSystemStore.getState().celestialBodies.trash : {};
   // const randomObjects = !disableRandomObjects ? generateRandomObjects() : {};
   
   useEffect(() => {
+
+    if (isInitialized) {return;}
+
     console.log("start init");
     const celestialBodiesUpdates = {};
     const propertiesUpdates = {};
@@ -47,7 +52,7 @@ export const useInitiateSolarSystem = () => {
       const normalizedData = normalizeDataToEarth(filteredData, ignoreToNormalize);
       const additionalProcessingParams = {
         ...normalizedData,
-        volumetricMeanRadiusKm: normalizedData.volumetricMeanRadiusKm / planetsScaleFactor,
+        volumetricMeanRadiusKm: (normalizedData?.volumetricMeanRadiusKm || 1) * planetsScaleFactor,
       };
 
       celestialBodiesUpdates[type] = celestialBodiesUpdates[type] || {};
@@ -58,7 +63,8 @@ export const useInitiateSolarSystem = () => {
       };
 
       additionalProcessingParams['type'] = parentName;
-      additionalProcessingParams['color'] = uiRandomColors[Math.floor(Math.random() * uiRandomColors.length)];
+      additionalProcessingParams['color'] = uiRandomColors[(Math.random() * uiRandomColors.length) - 0.1];
+      // additionalProcessingParams['color'] = uiRandomColors[Math.floor(Math.random() * uiRandomColors.length) - 0.1];
     };
 
     Object.keys(reorderPlanets).forEach((planetName) => {
@@ -74,12 +80,19 @@ export const useInitiateSolarSystem = () => {
         });
       }
 
-      if (randomObjects && !disableRandomObjects) {
-        Object.keys(randomObjects).forEach((cosmicObjectName) => {
-          processCelestialBody("objects", cosmicObjectName, randomObjects[cosmicObjectName]);
-        });
-      }
     });
+
+    if (randomObjects && !disableRandomObjects) {
+      Object.keys(randomObjects).forEach((cosmicObjectName) => {
+        processCelestialBody("objects", cosmicObjectName, randomObjects[cosmicObjectName]);
+      });
+    }
+
+    if (trashObjects && !disableTrash) {
+      Object.keys(trashObjects).forEach((trashObjectName) => {
+        processCelestialBody("trash", trashObjectName, trashObjects[trashObjectName]);
+      });
+    }
 
     const sunData = starsData["sun"];
     processCelestialBody("stars", "sun", sunData);
@@ -101,6 +114,8 @@ export const useCelestialBodyUpdates = () => {
   const quaternionRef = useRef(new THREE.Quaternion());
   const objectsSupportDataRef = useRef({});
 
+
+
   const { isInitialized, isInitialized2, timeSpeed, timeOffset, solarScale, objectsDistance, orbitAngleOffset } = useSystemStore.getState();
   const { planets, moons, objects } = useSolarSystemStore.getState().celestialBodies;
 
@@ -117,14 +132,39 @@ export const useCelestialBodyUpdates = () => {
     };
   }, [isInitialized, planets, moons, objects]);
 
-  useEffect(() => {
+  const [maxDistance, minDistance] = useMemo(() => {
+    if (!isInitialized) return [0, 1];
+    const distances = Object.keys(combinedObjects).reduce((acc, name) => {
+      const { semimajorAxis10_6Km, orbitEccentricity } = combinedObjects[name];
 
+      const distanceX = semimajorAxis10_6Km * (1 - orbitEccentricity);
+      const distanceY = semimajorAxis10_6Km * (1 + orbitEccentricity);
+
+      return {
+        maxDistance: Math.max(distanceX, distanceY, acc.maxDistance),
+        minDistance: Math.min(distanceX, distanceY, acc.minDistance),
+      };
+    }, { maxDistance: 0, minDistance: 1 });
+
+    return [distances.maxDistance, distances.minDistance];
+  }, [isInitialized, combinedObjects]);
+
+
+
+  // console.log("farrestObject", farrestObject);
+
+
+  useEffect(() => {
     if (!isInitialized) return;
+
+      useSystemStore.getState().updateSystemSettings({ maxDistance: maxDistance, minDistance: minDistance });
+
+
     const supportData = {};
     Object.keys(combinedObjects).forEach(name => {
       const { semimajorAxis10_6Km, orbitEccentricity, orbitInclinationDeg } = combinedObjects[name];
       supportData[name] = {
-        distanceXY: calculateRelativeDistanceXY(semimajorAxis10_6Km, orbitEccentricity, objectsDistance), // Use Vector2 for 2D distances
+        distanceXY: calculateRelativeDistanceXY(semimajorAxis10_6Km, orbitEccentricity, objectsDistance, maxDistance, minDistance, name), // Use Vector2 for 2D distances
         angleRad: degreesToRadians(orbitInclinationDeg + orbitAngleOffset),
       };
 
@@ -156,9 +196,9 @@ export const useCelestialBodyUpdates = () => {
 
       const position = positionVectorsRef.current[name];
       position.set(
-        Math.cos(t) * supportData.distanceXY.x * solarScale,
+        Math.cos(t) * supportData.distanceXY.x,
         0,
-        Math.sin(t) * supportData.distanceXY.y * solarScale
+        Math.sin(t) * supportData.distanceXY.y
       );
 
       quaternionRef.current.setFromAxisAngle(axisVectorRef.current, supportData.angleRad);

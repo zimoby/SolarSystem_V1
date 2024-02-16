@@ -24,10 +24,10 @@ export const useSyncControlsWithStore = () => {
         step: 1,
       },
       objectsDistance: {
-        value: 2,
+        value: 1,
         min: 1,
-        max: 10,
-        step: 0.1,
+        max: 5,
+        step: 1,
       },
       objectsRelativeScale: {
         value: 1,
@@ -47,7 +47,8 @@ export const useSyncControlsWithStore = () => {
 
   useEffect(() => {
     updateSystemSettings({
-      solarScale: Math.pow(objectsDistance, 2),
+      // solarScale: Math.pow(objectsDistance, 2),
+
       timeSpeed: timeSpeed === 1 ? 1 : timeSpeed * 100000,
       timeOffset,
       objectsDistance,

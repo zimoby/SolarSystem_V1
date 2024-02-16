@@ -2,6 +2,9 @@ import { Environment, GizmoHelper, GizmoViewport, Grid, PerspectiveCamera, Stars
 import galaxy from "../../assets/2k_stars_milky_way.jpg";
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
+import { PointLight } from "three";
+import { useThree } from "@react-three/fiber";
+import { useEffect, useRef } from "react";
 
 export const SceneSetup = () => {
 
@@ -18,6 +21,48 @@ export const SceneSetup = () => {
     followCamera: false,
     infiniteGrid: true,
   };
+
+  const {scene} = useThree();
+  
+  const lightRef = useRef();
+
+  // var light2;
+  //   light2 = new THREE.PointLight(color, intensity, distance, decay);
+  //   //move light
+  //   light2.name = "SUNLIGHT";
+  //   light2.distance = distance;
+  //   light2.decay = decay;
+  //   // light2.position.set(lightPositionX, lightPositionY, lightPositionZ);
+  //   light2.castShadow = castShadow; // default false
+  //   light2.visible = true;
+  //   light2.shadow.bias = 0.0001;
+  //   light2.shadow.mapSize.width = 4096; // default
+  //   light2.shadow.mapSize.height = 4096; // default
+  //   light2.shadow.darkness = 0.1;
+  //   light2.shadow.camera.near = 1000000;
+  //   light2.shadow.camera.far = 3e9; // default
+  //   // light2.color.setHSL(0.5, 0.7, 0.8);
+
+  //   //shadow.camera.fov and rotation shows the shadow.
+  //   // light2.shadow.camera.fov = -270;
+  //   light2.rotation.set(0, Math.PI, 0);
+
+  useEffect(() => {
+    if (lightRef.current) {
+      lightRef.current.position.set(0, 0.5, 0);
+      lightRef.current.shadow.bias = 0.0001;
+      lightRef.current.shadow.darkness = 0.1;
+      lightRef.current.intensity = 5;
+      lightRef.current.distance = 0;
+      lightRef.current.decay = 0;
+
+
+    }
+  }, []);
+
+  console.log("lightRef", lightRef);
+  // const lightTest = new PointLight(0xffffff, 1, 0);
+  // lightTest.position.set(0, 0, 0);
   
   const createOuterSpaceTexture = useTexture(galaxy);
 
@@ -43,12 +88,18 @@ export const SceneSetup = () => {
       {/* <Environment files="../../assets/2k_stars_milky_way.jpg" /> */}
       {/* <mesh position={[0, 0, 0]}>
         <sphereGeometry args={[10, 32, 32]} />
-        <meshStandardMaterial attach="material" map={createOuterSpaceTexture} side={DoubleSide} />
+        <meshStandardMaterial attach="material" map={createOuterSpaceTexture} />
       </mesh> */}
-      <hemisphereLight groundColor={"#000000"} intensity={Math.PI / 2} />
-      <spotLight position={[2, 2, 2]} angle={0.2} penumbra={1} intensity={Math.PI * 2} />
+      {/* <hemisphereLight groundColor={"#000000"} intensity={Math.PI / 2} /> */}
+      {/* <spotLight intensity={1000} /> */}
+      <group position={[0,0.0,0]}>
+        <pointLight ref={lightRef} castShadow={true} />
+      </group>
+      {/* <directionalLight intensity={10} /> */}
       <ambientLight intensity={0.4} />
       <Stars />
+
+      
 
       <Grid position={[0, 0.3, 0]} args={gridSize} {...gridConfig} />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>

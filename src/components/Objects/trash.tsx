@@ -7,9 +7,10 @@ import { Euler, MathUtils, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import { random } from "maath";
 import { NeuralNetwork2 } from "../Scene/neuralTest copy";
+import { calculateRelativeDistanceXY } from "../../utils/calculations";
 
 const SimplePointsWrapper = ({ points, rotSpeed, size }) => {
-  const { solarScale } = useSystemStore.getState();
+  // const { solarScale } = useSystemStore.getState();
   const ref1 = useRef();
 
   useFrame((_, delta) => {
@@ -17,7 +18,7 @@ const SimplePointsWrapper = ({ points, rotSpeed, size }) => {
   });
 
   return (
-    <Points scale={solarScale} limit={points.length} rotation-x={Math.PI / 2} ref={ref1}>
+    <Points limit={points.length} rotation-x={Math.PI / 2} ref={ref1}>
       <PointMaterial
         vertexColors
         size={size}
@@ -256,24 +257,33 @@ const PointsOrbitRotation = ({ points, text = false, name }) => {
 // }
 
 export const TrashComponent = () => {
+
+  const { objectsDistance, maxDistance, minDistance } = useSystemStore.getState();
+
+  // const { solarScale } = useSystemStore.getState();
+
   //   const { disableTrash, objectsDistance, solarScale } = useSystemStore((state) => state);
   //   const trashInnerAmount = useSolarAmounOfItems((state) => state.trashInnerAmount);
   //   const trashMiddleAmount = useSolarAmounOfItems((state) => state.trashMiddleAmount);
   //   const trashOuterAmount = useSolarAmounOfItems((state) => state.trashOuterAmount);
 
-  const trashInner1 = useSolarSystemStore((state) => state.celestialBodies.trash.trashInner1);
-  const trashInner2 = useSolarSystemStore((state) => state.celestialBodies.trash.trashInner2);
+  const trashInner1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner1);
+  const trashInner2 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner2);
+  const trashMiddle1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashMiddle1);
+  const trashMiddle2 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashMiddle2);
+  const trashOuter1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashOuter1);
+  const trashCross = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashCross);
 
-  const trashMiddle1 = useSolarSystemStore((state) => state.celestialBodies.trash.trashMiddle1);
-  const trashMiddle2 = useSolarSystemStore((state) => state.celestialBodies.trash.trashMiddle2);
+  const trashPositions = useSolarSystemStore((state) => state.celestialBodies.trash);
+  const planetsData = useSolarSystemStore((state) => state.celestialBodies.planets);
 
-  const trashOuter1 = useSolarSystemStore((state) => state.celestialBodies.trash.trashOuter1);
+  const relativeScaleInner = useMemo(() => {
+    return calculateRelativeDistanceXY( trashPositions.trashInner1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
+  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashInner1.semimajorAxis10_6Km]);
 
-  const trashCross = useSolarSystemStore((state) => state.celestialBodies.trash.trashCross);
 
-  const { solarScale } = useSystemStore.getState();
 
-  // console.log("trashInner1", trashInner1);
+  console.log("trashInner1", relativeScaleInner);
 
   const generateInnerTrash = true;
   const generateMiddleTrash = true;
@@ -288,6 +298,8 @@ export const TrashComponent = () => {
   const ref3 = useRef();
   //   const ref4 = useRef()
   useFrame((_, delta) => {
+
+    // console.log("delta", useSolarSystemStore.getState().celestialBodies.trash.trashInner1.semimajorAxis10_6Km);
     if (generateInnerTrash) {
       // ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
       // ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
@@ -298,13 +310,26 @@ export const TrashComponent = () => {
     // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
   });
 
+  // useFrame((state) => {
+  //   const time = state.clock.getElapsedTime();
+  //   planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
+  //   planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs, timeSpeed);
+
+  //   guiRef.current.lookAt(camera.position);
+  // });
+
+
+  console.log("trashPositions", relativeScaleInner, planetsData.earth.semimajorAxis10_6Km);
+
   return (
-    <>
+    <group>
       {/* <Stars /> */}
       {generateInnerTrash && (
         <>
-        <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
-        <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } />
+        <group scale={[relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
+          <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
+          <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } />
+        </group>
           {/* <Instances
             scale={solarScale}
             limit={trashInner1.length + trashInner2.length}
@@ -327,19 +352,21 @@ export const TrashComponent = () => {
       )}
 
       {generateOuterTrash && (
-        <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } />
+        <group scale={[1,1,1]}>
+          <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } />
+        </group>
       )}
 
       {generateMiddleTrash && (
-        <group scale={solarScale}>
+        <group scale={1,1,1}>
           <PointsOrbitRotation points={trashMiddle1} name={"dots"} />
           <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
         </group>
       )}
 
-      {generateCrossTrash && <group scale={solarScale}>
+      {generateCrossTrash && <group>
         <PointsCrossSolarSystem points={trashCross} />
       </group>}
-    </>
+    </group>
   );
 };
