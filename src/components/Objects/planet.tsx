@@ -6,11 +6,66 @@ import {
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Circle, Html, Line, Sparkles, Sphere, Trail } from "@react-three/drei";
+import { Circle, Html, Line, Ring, Sparkles, Sphere, Trail, useTexture } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
 import { extend, useFrame, useThree } from "@react-three/fiber";
 import { dayInSeconds, objectsRotationSpeed, planetsScaleFactor } from "../../data/solarSystemData";
 import { updateActiveName } from "../../hooks/storeProcessing";
+
+import saturnRing from "../../assets/saturnringcolor.jpg";
+import saturnRingAlpha from "../../assets/saturnringpattern.gif";
+
+import uranusRing from "../../assets/uranusringcolour.jpg";
+import uranusRingAlpha from "../../assets/uranusringtrans.gif";
+
+import earthClouds from "../../assets/earthcloudmap.jpg";
+import earthCloudsAlpha from "../../assets/earthcloudmaptrans.jpg";
+
+// https://github.com/dataarts/webgl-globe/blob/8d746a3dbf95e57ec3c6c2c6effe920c95135253/globe/globe.js
+const Shaders = {
+  'earth' : {
+    uniforms: {
+      'texture': { type: 't', value: null }
+    },
+    vertexShader: [
+      'varying vec3 vNormal;',
+      'varying vec2 vUv;',
+      'void main() {',
+        'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+        'vNormal = normalize( normalMatrix * normal );',
+        'vUv = uv;',
+      '}'
+    ].join('\n'),
+    fragmentShader: [
+      'uniform sampler2D texture;',
+      'varying vec3 vNormal;',
+      'varying vec2 vUv;',
+      'void main() {',
+        'vec3 diffuse = texture2D( texture, vUv ).xyz;',
+        'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
+        'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );',
+        'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );',
+      '}'
+    ].join('\n')
+  },
+  'atmosphere' : {
+    uniforms: {},
+    vertexShader: [
+      'varying vec3 vNormal;',
+      'void main() {',
+        'vNormal = normalize( normalMatrix * normal );',
+        'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+      '}'
+    ].join('\n'),
+    fragmentShader: [
+      'varying vec3 vNormal;',
+      'void main() {',
+        'float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );',
+        'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;',
+      '}'
+    ].join('\n')
+  }
+};
 
 const filterParamsOnlyNumbers = (params) => {
   // return object with values that are numbers
@@ -111,7 +166,8 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   } = useSystemStore.getState();
 
   const {
-    siderealRotationPeriodHrs
+    siderealRotationPeriodHrs,
+    planetaryRingSystem
   } = useSolarSystemStore.getState().celestialBodies.planets[planetName];
     
   const planetRef = useRef();
@@ -120,14 +176,30 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
 
   const typeOfObject = "planet";
 
+
+  const [earthCloudsTexture, earthAlphaTexture] = useTexture([earthClouds, earthCloudsAlpha]);
+  let cloudsTexture = null;
+  let cloudsTextureAlpha = null;
+  if (planetName === "earth") {
+    cloudsTexture = earthCloudsTexture;
+    cloudsTextureAlpha = earthAlphaTexture;
+  }
+
+  // console.log("planetName", planetName, planetaryRingSystem);
+
+  // const ringTexture = useTexture(saturnRing);
+  // ringTexture.wrapS = THREE.RepeatWrapping;
+  // ringTexture.flipY = true;
+
   //--------- processings size
 
   const planetSize = useMemo(() => {
     return calculateRelativeScale(
       params.volumetricMeanRadiusKm ?? 0.1,
-      objectsRelativeScale
-    ) * solarScale;
-  }, [params, solarScale, objectsRelativeScale]);
+      objectsRelativeScale,
+      planetName
+    );
+  }, [params.volumetricMeanRadiusKm, objectsRelativeScale, planetName]);
 
   const planetEllipseRotation = useMemo(() => {
     const curve = new THREE.EllipseCurve(
@@ -158,6 +230,25 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   // }, [planetSize]);
 
   const { camera } = useThree();
+
+
+
+
+
+  const shader = Shaders['atmosphere'];
+  const uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+
+  const material = new THREE.ShaderMaterial({
+
+        uniforms: uniforms,
+        vertexShader: shader.vertexShader,
+        fragmentShader: shader.fragmentShader,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending,
+        transparent: true
+
+      });
+
 
   // console.log("camera", camera);
 
@@ -237,7 +328,13 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
         >
           <meshStandardMaterial wireframe transparent={true} opacity={0.1} />
         </Sphere> */}
+        {/* <Circle args={[planetSize * 2, 64]} /> */}
+        {planetaryRingSystem &&
+          <PlanetRing planetName={planetName} planetSize={planetSize} />
+        }
         <group ref={planetRotationRef}>
+
+
           <mesh rotation-y={Math.PI / 2}>
             <Line
               points={planetEllipseRotation}
@@ -245,10 +342,15 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
               lineWidth={1}
             />
           </mesh>
-
+            {/* <circleGeometry args={[1, planetSize * 3 + 0.1, 64]}>
+              <meshBasicMaterial color={"white"} side={THREE.DoubleSide} />
+            </circleGeometry> */}
+          
           <Sphere
             key={planetName}
             args={[planetSize]}
+            receiveShadow={true}
+            castShadow={true}
             onClick={() => {
               updateActiveName(planetName);
             }}
@@ -256,7 +358,47 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
             onPointerOut={() => setSelected(false)}
           >
             <meshStandardMaterial map={planetTexture} />
+
           </Sphere>
+          {/* <Sphere
+            key={planetName}
+            args={[planetSize * 1.1]}
+
+            // {...material}
+          >
+            <shaderMaterial
+              uniforms={uniforms}
+              vertexShader={shader.vertexShader}
+              fragmentShader={shader.fragmentShader}
+              side={THREE.BackSide}
+              blending={THREE.AdditiveBlending}
+              transparent={true}
+            />
+          </Sphere> */}
+
+          {cloudsTexture && cloudsTextureAlpha && (
+            <Sphere
+              key={planetName + "clouds"}
+              args={[planetSize * 1.01]}
+              // receiveShadow={true}
+              // castShadow={true}
+              onClick={() => {
+                updateActiveName(planetName);
+              }}
+              // onPointerOver={() => setSelected(true)}
+              // onPointerOut={() => setSelected(false)}
+            >
+              <meshStandardMaterial
+                map={cloudsTexture}
+                alphaMap={cloudsTextureAlpha}
+                transparent={true}
+                
+                // opacity={0.5}
+                // depthWrite={false}
+              />
+            </Sphere>
+          
+          )}
 
         </group>
       </group>
@@ -264,4 +406,89 @@ const PlanetComponent = ({ planetName, params, planetTexture = null }) => {
   );
 };
 
+const PlanetRing = ({ planetName, planetSize }) => {
+  const [ringTextureSaturn, alphaTextureSaturn] = useTexture([saturnRing, saturnRingAlpha]);
+  const [ringTextureUranus, alphaTextureUranus] = useTexture([uranusRing, uranusRingAlpha]);
+  const ringRef = useRef();
+
+  console.log("planetName", planetName, ringRef.current);
+
+
+  let extraRotation = 0;
+  let useRingTexture = null;
+  let useAlphaTexture = null;
+  if (planetName === "saturn") {
+    useRingTexture = ringTextureSaturn;
+    useAlphaTexture = alphaTextureSaturn;
+  } else if (planetName === "uranus") {
+    useRingTexture = ringTextureUranus;
+    useAlphaTexture = alphaTextureUranus;
+    extraRotation = Math.PI / 2;
+  }
+
+
+  // useEffect(() => {
+  //   ringRef.current.deleteAttribute("uv");;
+  // }, []);
+
+  useRingTexture.wrapS = THREE.RepeatWrapping;
+  useRingTexture.flipY = true;
+  useAlphaTexture.wrapS = THREE.RepeatWrapping;
+  useAlphaTexture.flipY = true;
+
+
+  const ringGeo = useMemo(() => {
+    const innerRadius = planetSize * 1.1;
+    const outerRadius = planetSize * 3;
+    const segments = 96;
+    const geometry = new THREE.RingGeometry(innerRadius, outerRadius, segments);
+
+    const uv = geometry.attributes.uv;
+    for (let i = 0; i < uv.count; i++) {
+      const vertex = new THREE.Vector3().fromBufferAttribute(geometry.attributes.position, i);
+      const radius = vertex.x === 0 && vertex.y === 0 ? 0 : vertex.length();
+      const normalizedRadius = (radius - innerRadius) / (outerRadius - innerRadius);
+      uv.setXY(i, normalizedRadius, uv.getY(i));
+    }
+    geometry.attributes.uv.needsUpdate = true;
+
+    return geometry;
+  }, [planetSize]);
+
+
+  // ringRef.current.uv
+  // ringTexture.wrapS = THREE.RepeatWrapping;
+  // ringTexture.flipY = true;
+
+  return (
+    <group rotation-x={-Math.PI / 2} rotation-y={extraRotation} >
+      <mesh
+        ref={ringRef}
+        geometry={ringGeo}
+        receiveShadow={true}
+        castShadow={true}
+      >
+        <meshStandardMaterial
+          color={"white"}
+          side={THREE.DoubleSide}
+          // blendSrcAlpha={THREE.OneMinusSrcAlphaFactor}
+          shadowSide={THREE.DoubleSide}
+          // clipShadows
+          map={useRingTexture}
+          // transparent
+          alphaTest={0.2}
+          alphaMap={useAlphaTexture}
+          // blending={THREE.MultiplyBlending}
+        />
+        {/* alpha channel */}
+
+      </mesh>
+      {/* <Ring ref={ringRef} args={[planetSize * 1.1, planetSize * 3, 64]}>
+        <meshBasicMaterial color={"white"} side={THREE.DoubleSide} map={ringTexture} />
+      </Ring> */}
+    </group>
+  );
+}
+
 export default PlanetComponent;
+
