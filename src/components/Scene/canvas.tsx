@@ -5,12 +5,12 @@ import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
-import { useSystemStore } from "../../store/systemStore";
+// import { useSystemStore } from "../../store/systemStore";
 
 const cameraDistance = 100;
 
 export const ThreeJsCanvas = () => {
-	const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized} = useSystemStore.getState();
+	// const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized} = useSystemStore.getState();
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [

@@ -9,7 +9,7 @@ import { updateActiveName } from "../../hooks/storeProcessing";
 
 type PlanetHUDComponentProps = {
   planetName: string;
-  planetSize: number;
+  planetSize?: number;
   extendData?: boolean;
   typeOfObject?: string;
 };
@@ -23,10 +23,10 @@ interface SegmentRef {
 
 const planetHui1Pos = new THREE.Vector3(0,0,0);
 
-export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "", planetSize }) => {
+export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "", planetSize = 0.01 }) => {
   const { lineUnderOrbit, lineBelowOrbit } = useSystemColorsStore.getState().hudColors;
-  const planetHuiRef = useRef<THREE.Group>();
-  const planetHuiRefCenter = useRef<THREE.Group>();
+  const planetHuiRef = useRef<THREE.Group>(null);
+  const planetHuiRefCenter = useRef<THREE.Group>(null);
   const segmentRef = useRef<SegmentRef>(null);
   const segmentRef2 = useRef<SegmentRef>(null);
 

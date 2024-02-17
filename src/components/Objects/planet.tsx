@@ -163,12 +163,12 @@ type PlanetComponentProps = {
 
 const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, planetTexture = null }) => {
   const {
+    planetsInitialized,
     objectsRelativeScale,
     timeSpeed
-  } = useSystemStore.getState();
+  } = useSystemStore();
 
   const { objectDefaultColors } = useSystemColorsStore.getState();
-
 
   const {
     siderealRotationPeriodHrs,
@@ -195,12 +195,13 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
   //--------- processings size
 
   const planetSize = useMemo(() => {
+    if (!planetsInitialized) { return 0.1; }
     return calculateRelativeScale(
       params.volumetricMeanRadiusKm ?? 0.1,
       objectsRelativeScale,
       planetName
     );
-  }, [params.volumetricMeanRadiusKm, objectsRelativeScale, planetName]);
+  }, [planetsInitialized, params.volumetricMeanRadiusKm, objectsRelativeScale, planetName]);
 
   const planetEllipseRotation = useMemo(() => {
     const curve = new THREE.EllipseCurve(
@@ -267,6 +268,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
    }, [planetName]);
 
   useFrame((state) => {
+    if (!planetsInitialized) { return; }
     const time = state.clock.getElapsedTime();
     if (planetRef.current) {
       planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position as THREE.Vector3);

@@ -4,7 +4,7 @@ import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import { calculateObjectsRotation, calculateRelativeScale } from "../../utils/calculations";
 import { InfoAboutObject } from "../HUD/hud";
 import { starsScaleFactor } from "../../data/solarSystemData";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 import { AdditiveBlending, DoubleSide, Group } from "three";
@@ -12,11 +12,15 @@ import { AdditiveBlending, DoubleSide, Group } from "three";
 export const SunComponent = () => {
   const createSunTexture = useTexture(sunTexture);
   const sunData = useSolarSystemStore((state) => state.celestialBodies.stars.sun);
-  const { sunInitialized, objectsRelativeScale, timeOffset } = useSystemStore.getState();
+  
+  const { sunInitialized, objectsRelativeScale, timeOffset } = useSystemStore();
   // console.log("sunData", sunData?.volumetricMeanRadiusKm);
   const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1) / starsScaleFactor;
 
-  const calculatedSunSize = calculateRelativeScale(sunSize, objectsRelativeScale, "sun");
+  const calculatedSunSize = useMemo(() => {
+    if (!sunInitialized) { return 0.1; }
+    return calculateRelativeScale(sunSize, objectsRelativeScale, "sun")
+  }, [sunInitialized, sunSize, objectsRelativeScale]);
 
   const sunRef = useRef<THREE.Object3D>(null);
   const sunOreolRef = useRef<Group>(null);
@@ -33,6 +37,8 @@ export const SunComponent = () => {
   }, [sunInitialized]);
 
   useFrame((state) => {
+    if (!sunData || !sunInitialized) { return; }
+
     const time = state.clock.getElapsedTime();
     const timeSec = time * Math.PI * 2;
     if (sunRef.current) {

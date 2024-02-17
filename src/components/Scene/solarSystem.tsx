@@ -8,13 +8,14 @@ import { SunComponent } from "../Objects/sun";
 import RandomObjects from "../controls/randomObjects";
 import SolarSystemPlanets from "../controls/solarSystemPlanets";
 import { TrashComponent } from "../Objects/trash";
-import { OrbitDisk } from "../Objects/disk";
-import { useEffect, useState } from "react";
+
+// import { useEffect, useState } from "react";
 // import skyStars from "../../assets/2k_stars_milky_way.jpg";
 
 export const SolarSystem = () => {
   // const [allInitialized, setAllInitialized] = useState(false);
-  const { isInitialized, isInitialized2, disableTrash, sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSystemStore();
+  const { isInitialized, isInitialized2, disableTrash } = useSystemStore();
+  // const { isInitialized, isInitialized2, disableTrash, sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSystemStore();
   // const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSystemStore();
 
   useInitiateSolarSystem();

@@ -10,15 +10,18 @@ import { TextureImageData } from "three/src/textures/types.js";
 import { Group, Object3DEventMap, Vector3 } from "three";
 
 const ObjectsComponent = ({ planetName, params }: { planetName: string, params: ObjectsAdditionalDataT, planetTexture?: TextureImageData | null }) => {
+  const { randomObjectsInitialized } = useSystemStore();
+
 
   const planetSize: number = useMemo(() => {
     // console.log("test", planetName, params.volumetricMeanRadiusKm);
+    if (!randomObjectsInitialized) { return 0.01; }
     return calculateRelativeScale(
       params.volumetricMeanRadiusKm ?? 0,
       useSystemStore.getState().objectsRelativeScale,
       planetName
     );
-  }, [params.volumetricMeanRadiusKm, planetName]);
+  }, [params.volumetricMeanRadiusKm, planetName, randomObjectsInitialized]);
 
   // const { isInitialized, isInitialized2 } = useSystemStore.getState();
 
@@ -28,7 +31,7 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
   const typeOfObject = "object";
 
   useFrame(() => {
-    if (objectRef.current) {
+    if (objectRef.current && randomObjectsInitialized) {
       objectRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position as Vector3);
     }
   });
