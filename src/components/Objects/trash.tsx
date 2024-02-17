@@ -263,9 +263,15 @@ export const TrashComponent = () => {
     return calculateRelativeDistanceXY( trashPositions.trashInner1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
   }, [maxDistance, minDistance, objectsDistance, trashPositions.trashInner1.semimajorAxis10_6Km]);
 
+  const relativeScaleMiddle = useMemo(() => {
+    return calculateRelativeDistanceXY( trashPositions.trashMiddle1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
+  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashMiddle1.semimajorAxis10_6Km]);
 
+  const relativeScaleOuter = useMemo(() => {
+    return calculateRelativeDistanceXY( trashPositions.trashOuter1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
+  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashOuter1.semimajorAxis10_6Km]);
 
-  console.log("trashInner1", relativeScaleInner);
+  // console.log("trashInner1", relativeScaleInner);
 
   const generateInnerTrash = true;
   const generateMiddleTrash = true;
@@ -308,7 +314,7 @@ export const TrashComponent = () => {
       {/* <Stars /> */}
       {generateInnerTrash && (
         <>
-        <group scale={[relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
+        <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
           <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
           <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } />
         </group>
@@ -334,19 +340,19 @@ export const TrashComponent = () => {
       )}
 
       {generateOuterTrash && (
-        <group scale={[1,1,1]}>
+        <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
           <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } />
         </group>
       )}
 
       {generateMiddleTrash && (
-        <group scale={[1,1,1]}>
+        <group scale={[relativeScaleMiddle.x, relativeScaleMiddle.x, relativeScaleMiddle.x]}>
           <PointsOrbitRotation points={trashMiddle1} name={"dots"} />
           <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
         </group>
       )}
 
-      {generateCrossTrash && <group>
+      {generateCrossTrash && <group scale={[relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x]}>
         <PointsCrossSolarSystem points={trashCross} />
       </group>}
     </group>

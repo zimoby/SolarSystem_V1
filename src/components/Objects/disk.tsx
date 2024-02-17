@@ -1,7 +1,9 @@
 import { Circle, GradientTexture, GradientType } from "@react-three/drei";
 import { AdditiveBlending, DoubleSide, NormalBlending } from "three";
+import { useSystemStore } from "../../store/systemStore";
 
 export const OrbitDisk = ({ size = 10, opacity = 0.4, positionYoffset = 0 }) => {
+  const { objectsDistance } = useSystemStore();
   return (
     <group>
       <Circle args={[size, 64]} position={[0, positionYoffset + 1, 0]} rotation-x={Math.PI / 2}>
@@ -13,7 +15,7 @@ export const OrbitDisk = ({ size = 10, opacity = 0.4, positionYoffset = 0 }) => 
           blending={AdditiveBlending}
         >
           <GradientTexture
-            stops={[0, 0.5, 1]}
+            stops={[0, 0.35 / (objectsDistance * 0.7), 1]}
             colors={["yellow", "purple", "blue"]}
             size={1024}
             width={1024}
@@ -32,7 +34,7 @@ export const OrbitDisk = ({ size = 10, opacity = 0.4, positionYoffset = 0 }) => 
           blending={NormalBlending}
         >
           <GradientTexture
-            stops={[0, 0.5, 1]}
+            stops={[0, 0.35 / (objectsDistance * 0.7), 1]}
             colors={["yellow", "purple", "black"]}
             size={1024}
             width={1024}

@@ -54,6 +54,7 @@ export type SolarObjectParamsBasicT = OnlyNumbericSolarObjectParamsBasicT & {
   anchorXYOffset?: { x: number; y: number };
   name?: string;
   type?: string | null;
+  type2?: string;
 }
 
 export type SolarObjectParamsBasicWithMoonsT = SolarObjectParamsBasicT & {
@@ -110,7 +111,7 @@ export interface SystemStoreStateT {
   disableMoons: boolean;
   disableRandomObjects: boolean;
   disableTrash: boolean;
-  
+
   activeObjectName: string;
   timeSpeed: number;
   timeOffset: number;
@@ -135,10 +136,12 @@ export interface CalculatedObjectDataT {
     y: number;
   };
   angleRad: number;
+  scale: number;
 }
 
 export type ObjectsAdditionalDataT = SolarObjectParamsBasicT & {
   type?: string | null;
+  type2?: string;
   color?: Color | string | undefined;
 }
 

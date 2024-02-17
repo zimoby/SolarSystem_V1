@@ -36,7 +36,49 @@
         "siderealRotationPeriodHrs": 24.6229,
         "lengthOfDayHrs": 24.6597,
         "obliquityToOrbitDeg": 25.19,
-        "inclinationOfEquatorDeg": 25.19
+        "inclinationOfEquatorDeg": 25.19,
+        "moons": [
+            {
+                "name": "Phobos",
+                "volumetricMeanRadiusKm": 11.1,
+                "distanceToPlanetKm": 9380,
+                "semimajorAxis10_6Km": 0.00938,
+                "siderealOrbitPeriodDays": 0.31891,
+                "tropicalOrbitPeriodDays": null,
+                "perihelion10_6Km": null,
+                "aphelion10_6Km": null,
+                "synodicPeriodDays": null,
+                "meanOrbitalVelocityKmS": null,
+                "maxOrbitalVelocityKmS": null,
+                "minOrbitalVelocityKmS": null,
+                "orbitInclinationDeg": 1.093,
+                "orbitEccentricity": 0.0151,
+                "siderealRotationPeriodHrs": null,
+                "lengthOfDayHrs": null,
+                "obliquityToOrbitDeg": null,
+                "inclinationOfEquatorDeg": null
+            },
+            {
+                "name": "Deimos",
+                "volumetricMeanRadiusKm": 6.2,
+                "distanceToPlanetKm": 23460,
+                "semimajorAxis10_6Km": 0.02346,
+                "siderealOrbitPeriodDays": 1.26244,
+                "tropicalOrbitPeriodDays": null,
+                "perihelion10_6Km": null,
+                "aphelion10_6Km": null,
+                "synodicPeriodDays": null,
+                "meanOrbitalVelocityKmS": null,
+                "maxOrbitalVelocityKmS": null,
+                "minOrbitalVelocityKmS": null,
+                "orbitInclinationDeg": 1.79,
+                "orbitEccentricity": 0.0005,
+                "siderealRotationPeriodHrs": null,
+                "lengthOfDayHrs": null,
+                "obliquityToOrbitDeg": null,
+                "inclinationOfEquatorDeg": null
+            }          
+        ]
     },
     "earth": {
         "mass10_24Kg": 5.9724,
@@ -283,6 +325,42 @@
                 "orbitEccentricity": 0.0094,
                 "siderealRotationPeriodHrs": 85.222,
                 "lengthOfDayHrs": 85
+            },
+            {
+                "name": "ganymede",
+                "volumetricMeanRadiusKm": 2634.1,
+                "distanceToPlanetKm": 1070412,
+                "semimajorAxis10_6Km": 1.0704,
+                "siderealOrbitPeriodDays": 7.1546,
+                "tropicalOrbitPeriodDays": 7.1546,
+                "perihelion10_6Km": 1.0703,
+                "aphelion10_6Km": 1.0705,
+                "synodicPeriodDays": 7.1546,
+                "meanOrbitalVelocityKmS": 10.88,
+                "maxOrbitalVelocityKmS": 10.88,
+                "minOrbitalVelocityKmS": 10.88,
+                "orbitInclinationDeg": 0.204,
+                "orbitEccentricity": 0.0013,
+                "siderealRotationPeriodHrs": 171.709,
+                "lengthOfDayHrs": 171.7
+            },
+            {
+                "name": "callisto",
+                "volumetricMeanRadiusKm": 2410.3,
+                "distanceToPlanetKm": 1882709,
+                "semimajorAxis10_6Km": 1.8827,
+                "siderealOrbitPeriodDays": 16.689,
+                "tropicalOrbitPeriodDays": 16.689,
+                "perihelion10_6Km": 1.8826,
+                "aphelion10_6Km": 1.8828,
+                "synodicPeriodDays": 16.689,
+                "meanOrbitalVelocityKmS": 8.2,
+                "maxOrbitalVelocityKmS": 8.2,
+                "minOrbitalVelocityKmS": 8.2,
+                "orbitInclinationDeg": 0.281,
+                "orbitEccentricity": 0.0074,
+                "siderealRotationPeriodHrs": 400.536,
+                "lengthOfDayHrs": 400.536
             }
         ]
     },

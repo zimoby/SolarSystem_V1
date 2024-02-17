@@ -3,7 +3,6 @@ import sunTexture from "../../assets/2k_sun.jpg";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import { calculateObjectsRotation, calculateRelativeScale } from "../../utils/calculations";
 import { InfoAboutObject } from "../HUD/hud";
-import { starsScaleFactor } from "../../data/solarSystemData";
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
@@ -15,7 +14,7 @@ export const SunComponent = () => {
   
   const { sunInitialized, objectsRelativeScale, timeOffset } = useSystemStore();
   // console.log("sunData", sunData?.volumetricMeanRadiusKm);
-  const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1) / starsScaleFactor;
+  const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1);
 
   const calculatedSunSize = useMemo(() => {
     if (!sunInitialized) { return 0.1; }

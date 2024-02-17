@@ -14,9 +14,10 @@ type ObjectEllipseProps = {
   name: string;
   color?: THREE.Color | string;
   opacity?: number;
+  type?: string;
 };
 
-export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, color = "grey", opacity = 1}) => {
+export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, color = "grey", opacity = 1, type}) => {
   const [selected, setSelected] = useState(false);
   const {distanceXY} = useSolarSystemStore.getState().additionalProperties[name] || { distanceXY: { x: 0, y: 0 } };
 
@@ -89,6 +90,10 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, colo
             lineWidth={1}
             transparent={true}
             opacity={opacity}
+            dashed={type === "moons"}
+            dashSize={0.3}
+            dashScale={10}
+            
           />
         </mesh>
       </group>

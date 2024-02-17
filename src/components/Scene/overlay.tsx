@@ -1,4 +1,5 @@
 import { svgLogo } from "../../assets/logo"
+import { moonsDistanceFactor, moonsRotationSpeed, objectsRotationSpeed, planetsScaleFactor, relativeEarthSizeDependOnDistance, starsScaleFactor } from "../../data/solarSystemData"
 
 export const OverlayElements = () => {
     return (
@@ -19,15 +20,19 @@ export const OverlayElements = () => {
                     <div className="">
                         {svgLogo}
                     </div>
-                    <div className="*:pl-4 flex flex-col">
+                    <div className="*:pl-4 flex flex-col leading-3 -space-y-1">
+                        <p>Data driven Solar system</p>
+                    </div>
+                    <div className="*:pl-4 flex flex-col leading-4 -space-y-1">
+                        <p>Planets size increased to x{planetsScaleFactor / relativeEarthSizeDependOnDistance}</p>
+                        <p>Sun size increased to x{starsScaleFactor / relativeEarthSizeDependOnDistance}</p>
+                        <p>Planets rotation decreased to x{objectsRotationSpeed}</p>
+                        <p>Moons rotation decreased to x{moonsRotationSpeed}</p>
+                        <p>Moons distance from planet decreased to x{moonsDistanceFactor / relativeEarthSizeDependOnDistance}</p>
+                    </div>
+                    <div className="*:pl-4 flex flex-col leading-3">
                         <p>Choose a planet with arrows ⟵ / ⟶</p>
                         <p>Or click on the planet info</p>
-                    </div>
-                    <div className="*:pl-4 flex flex-col -space-y-1">
-                        <p>Planets size increased to x1200</p>
-                        <p>Sun size increased to x24</p>
-                        <p>Planets rotation decreased to x100</p>
-                        <p>Moons rotation decreased to x500</p>
                     </div>
                 </div>
             </div>

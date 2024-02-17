@@ -6,13 +6,17 @@ export const distOfEarthToSun10_6Km = 149.6;
 const earchRadiusKm = 6371;
 // const sunRadiusKm = 696340;
 const distanceToSunKm = 149.6 * 10 ** 6;
-const relativeEarthSizeDependOnDistance = earchRadiusKm / distanceToSunKm;
+export const relativeEarthSizeDependOnDistance = earchRadiusKm / distanceToSunKm;
 
 // console.log("relativeEarthSizeDependOnDistance", relativeEarthSizeDependOnDistance);
 
 export const planetsScaleFactor = relativeEarthSizeDependOnDistance * 1200;
-export const starsScaleFactor = 50;
-export const objectsRotationSpeed = 0.01
+export const starsScaleFactor = relativeEarthSizeDependOnDistance * 10;
+export const objectsRotationSpeed = 100
+export const moonsRotationSpeed = 500
+export const moonsDistanceFactor = relativeEarthSizeDependOnDistance * 8000000 / 2;
+
+// console.log("planetsScaleFactor", relativeEarthSizeDependOnDistance * 5000000);
 
 export const yearInSeconds = 60 * 60 * 24 * 365;
 export const dayInSeconds = 60 * 60 * 24;

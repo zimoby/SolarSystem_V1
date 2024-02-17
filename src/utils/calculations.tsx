@@ -57,7 +57,7 @@ export const degreesToRadians = (degrees: number): number => (degrees * Math.PI)
 
 export const calculateObjectsRotation = (time: number, periodHrs: number, timeSpeed: number) => {
   return (
-    (((time * Math.PI * 2) / dayInSeconds / periodHrs) *
+    (((time * Math.PI * 2) / dayInSeconds / periodHrs) /
       objectsRotationSpeed *
       timeSpeed) %
     (Math.PI * 2)

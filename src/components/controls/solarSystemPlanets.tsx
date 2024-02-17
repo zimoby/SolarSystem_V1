@@ -78,6 +78,7 @@ const SolarSystemPlanets = () => {
             planetName={planetName}
             params={getPlanetsData[planetName]}
             planetTexture={mapedTextures[planetName as keyof typeof mapedTextures]}
+            type="planets"
           />
           // </SelectToZoom>
           // </Bounds>

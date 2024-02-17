@@ -2,7 +2,6 @@ import { useMemo, useRef } from "react";
 import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../../store/systemStore";
 import {
   calculateObjectsRotation,
-  calculateRelativeScale,
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
@@ -20,6 +19,7 @@ import uranusRingAlpha from "../../assets/uranusringtrans.gif";
 import earthClouds from "../../assets/earthcloudmap.jpg";
 import earthCloudsAlpha from "../../assets/earthcloudmaptrans.jpg";
 import { SolarObjectParamsBasicWithMoonsT } from "../../types";
+
 
 // https://github.com/dataarts/webgl-globe/blob/8d746a3dbf95e57ec3c6c2c6effe920c95135253/globe/globe.js
 // const Shaders = {
@@ -159,12 +159,12 @@ type PlanetComponentProps = {
   planetName: string;
   params: SolarObjectParamsBasicWithMoonsT;
   planetTexture?: THREE.Texture | null;
+  type: string;
 };
 
-const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, planetTexture = null }) => {
+const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, planetTexture = null, type = "planets" }) => {
   const {
     planetsInitialized,
-    objectsRelativeScale,
     timeSpeed
   } = useSystemStore();
 
@@ -173,7 +173,10 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
   const {
     siderealRotationPeriodHrs,
     planetaryRingSystem
-  } = useSolarSystemStore.getState().celestialBodies.planets[planetName];
+    // @ts-expect-error tired of typescript
+  } = useSolarSystemStore.getState().celestialBodies[type][planetName];
+
+  const { scale: planetSize } = useSolarSystemStore.getState().additionalProperties[planetName]
     
   const planetRef = useRef<THREE.Group>(null);
   const planetRotationRef = useRef<THREE.Group>(null);
@@ -193,15 +196,6 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
   // ringTexture.flipY = true;
 
   //--------- processings size
-
-  const planetSize = useMemo(() => {
-    if (!planetsInitialized) { return 0.1; }
-    return calculateRelativeScale(
-      params.volumetricMeanRadiusKm ?? 0.1,
-      objectsRelativeScale,
-      planetName
-    );
-  }, [planetsInitialized, params.volumetricMeanRadiusKm, objectsRelativeScale, planetName]);
 
   const planetEllipseRotation = useMemo(() => {
     const curve = new THREE.EllipseCurve(
@@ -267,6 +261,8 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
     return takeMoons;
    }, [planetName]);
 
+  //  const rotationCompensation = type === "moons" ? moonsRotationSpeed : 1;
+
   useFrame((state) => {
     if (!planetsInitialized) { return; }
     const time = state.clock.getElapsedTime();
@@ -287,12 +283,14 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
       <PlanetHUDComponent
         planetName={planetName}
         planetSize={planetSize}
+        extendData={type == "planets"}
       />
       <ObjectEllipse
         params={params}
         name={planetName}
+        type={type}
       />
-      <Trail
+      {/* <Trail
         local
         width={planetSize * 100}
         length={5}
@@ -300,15 +298,15 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         attenuation={(t) => t * t}
         // @ts-expect-error tired of typescript
         target={planetRef}
-      />
+      /> */}
       <group ref={planetRef}>
-        <mesh ref={guiRef}>
+        {/* <mesh ref={guiRef}>
           <PlanetInfoCircles
             planetName={planetName}
             planetSize={planetSize}
             params={params}
           />
-        </mesh>
+        </mesh> */}
         <group>
           {moons.map((moon, index) => {
             return (
@@ -317,6 +315,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
                 planetName={moon.name}
                 params={moon}
                 planetTexture={planetTexture}
+                type="moons"
               />
             ); 
           } )}

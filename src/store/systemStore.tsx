@@ -37,9 +37,9 @@ export const useSystemStore = create<SystemStoreStateT>((set) => ({
   trashInitialized: false,
 
   disablePlanets: false,
-  disableMoons: true,
+  disableMoons: false,
   disableRandomObjects: false,
-  disableTrash: true,
+  disableTrash: false,
 
   activeObjectName: "sun",
 
@@ -79,21 +79,21 @@ export const useSolarSystemStore = create<SolarSystemStoreStateT>((set) => ({
         semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
       },
       trashMiddle1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 15,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 2.5,
       },
       trashMiddle2: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 15,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 2.5,
       },
       trashOuter1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 45,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
       },
     },
     trashCollection: {
       trashInner1: generateTrash(trashInnerAmount, 0.9, 0.2, 1, "inner circle"),
       trashInner2: generateTrash(trashInnerAmount, 0.9, 0.2, 1, "inner circle", 2),
-      trashMiddle1: generateTrash(trashMiddleAmount, 6, 1.7, 1, "middle circle"),
-      trashMiddle2: generateTrash(trashMiddleAmount / 50, 6, 1.7, 1, "middle circle"),
-      trashOuter1: generateTrash(trashOuterAmount, 3.5, 1, 1, "outer circle"),
+      trashMiddle1: generateTrash(trashMiddleAmount, 3.5, 4, 1, "middle circle"),
+      trashMiddle2: generateTrash(trashMiddleAmount / 50, 3.5, 4, 1, "middle circle"),
+      trashOuter1: generateTrash(trashOuterAmount, 7, 1, 1, "outer circle"),
       trashCross: generateCrossingObjects(trashCross, [10, 10, 3]),
     },
   },

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useSystemStore } from "../store/systemStore";
 
 export const useSyncControlsWithStore = () => {
-  const { timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, orbitAngleOffset } =
+  const { timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, disableRandomObjects, disableMoons, disableTrash, orbitAngleOffset } =
     useControls({
       // solarScale: {
       //   value: 1,
@@ -41,6 +41,15 @@ export const useSyncControlsWithStore = () => {
         max: 360,
         step: 1,
       },
+      disableMoons: {
+        value: false,
+      },
+      disableTrash: {
+        value: false,
+      },
+      disableRandomObjects: {
+        value: false,
+      },
     });
 
   const updateSystemSettings = useSystemStore((state) => state.updateSystemSettings);
@@ -54,6 +63,9 @@ export const useSyncControlsWithStore = () => {
       objectsDistance,
       objectsRelativeScale,
       orbitAngleOffset,
+      disableMoons,
+      disableTrash,
+      disableRandomObjects,
     });
   }, [
     
@@ -62,6 +74,9 @@ export const useSyncControlsWithStore = () => {
     objectsDistance,
     objectsRelativeScale,
     orbitAngleOffset,
+    disableMoons,
+    disableTrash,
+    disableRandomObjects,
     updateSystemSettings,
   ]);
 };
