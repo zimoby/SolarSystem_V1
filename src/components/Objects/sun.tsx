@@ -4,7 +4,7 @@ import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 import { calculateObjectsRotation, calculateRelativeScale } from "../../utils/calculations";
 import { InfoAboutObject } from "../HUD/hud";
 import { starsScaleFactor } from "../../data/solarSystemData";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 import { AdditiveBlending, DoubleSide, Group } from "three";
@@ -12,7 +12,7 @@ import { AdditiveBlending, DoubleSide, Group } from "three";
 export const SunComponent = () => {
   const createSunTexture = useTexture(sunTexture);
   const sunData = useSolarSystemStore((state) => state.celestialBodies.stars.sun);
-  const { objectsRelativeScale, timeOffset } = useSystemStore.getState();
+  const { sunInitialized, objectsRelativeScale, timeOffset } = useSystemStore.getState();
   // console.log("sunData", sunData?.volumetricMeanRadiusKm);
   const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1) / starsScaleFactor;
 
@@ -22,6 +22,15 @@ export const SunComponent = () => {
   const sunOreolRef = useRef<Group>(null);
 
   const { camera } = useThree();
+
+  // console.log("sunData", sunData);
+
+  useEffect(() => {
+    if (!sunInitialized) {
+      console.log("Sun init");
+      useSystemStore.getState().updateSystemSettings({ sunInitialized: true });
+    }
+  }, [sunInitialized]);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();

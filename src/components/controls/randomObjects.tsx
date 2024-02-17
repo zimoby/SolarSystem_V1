@@ -1,10 +1,19 @@
 import ObjectsComponent from "../Objects/objects";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useEffect } from "react";
 
 const RandomObjects = () => {
   const getObjectsData = useSolarSystemStore((state) => state.celestialBodies.objects);
-  // const { isInitialized, isInitialized2 } = useSystemStore.getState();
-  const { disableRandomObjects } = useSystemStore((state) => state)
+  const { randomObjectsInitialized, disableRandomObjects } = useSystemStore((state) => state)
+
+  useEffect(() => {
+    if (!randomObjectsInitialized) {
+      console.log("RandomObjects init");
+      useSystemStore.getState().updateSystemSettings({ randomObjectsInitialized: true });
+    }
+  
+  }, [randomObjectsInitialized]);
+
 
   return (
     <>

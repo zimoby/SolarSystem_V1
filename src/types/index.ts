@@ -100,10 +100,17 @@ export interface SystemStoreStateT {
   isInitialized: boolean;
   isInitialized2: boolean;
   dataInitialized: boolean;
+
+  sunInitialized: boolean;
+  planetsInitialized: boolean;
+  randomObjectsInitialized: boolean;
+  trashInitialized: boolean;
+
   disablePlanets: boolean;
   disableMoons: boolean;
   disableRandomObjects: boolean;
   disableTrash: boolean;
+  
   activeObjectName: string;
   timeSpeed: number;
   timeOffset: number;

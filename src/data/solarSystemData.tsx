@@ -10,8 +10,8 @@ const relativeEarthSizeDependOnDistance = earchRadiusKm / distanceToSunKm;
 
 // console.log("relativeEarthSizeDependOnDistance", relativeEarthSizeDependOnDistance);
 
-export const planetsScaleFactor = relativeEarthSizeDependOnDistance * 500;
-export const starsScaleFactor = 10;
+export const planetsScaleFactor = relativeEarthSizeDependOnDistance * 1200;
+export const starsScaleFactor = 50;
 export const objectsRotationSpeed = 0.01
 
 export const yearInSeconds = 60 * 60 * 24 * 365;

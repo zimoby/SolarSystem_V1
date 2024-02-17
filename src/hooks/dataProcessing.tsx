@@ -182,6 +182,7 @@ export const useCelestialBodyUpdates = () => {
 
   const {
     isInitialized,
+    isInitialized2,
     timeSpeed,
     timeOffset,
     objectsDistance,
@@ -257,12 +258,17 @@ export const useCelestialBodyUpdates = () => {
     objectsSupportDataRef.current = supportData;
     useSystemStore.getState().setInitialized2(true);
     useSolarSystemStore.getState().batchUpdateAdditionalProperties(supportData);
-
     console.log("update supportData", supportData);
+
   }, [isInitialized, combinedObjects, objectsDistance, orbitAngleOffset, maxDistance, minDistance]);
+
+  // console.log("useCelestialBodyUpdates", isInitialized, isInitialized2);
 
   useFrame((state) => {
     if (!isInitialized) return;
+    if (!isInitialized2) return;
+
+    // console.log("useFrame");
 
     const time = state.clock.getElapsedTime();
     const updatedObjectsData: Record<string, ObjectsRealtimeDataT> = {};

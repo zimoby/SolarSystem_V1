@@ -31,6 +31,11 @@ export const useSystemStore = create<SystemStoreStateT>((set) => ({
   isInitialized2: false,
   dataInitialized: false,
 
+  sunInitialized: false,
+  planetsInitialized: false,
+  randomObjectsInitialized: false,
+  trashInitialized: false,
+
   disablePlanets: false,
   disableMoons: true,
   disableRandomObjects: false,

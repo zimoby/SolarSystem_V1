@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../../store/systemStore";
 import {
   calculateObjectsRotation,
   calculateRelativeScale,
@@ -166,6 +166,9 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
     objectsRelativeScale,
     timeSpeed
   } = useSystemStore.getState();
+
+  const { objectDefaultColors } = useSystemColorsStore.getState();
+
 
   const {
     siderealRotationPeriodHrs,
@@ -336,7 +339,10 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
               updateActiveName(planetName);
             }}
           >
-            <meshStandardMaterial map={planetTexture} />
+            <meshStandardMaterial
+              color={!planetTexture && objectDefaultColors[planetName] || "white"}
+              map={planetTexture}
+            />
 
           </Sphere>
           {/* <Sphere

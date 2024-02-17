@@ -9,7 +9,9 @@ import neptuneTexture from "../../assets/2k_neptune.jpg";
 import saturnTexture from "../../assets/2k_saturn.jpg";
 import uranusTexture from "../../assets/2k_uranus.jpg";
 import venusTexture from "../../assets/2k_venus_surface.jpg";
-import { useSolarSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useEffect } from "react";
+import { OrbitDisk } from "../Objects/disk";
 
 // function SelectToZoom({ children }) {
 //   const api = useBounds()
@@ -22,15 +24,30 @@ import { useSolarSystemStore } from "../../store/systemStore";
 
 const SolarSystemPlanets = () => {
   const getPlanetsData = useSolarSystemStore((state) => state.celestialBodies.planets);
+  const { planetsInitialized } = useSystemStore((state) => state)
 
-  const createEarthTexture = useTexture(earthTexture);
-  const createJupiterTexture = useTexture(jupiterTexture);
-  const createMarsTexture = useTexture(marsTexture);
-  const createMercuryTexture = useTexture(mercuryTexture);
-  const createNeptuneTexture = useTexture(neptuneTexture);
-  const createSaturnTexture = useTexture(saturnTexture);
-  const createUranusTexture = useTexture(uranusTexture);
-  const createVenusTexture = useTexture(venusTexture);
+  const [
+    createEarthTexture,
+    createJupiterTexture,
+    createMarsTexture,
+    createMercuryTexture,
+    createNeptuneTexture,
+    createSaturnTexture,
+    createUranusTexture,
+    createVenusTexture
+  ] = useTexture([
+    earthTexture,
+    jupiterTexture,
+    marsTexture,
+    mercuryTexture,
+    neptuneTexture,
+    saturnTexture,
+    uranusTexture,
+    venusTexture
+  ]);
+
+
+  // console.log("SolarSystemPlanets");
 
   const mapedTextures = {
     earth: createEarthTexture,
@@ -42,6 +59,13 @@ const SolarSystemPlanets = () => {
     uranus: createUranusTexture,
     venus: createVenusTexture,
   };
+
+  useEffect(() => {
+    if (!planetsInitialized) {
+      console.log("SolarSystemPlanets init");
+      useSystemStore.getState().updateSystemSettings({ planetsInitialized: true });
+    }
+  }, [planetsInitialized]);
 
   return (
     <>
@@ -59,6 +83,7 @@ const SolarSystemPlanets = () => {
           // </Bounds>
         );
       })}
+      <OrbitDisk size={40} positionYoffset={-2} opacity={0.1} />
     </>
   );
 };

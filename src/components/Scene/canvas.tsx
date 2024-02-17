@@ -5,10 +5,13 @@ import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
+import { useSystemStore } from "../../store/systemStore";
 
 const cameraDistance = 100;
 
 export const ThreeJsCanvas = () => {
+	const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized} = useSystemStore.getState();
+
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
       { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
@@ -18,20 +21,6 @@ export const ThreeJsCanvas = () => {
       { name: Controls.jump, keys: ["Space"] },
     ], []
   );
-
-	// const particlePositionsRef = useRef([]);
-
-	// const dist = 5;
-
-	// useEffect(() => {
-	// 		const positions = new Array(50).fill(0).map(() => ({
-	// 				x: Math.random() * dist - dist / 2,
-	// 				y: Math.random() * dist - dist / 2,
-	// 				z: Math.random() * dist - dist / 2,
-	// 		}));
-	// 		particlePositionsRef.current = positions;
-	// }, []);
-
 
   return (
     <KeyboardControls map={map}>
