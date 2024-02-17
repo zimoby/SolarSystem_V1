@@ -1,13 +1,14 @@
-import { Box, Center, Html, Svg } from "@react-three/drei"
+import { Html } from "@react-three/drei"
 import { svgLogo } from "../../assets/logo"
 import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { lerp } from "three/src/math/MathUtils.js";
+import { Group } from "three";
 
 
 
 export const LogoIntroAnimation = () => {
-    const logoRef = useRef();
+    const logoRef = useRef<Group>(null);
 
     const { viewport } = useThree();
 
@@ -16,18 +17,15 @@ export const LogoIntroAnimation = () => {
     // calculate logoRef boundaries
 
 
-    useFrame((state, delta) => {
-        // logoRef.current.rotation.y += delta;
-        const time = state.clock.getElapsedTime();
+    useFrame((state) => {
+        if (logoRef.current) {
+            const time = state.clock.getElapsedTime();
 
-        if (time > 1) {
-            logoRef.current.position.x = lerp(logoRef.current.position.x, -(viewport.width / 2 -4), 0.1);
-            // logoRef.current.position.y = lerp(logoRef.current.position.y, (viewport.height / 2 ), 0.1);
-            logoRef.current.position.y = lerp(logoRef.current.position.y, (viewport.height / 2 ), 0.1);
+            if (time > 1) {
+                logoRef.current.position.x = lerp(logoRef.current.position.x, -(viewport.width / 2 -4), 0.1);
+                logoRef.current.position.y = lerp(logoRef.current.position.y, (viewport.height / 2 ), 0.1);
+            }
         }
-        // if (time > 1) {
-        //     // logoRef.current.position.x = lerp(logoRef.current.position.x, -(viewport.width / 2 -4), 0.1);
-        // }
     })
 
     return (

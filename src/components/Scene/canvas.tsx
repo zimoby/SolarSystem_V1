@@ -1,15 +1,11 @@
-import { Box, Html, KeyboardControls, KeyboardControlsEntry, Svg } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Html, KeyboardControls, KeyboardControlsEntry } from "@react-three/drei";
+import { Suspense, useMemo } from "react";
 import { Controls } from "../../types";
 import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
-import { LogoIntroAnimation } from "./logoAnim";
 
-import svg from "../../assets/logo.svg";
-import { NeuralNetwork } from "./neuralTest";
-import { NeuralNetwork2 } from "./neuralTest copy";
 const cameraDistance = 100;
 
 export const ThreeJsCanvas = () => {

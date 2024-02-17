@@ -1,15 +1,10 @@
-import { Environment, GizmoHelper, GizmoViewport, Grid, PerspectiveCamera, Stars, useTexture } from "@react-three/drei";
-import galaxy from "../../assets/2k_stars_milky_way.jpg";
-import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
-import { PointLight } from "three";
-import { useThree } from "@react-three/fiber";
+import { GizmoHelper, GizmoViewport, Grid, Stars } from "@react-three/drei";
 import { useEffect, useRef } from "react";
+import { PointLight } from "three";
 
 export const SceneSetup = () => {
 
-  const { gridSize, ...gridConfig } = {
-    gridSize: [10, 10],
+  const { ...gridConfig } = {
     cellSize: 0.1,
     cellThickness: 0.5,
     cellColor: "#ffffff", //6f6f6f
@@ -24,7 +19,7 @@ export const SceneSetup = () => {
 
   // const {scene} = useThree();
   
-  const lightRef = useRef();
+  const lightRef = useRef<PointLight>(null);
 
   // var light2;
   //   light2 = new THREE.PointLight(color, intensity, distance, decay);
@@ -51,7 +46,7 @@ export const SceneSetup = () => {
     if (lightRef.current) {
       lightRef.current.position.set(0, 0.5, 0);
       lightRef.current.shadow.bias = 0.0001;
-      lightRef.current.shadow.darkness = 0.1;
+      // lightRef.current.shadow.darkness = 0.1;
       lightRef.current.intensity = 5;
       lightRef.current.distance = 0;
       lightRef.current.decay = 0;
@@ -99,7 +94,7 @@ export const SceneSetup = () => {
       <ambientLight intensity={0.4} />
       <Stars />
 
-      <Grid position={[0, 0.3, 0]} args={gridSize} {...gridConfig} />
+      <Grid position={[0, 0.3, 0]} args={[10, 10]} {...gridConfig} />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
         <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
       </GizmoHelper>

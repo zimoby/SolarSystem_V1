@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 
-
-import { useRef, useMemo, useEffect, forwardRef } from 'react'
+import { useRef, useMemo, forwardRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { AdditiveBlending, BufferGeometry, Color, Float32BufferAttribute, LineBasicMaterial, LineSegments, Vector3 } from 'three'
+import {  BufferGeometry,  Float32BufferAttribute, LineBasicMaterial, Vector3 } from 'three'
 // import { min } from 'lodash'
 
 export const NeuralNetwork2 = forwardRef((props, ref) => {

@@ -1,36 +1,45 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { useSolarSystemStore, useSystemColorsStore, useSystemObjectsStore, useSystemStore } from "../../store/systemStore";
+import { forwardRef, useRef } from "react";
+import { useSolarSystemStore, useSystemColorsStore } from "../../store/systemStore";
 import * as THREE from "three";
-import { Html, Line, Segment, Segments, Sphere } from "@react-three/drei";
-import { invalidate, useFrame, extend } from "@react-three/fiber";
+import { Html, Segment, Segments } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
 // extend({ Line });
 
-export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData = true, typeOfObject = "" }) => {
-  const { lineUnderOrbit, lineBelowOrbit, directLine } = useSystemColorsStore.getState().hudColors;
-  const planetHuiRef = useRef();
-  const planetHuiRefCenter = useRef();
-  // const planetPositionRef = useRef(new THREE.Vector3(0, 0, 0));
-  // const lineRef2 = useRef(new THREE.Vector3(0, 0, 0));
-  const segmentRef = useRef();
-  const segmentRef2 = useRef();
+type PlanetHUDComponentProps = {
+  planetName: string;
+  planetSize: number;
+  extendData?: boolean;
+  typeOfObject?: string;
+};
 
-  // console.log("line", segmentRef.current);
+interface SegmentRef {
+  start: THREE.Vector3;
+  end: THREE.Vector3;
+  color: THREE.Color;
+}
+
+export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "" }) => {
+  const { lineUnderOrbit, lineBelowOrbit } = useSystemColorsStore.getState().hudColors;
+  // const planetHuiRef = useRef<THREE.Group>();
+  // const planetHuiRefCenter = useRef<THREE.Group>();
+  const segmentRef = useRef<SegmentRef>(null);
+  const segmentRef2 = useRef<SegmentRef>(null);
 
   useFrame(() => {
-    const newPosition = useSolarSystemStore.getState().properties[planetName]?.position;
+    const newPosition = useSolarSystemStore.getState().properties[planetName]?.position as THREE.Vector3 | undefined;
     if (newPosition) {
-      planetHuiRef.current.position.set(newPosition.x, newPosition.y - planetSize, newPosition.z);
-      planetHuiRefCenter.current.position.set(newPosition.x, newPosition.y, newPosition.z);
+      if (segmentRef.current) {
+        segmentRef.current.start.set(0,0,0);
+        segmentRef.current.end.copy(newPosition);
+      }
 
-      segmentRef.current.start.set(0,0,0);
-      segmentRef.current.end.copy(newPosition);
-
-      segmentRef2.current.start.set(newPosition.x, 0, newPosition.z);
-      segmentRef2.current.end.copy(newPosition);
-
-      segmentRef2.current.color.set( newPosition.y > 0 ? lineUnderOrbit.color : lineBelowOrbit.color );
+      if (segmentRef2.current) {
+        segmentRef2.current.start.set(newPosition.x, 0, newPosition.z);
+        segmentRef2.current.end.copy(newPosition);
+        segmentRef2.current.color.set( newPosition.y > 0 ? lineUnderOrbit.color : lineBelowOrbit.color );
+      }
     }
   });
 
@@ -42,12 +51,10 @@ export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData 
   return (
     <group>
       <InfoAboutObject
-        ref={planetHuiRef}
-        offset={planetSize}
         params={{ name: planetName, extendData}}
         typeOfObject={typeOfObject}
       />
-      <group ref={planetHuiRefCenter}>
+      <group>
         <Html center>
           <div className={`rotate-45`}>
             <div className={`animate-ping size-5 ${selectionType} `} />
@@ -67,7 +74,15 @@ export const PlanetHUDComponent = ({ params, planetName, planetSize, extendData 
   );
 };
 
-export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, params, typeOfObject = "" }, ref) => {
+type InfoAboutObjectProps = {
+  params: {
+    name: string;
+    extendData?: boolean;
+  };
+  typeOfObject?: string;
+};
+
+export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(({ params, typeOfObject = "" }) => {
 
   let textStyle;
   let bgStyle;
@@ -93,13 +108,11 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
 
   const positionTextRef = useRef<HTMLParagraphElement>(null);
 
-
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const time = state.clock.getElapsedTime();
     const timeToFrames = Math.floor(time * 60);
     if (timeToFrames % 15 === 0) {
-      const newPosition = useSolarSystemStore.getState().properties[params.name]?.position;
+      const newPosition = useSolarSystemStore.getState().properties[params.name]?.position as THREE.Vector3 | undefined;
       if (newPosition && positionTextRef.current) {
         positionTextRef.current.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`;
       }
@@ -107,7 +120,7 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
   });
   
   return (
-    <group ref={ref} >
+
       <Html center>
         <div
           className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
@@ -122,6 +135,6 @@ export const InfoAboutObject = forwardRef( ({ position = [0,0,0], offset = 0, pa
           )}
         </div>
       </Html>
-    </group>
+
   );
 });

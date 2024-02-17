@@ -1,24 +1,34 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { generateTrash } from "../../utils/generators";
-import { useSolarAmounOfItems, useSolarSystemStore, useSystemStore } from "../../store/systemStore";
-import { Box, Html, Instance, Instances, Point, PointMaterial, Points, Sphere } from "@react-three/drei";
+import { useEffect, useMemo, useRef } from "react";
+import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { Html, Point, PointMaterial, Points } from "@react-three/drei";
 
-import { Euler, MathUtils, Vector3 } from "three";
+import { MathUtils, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
-import { random } from "maath";
-import { NeuralNetwork2 } from "../Scene/neuralTest copy";
 import { calculateRelativeDistanceXY } from "../../utils/calculations";
+import { CrossingTrashParamsT, TrashParamsT } from "../../types";
 
-const SimplePointsWrapper = ({ points, rotSpeed, size }) => {
-  // const { solarScale } = useSystemStore.getState();
-  const ref1 = useRef();
+type SimplePointsWrapperProps = {
+  points: TrashParamsT[];
+  rotSpeed: number;
+  size: number;
+};
+
+const SimplePointsWrapper = ({ points, rotSpeed, size }: SimplePointsWrapperProps) => {
+  const ref1 = useRef<THREE.Points>();
 
   useFrame((_, delta) => {
-      ref1.current.rotation.z = ref1.current.rotation.z + delta / rotSpeed;
+    if (ref1.current) {
+      ref1.current.rotation.z += delta / rotSpeed;
+    }
   });
 
   return (
-    <Points limit={points.length} rotation-x={Math.PI / 2} ref={ref1}>
+    <Points
+      limit={points.length}
+      rotation-x={Math.PI / 2}
+      // @ts-expect-error tired of typescript
+      ref={ref1}
+    >
       <PointMaterial
         vertexColors
         size={size}
@@ -27,14 +37,20 @@ const SimplePointsWrapper = ({ points, rotSpeed, size }) => {
         toneMapped={false}
       />
       {points.map((dot, i) => (
-        <Point key={i} index={i} position={dot.position} />
+        <Point key={i} position={dot.position} />
       ))}
     </Points>
-  )
-}
+  );
+};
 
-const wrapIntoBoundaries = (pos, boundary) => {
-  const newPos = { ...pos };
+type Position = {
+  x: number;
+  y: number;
+  z: number;
+};
+
+const wrapIntoBoundaries = (pos: Position, boundary: number[]): Position => {
+  const newPos: Position = { ...pos };
   if (pos.x > boundary[0]) newPos.x = -boundary[0];
   if (pos.x < -boundary[0]) newPos.x = boundary[0];
   if (pos.y > boundary[1]) newPos.y = -boundary[1];
@@ -42,45 +58,30 @@ const wrapIntoBoundaries = (pos, boundary) => {
   if (pos.z > boundary[2]) newPos.z = -boundary[2];
   if (pos.z < -boundary[2]) newPos.z = boundary[2];
   return newPos;
-}
+};
 
-const PointsCrossSolarSystem = ({ points }) => {
-  const pointRefs = useRef([]);
-  const pointsVectorRefs = useRef([]);
-  // const pointsForLinesRef = useRef([]);
-  // pointRefs.current = points.map((_, i) => pointRefs.current[i]);
-  // pointsForLinesRef.current = points.map((_, i) => pointsForLinesRef.current[i]);
+const PointsCrossSolarSystem = ({ points }: {points: CrossingTrashParamsT[]}) => {
+  const pointRefs = useRef<THREE.Points[]>([]);
+  const pointsVectorRefs = useRef<Vector3[]>([]);
   const boundary = [10, 10, 3];
   const allSpeed = 10;
 
   useEffect(() => {
     pointRefs.current = points.map((_, i) => pointRefs.current[i]);
-    pointsVectorRefs.current = points.map((dot, i) => new Vector3(dot.position.x, dot.position.y, dot.position.z));
+    pointsVectorRefs.current = points.map((dot) => new Vector3(dot.position.x, dot.position.y, dot.position.z));
 
     points.forEach((dot, i) => {
       if (pointRefs.current[i]) {
         pointRefs.current[i].position.x = dot.position.x;
         pointRefs.current[i].position.y = dot.position.y;
         pointRefs.current[i].position.z = dot.position.z;
-        // pointsForLinesRef.current[i].position.x = dot.position.x;
-        // pointsForLinesRef.current[i].position.y = dot.position.y;
-        // pointsForLinesRef.current[i].position.z = dot.position.z;
-
       }
 
-      
-      // if (pointsForLinesRef.current[i]) {
-      //   pointsForLinesRef.current[i].position.x = dot.position.x;
-      //   pointsForLinesRef.current[i].position.y = dot.position.y;
-      //   pointsForLinesRef.current[i].position.z = dot.position.z;
-
-      // }
     });
   }, [points]); 
 
-  useFrame((state, delta) => {
-    // const t = state.clock.getElapsedTime();
-    const speedFactor = delta * allSpeed; // Adjust 'allSpeed' as necessary to ensure movement is visible
+  useFrame((_, delta) => {
+    const speedFactor = delta * allSpeed;
 
     points.forEach((dot, i) => {
       const currentRef = pointRefs.current[i];
@@ -93,18 +94,12 @@ const PointsCrossSolarSystem = ({ points }) => {
   
         const wrappedPos = wrapIntoBoundaries(newPos, boundary);
   
-        // currentRef.position.x = wrappedPos.x;
-        // currentRef.position.y = wrappedPos.y;
-        // currentRef.position.z = wrappedPos.z;
-
         currentRef.position.set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
         pointsVectorRefs.current[i].set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
         
       }
     });
   });
-
-  // console.log("points", pointsVectorRefs);
 
   const style0 = "" 
   const style1 = "size-2 border border-red-500 opacity-50";
@@ -121,15 +116,6 @@ const PointsCrossSolarSystem = ({ points }) => {
 
   return (
     <>
-      {/* <Box args={[10 * 2, 3 * 2, 10 * 2]}>
-        <PointMaterial
-          vertexColors
-          size={3}
-
-          wireframe
-          toneMapped={false}
-        />
-      </Box> */}
       {/* <NeuralNetwork2 ref={pointsVectorRefs} /> */}
       <Points limit={points.length} rotation-x={Math.PI / 2}>
         <PointMaterial
@@ -139,8 +125,8 @@ const PointsCrossSolarSystem = ({ points }) => {
           depthWrite={false}
           toneMapped={false}
         />
-        {points.map((dot, i) => (
-          <Point key={i} ref={(el) => (pointRefs.current[i] = el)}>
+        {points.map((_dot, i) => (
+          <Point key={i} ref={(el) => (pointRefs.current[i] = el as unknown as THREE.Points)}>
             <Html center>
               <div className={dotStyles[selectRandomStyle()]} />
             </Html>
@@ -151,8 +137,14 @@ const PointsCrossSolarSystem = ({ points }) => {
   );
 };
 
-const PointsOrbitRotation = ({ points, text = false, name }) => {
-  const pointRefs = useRef([]);
+type PointsOrbitRotationProps = {
+  points: TrashParamsT[];
+  text?: boolean;
+  name: string;
+};
+
+const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotationProps) => {
+  const pointRefs = useRef<THREE.Points[]>([]);
   pointRefs.current = points.map((_, i) => pointRefs.current[i]);
 
   const baseSpeed = 0.02;
@@ -163,18 +155,15 @@ const PointsOrbitRotation = ({ points, text = false, name }) => {
     return points.map((dot) => (1 / (dot.distance - 1)) * mult);
   }, [points, text]);
 
-  useFrame((state, delta) => {
+  useFrame((state) => {
     const t = state.clock.getElapsedTime() * Math.PI * 2;
 
     points.forEach((dot, i) => {
-      // const speedMultiplier = 1 / (dot.distance - 1) * 3;
       const currentRef = pointRefs.current[i];
       if (currentRef) {
         const newAngle = dot.angle + baseSpeed * t * dotsSpeedMultiplier[i];
-
         const newX = dot.distance * Math.cos(newAngle);
         const newY = dot.distance * Math.sin(newAngle);
-
         currentRef.position.x = newX;
         currentRef.position.y = newY;
       }
@@ -192,7 +181,7 @@ const PointsOrbitRotation = ({ points, text = false, name }) => {
       />
       {points.map((dot, i) => (
         <group key={name + i}>
-          <Point ref={(el) => (pointRefs.current[i] = el)} key={i}>
+          <Point ref={(el) => (pointRefs.current[i] = el as unknown as THREE.Points)} key={i}>
             {text && (
               <group>
                 <Html center>
@@ -260,15 +249,8 @@ export const TrashComponent = () => {
 
   const { objectsDistance, maxDistance, minDistance } = useSystemStore.getState();
 
-  // const { solarScale } = useSystemStore.getState();
-
-  //   const { disableTrash, objectsDistance, solarScale } = useSystemStore((state) => state);
-  //   const trashInnerAmount = useSolarAmounOfItems((state) => state.trashInnerAmount);
-  //   const trashMiddleAmount = useSolarAmounOfItems((state) => state.trashMiddleAmount);
-  //   const trashOuterAmount = useSolarAmounOfItems((state) => state.trashOuterAmount);
-
   const trashInner1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner1);
-  const trashInner2 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner2);
+  // const trashInner2 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner2);
   const trashMiddle1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashMiddle1);
   const trashMiddle2 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashMiddle2);
   const trashOuter1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashOuter1);
@@ -293,22 +275,22 @@ export const TrashComponent = () => {
   const innerSpeed = 10;
   const outerSpeed = 100;
 
-  const ref1 = useRef();
-  const ref2 = useRef();
-  const ref3 = useRef();
+  // const ref1 = useRef();
+  // const ref2 = useRef();
+  // const ref3 = useRef();
   //   const ref4 = useRef()
-  useFrame((_, delta) => {
+  // useFrame((_, delta) => {
 
-    // console.log("delta", useSolarSystemStore.getState().celestialBodies.trash.trashInner1.semimajorAxis10_6Km);
-    if (generateInnerTrash) {
-      // ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
-      // ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
-    }
-    if (generateOuterTrash) {
-      // ref3.current.rotation.z = ref3.current.rotation.z + delta / outerSpeed;
-    }
-    // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
-  });
+  //   // console.log("delta", useSolarSystemStore.getState().celestialBodies.trash.trashInner1.semimajorAxis10_6Km);
+  //   if (generateInnerTrash) {
+  //     // ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
+  //     // ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
+  //   }
+  //   if (generateOuterTrash) {
+  //     // ref3.current.rotation.z = ref3.current.rotation.z + delta / outerSpeed;
+  //   }
+  //   // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
+  // });
 
   // useFrame((state) => {
   //   const time = state.clock.getElapsedTime();
@@ -358,7 +340,7 @@ export const TrashComponent = () => {
       )}
 
       {generateMiddleTrash && (
-        <group scale={1,1,1}>
+        <group scale={[1,1,1]}>
           <PointsOrbitRotation points={trashMiddle1} name={"dots"} />
           <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
         </group>

@@ -1,4 +1,4 @@
-import { Bounds, useBounds, useTexture } from "@react-three/drei";
+import { useTexture } from "@react-three/drei";
 import PlanetComponent from "../Objects/planet";
 
 import earthTexture from "../../assets/2k_earth_daymap.jpg";
@@ -53,7 +53,7 @@ const SolarSystemPlanets = () => {
             key={planetName + index}
             planetName={planetName}
             params={getPlanetsData[planetName]}
-            planetTexture={mapedTextures[planetName]}
+            planetTexture={mapedTextures[planetName as keyof typeof mapedTextures]}
           />
           // </SelectToZoom>
           // </Bounds>

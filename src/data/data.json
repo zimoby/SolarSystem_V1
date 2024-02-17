@@ -195,7 +195,7 @@
         "planetaryRingSystem": false,
         "semimajorAxis10_6Km": 5906.38,
         "siderealOrbitPeriodDays": 90560,
-        "tropicalOrbitPeriodDays": "Unknown",
+        "tropicalOrbitPeriodDays": null,
         "perihelion10_6Km": 4436.82,
         "aphelion10_6Km": 7375.93,
         "synodicPeriodDays": 366.73,

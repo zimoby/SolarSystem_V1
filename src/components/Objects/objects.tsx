@@ -1,40 +1,42 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
-import {
-  calculateRelativeScale,
-} from "../../utils/calculations";
-import * as THREE from "three";
+import { calculateRelativeScale } from "../../utils/calculations";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Circle, Line, Point, PointMaterial, Points, Sphere, Trail } from "@react-three/drei";
+import { Point, PointMaterial, Points } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
-import { useFrame, useThree } from "@react-three/fiber";
-// import { planetsScaleFactor } from "../../data/solarSystemData";
+import { useFrame } from "@react-three/fiber";
+import { ObjectsAdditionalDataT } from "../../types";
+import { TextureImageData } from "three/src/textures/types.js";
+import { Group, Object3DEventMap, Vector3 } from "three";
 
-const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
-  const planetSize = calculateRelativeScale(
-    params.volumetricMeanRadiusKm,
-    useSystemStore.getState().objectsRelativeScale,
-    planetName
-  );
+const ObjectsComponent = ({ planetName, params }: { planetName: string, params: ObjectsAdditionalDataT, planetTexture?: TextureImageData | null }) => {
 
-  const [selected, setSelected] = useState(false);
+  const planetSize: number = useMemo(() => {
+    // console.log("test", planetName, params.volumetricMeanRadiusKm);
+    return calculateRelativeScale(
+      params.volumetricMeanRadiusKm ?? 0,
+      useSystemStore.getState().objectsRelativeScale,
+      planetName
+    );
+  }, [params.volumetricMeanRadiusKm, planetName]);
 
-  const objectRef = useRef();
+  // const { isInitialized, isInitialized2 } = useSystemStore.getState();
+
+  // console.log("planetName", planetName, isInitialized, isInitialized2, params);
+
+  const objectRef = useRef<Group<Object3DEventMap>>(null);
+  const typeOfObject = "object";
 
   useFrame(() => {
-    // planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
     if (objectRef.current) {
-      objectRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
+      objectRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position as Vector3);
     }
-    // objectRef.current.rotation.y = state.properties[planetName]?.rotation.y;
   });
-
-  const typeOfObject = "object";
 
   return (
     <group>
-      <PlanetHUDComponent params={params} planetName={planetName} planetSize={planetSize} extendData={false} typeOfObject={typeOfObject} />
-      <ObjectEllipse params={params} name={planetName} objSelected={selected} color={params.color} opacity={0.3} />
+      <PlanetHUDComponent planetName={planetName} planetSize={planetSize} extendData={false} typeOfObject={typeOfObject} />
+      <ObjectEllipse params={params} name={planetName} color={params.color} opacity={0.3} />
       <group ref={objectRef}>
         <Points position={[0, 0, 0]}>
           <PointMaterial
@@ -46,15 +48,6 @@ const ObjectsComponent = ({ planetName, params, planetTexture = null }) => {
           />
           <Point position={[0, 0, 0]} />
         </Points>
-        {/* <Trail
-          local
-          width={planetSize * 100}
-          length={5}
-          color={"white"}
-          attenuation={(t) => t * t}
-          target={objectRef}
-        /> */}
-
       </group>
     </group>
   );

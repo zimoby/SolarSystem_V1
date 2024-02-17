@@ -1,22 +1,29 @@
 import solarData from "../data/data.json";
+import { OnlyNumbericSolarObjectParamsBasicT, SolarObjectParamsBasicT } from "../types";
 
-export const normalizeDataToEarth = (objData, ignoreToNormalize) => {
-  const earthData = solarData["earth"];
+
+export const normalizeDataToEarth = (
+  objData: OnlyNumbericSolarObjectParamsBasicT,
+  ignoreToNormalize: string[]
+): OnlyNumbericSolarObjectParamsBasicT => {
+  const earthData = solarData["earth"] as OnlyNumbericSolarObjectParamsBasicT;
   const normalizedData = Object.keys(objData).reduce((acc, key) => {
-    const planetValue = objData[key];
-    const earthValue = earthData[key];
 
-    // console.log("planetValue", earthData.semimajorAxis10_6Km);
+    if (typeof earthData[key as keyof OnlyNumbericSolarObjectParamsBasicT] === "undefined") {
+      return acc;
+    }
+
+    const planetValue = objData[key as keyof OnlyNumbericSolarObjectParamsBasicT];
+    const earthValue = earthData[key as keyof OnlyNumbericSolarObjectParamsBasicT];
 
     if (key === "anchorXYOffset") {
-      // console.log("planetValue", planetValue, earthData.semimajorAxis10_6Km);
       return {
         ...acc,
         [key]: {
-          x: planetValue.x / earthData.semimajorAxis10_6Km,
-          y: planetValue.y / earthData.semimajorAxis10_6Km,
+          x: ((planetValue as unknown as { x: number; y: number; })?.x ?? 0),
+          y: ((planetValue as unknown as { x: number; y: number; })?.y ?? 0),
         },
-      };
+      }
     } else if (
       typeof planetValue !== "number" ||
       typeof earthValue !== "number" ||
@@ -30,7 +37,6 @@ export const normalizeDataToEarth = (objData, ignoreToNormalize) => {
       };
     }
 
-    // console.log("planetValue", planetValue, earthValue);
     const normalizedValue = planetValue / earthValue;
     return {
       ...acc,
@@ -38,16 +44,18 @@ export const normalizeDataToEarth = (objData, ignoreToNormalize) => {
     };
   }, {});
 
-
   return normalizedData;
 };
 
-export const filterObjectData = (objData, usedProperties) => {
+export const filterObjectData = (
+  objData: SolarObjectParamsBasicT,
+  usedProperties: string[]
+): SolarObjectParamsBasicT => {
   return Object.keys(objData).reduce((acc, key) => {
     if (usedProperties.includes(key)) {
       return {
         ...acc,
-        [key]: objData[key],
+        [key]: objData[key as keyof SolarObjectParamsBasicT],
       };
     }
     return acc;

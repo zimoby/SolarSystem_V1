@@ -3,6 +3,7 @@ import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
 
 const RandomObjects = () => {
   const getObjectsData = useSolarSystemStore((state) => state.celestialBodies.objects);
+  // const { isInitialized, isInitialized2 } = useSystemStore.getState();
   const { disableRandomObjects } = useSystemStore((state) => state)
 
   return (
