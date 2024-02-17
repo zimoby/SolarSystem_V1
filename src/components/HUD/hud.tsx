@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from "react";
+import { Ref, forwardRef, useRef } from "react";
 import { useSolarSystemStore, useSystemColorsStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Segment, Segments } from "@react-three/drei";
@@ -18,18 +18,30 @@ interface SegmentRef {
   start: THREE.Vector3;
   end: THREE.Vector3;
   color: THREE.Color;
+  planetSize: number;
 }
 
-export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "" }) => {
+const planetHui1Pos = new THREE.Vector3(0,0,0);
+
+export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "", planetSize }) => {
   const { lineUnderOrbit, lineBelowOrbit } = useSystemColorsStore.getState().hudColors;
-  // const planetHuiRef = useRef<THREE.Group>();
-  // const planetHuiRefCenter = useRef<THREE.Group>();
+  const planetHuiRef = useRef<THREE.Group>();
+  const planetHuiRefCenter = useRef<THREE.Group>();
   const segmentRef = useRef<SegmentRef>(null);
   const segmentRef2 = useRef<SegmentRef>(null);
 
   useFrame(() => {
     const newPosition = useSolarSystemStore.getState().properties[planetName]?.position as THREE.Vector3 | undefined;
     if (newPosition) {
+
+      if (planetHuiRef.current) {
+        planetHuiRef.current.position.copy(planetHui1Pos.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
+      }
+
+      if (planetHuiRefCenter.current) {
+        planetHuiRefCenter.current.position.set(newPosition.x, newPosition.y, newPosition.z);
+      }
+
       if (segmentRef.current) {
         segmentRef.current.start.set(0,0,0);
         segmentRef.current.end.copy(newPosition);
@@ -51,10 +63,12 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetNa
   return (
     <group>
       <InfoAboutObject
+        // @ts-expect-error tired of typescript
+        ref={planetHuiRef}
         params={{ name: planetName, extendData}}
         typeOfObject={typeOfObject}
       />
-      <group>
+      <group ref={planetHuiRefCenter}>
         <Html center>
           <div className={`rotate-45`}>
             <div className={`animate-ping size-5 ${selectionType} `} />
@@ -82,7 +96,7 @@ type InfoAboutObjectProps = {
   typeOfObject?: string;
 };
 
-export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(({ params, typeOfObject = "" }) => {
+export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(({ params, typeOfObject = "" }, ref) => {
 
   let textStyle;
   let bgStyle;
@@ -120,7 +134,7 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
   });
   
   return (
-
+    <group ref={ref as Ref<THREE.Group<THREE.Object3DEventMap>>} >
       <Html center>
         <div
           className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
@@ -135,6 +149,6 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
           )}
         </div>
       </Html>
-
+    </group>
   );
 });
