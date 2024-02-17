@@ -3,7 +3,7 @@
 
 import { useRef, useMemo, forwardRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import {  BufferGeometry,  Float32BufferAttribute, LineBasicMaterial, Vector3 } from 'three'
+import {  BufferGeometry,  Float32BufferAttribute, Vector3 } from 'three'
 // import { min } from 'lodash'
 
 export const NeuralNetwork2 = forwardRef((props, ref) => {
@@ -56,7 +56,7 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
     // }, []);
     
 
-    useFrame((_, delta) => {
+    useFrame(() => {
         // setupGeometries();
 
         if (!ref.current) { return; }
@@ -65,9 +65,9 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
         // console.log('ref', ref.current);
         
         numConnected = 0
-        const maxConnections = 20;
-        const minDistance = 1;
-        const lineMaterial = new LineBasicMaterial({ color: 0xffffff });
+        // const maxConnections = 20;
+        // const minDistance = 1;
+        // const lineMaterial = new LineBasicMaterial({ color: 0xffffff });
         const points = ref.current.map(pos => new Vector3(pos.x, pos.y, pos.z));
         
         // const points2 = ref.current.map((particleRef, index) => {
@@ -95,7 +95,7 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
         // Calculate connections based on distance
         for (let i = 0; i < ref.current.length; i++) {
             for (let j = i + 1; j < ref.current.length; j++) {
-                const distance = points[i].distanceTo(points[j]);
+                // const distance = points[i].distanceTo(points[j]);
 
                 // console.log('distance', distance);
     
@@ -149,26 +149,26 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
 
 
     
-    const setupGeometries = () => {
+    // const setupGeometries = () => {
 
-    };
+    // };
 
-    const updateAnimation = (delta) => {
-        // This function is supposed to update the particles' positions
-        // and potentially recalculate the connections based on those positions.
-        // Since `ref` is expected to be an array of position vectors (or similar structure),
-        // we directly update the positions of particles here.
+    // const updateAnimation = (delta) => {
+    //     // This function is supposed to update the particles' positions
+    //     // and potentially recalculate the connections based on those positions.
+    //     // Since `ref` is expected to be an array of position vectors (or similar structure),
+    //     // we directly update the positions of particles here.
 
-        if (ref.current && linesGeometryRef.current) {
-            // Assuming ref.current is an array of { x, y, z } objects or similar
-            const positions = ref.current.flatMap(({ x, y, z }) => [x, y, z]);
-            const positionsAttribute = new Float32BufferAttribute(positions, 3);
-            linesGeometryRef.current.setAttribute('position', positionsAttribute);
+    //     if (ref.current && linesGeometryRef.current) {
+    //         // Assuming ref.current is an array of { x, y, z } objects or similar
+    //         const positions = ref.current.flatMap(({ x, y, z }) => [x, y, z]);
+    //         const positionsAttribute = new Float32BufferAttribute(positions, 3);
+    //         linesGeometryRef.current.setAttribute('position', positionsAttribute);
 
-            // Here you might also recalculate connections based on new positions
-            // and update the lines geometry accordingly.
-        }
-    }
+    //         // Here you might also recalculate connections based on new positions
+    //         // and update the lines geometry accordingly.
+    //     }
+    // }
 
     // useFrame((_, delta) => updateAnimation(delta));
 
