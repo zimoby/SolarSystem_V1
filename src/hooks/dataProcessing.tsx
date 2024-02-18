@@ -202,7 +202,6 @@ interface PositionVectorsT {
 export const useCelestialBodyUpdates = () => {
   const positionVectorsRef = useRef<PositionVectorsT>({});
   const objectsSupportDataRef = useRef<ObjectsSupportDataT>({});
-  const axisVectorRef = useRef(new THREE.Vector3(1, 0, 0));
   const quaternionRef = useRef(new THREE.Quaternion());
 
   const {
@@ -333,7 +332,20 @@ export const useCelestialBodyUpdates = () => {
     // if (timeToFrames % 2 === 0) {
 
     Object.keys(combinedObjects).forEach((name) => {
+      
       const supportData = objectsSupportDataRef.current[name];
+
+      // const calculatedPosition = calculatePosition({
+      //   name,
+      //   positionVectorsRef,
+      //   time,
+      //   timeSpeed,
+      //   timeOffset,
+      //   supportData,
+      //   siderealOrbitPeriodDays: combinedObjects[name].siderealOrbitPeriodDays,
+      //   quaternionRef,
+      // });
+
       const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;
       const t = calculateTime(
         time,
@@ -349,7 +361,7 @@ export const useCelestialBodyUpdates = () => {
         Math.sin(t) * supportData.distanceXY.y
       );
 
-      quaternionRef.current.setFromAxisAngle(axisVectorRef.current, supportData.angleRad);
+      quaternionRef.current.setFromAxisAngle({x: 1, y: 0, z: 0}, supportData.angleRad);
       position.applyQuaternion(quaternionRef.current);
 
       updatedObjectsData[name] = { position };

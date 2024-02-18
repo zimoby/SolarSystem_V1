@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
+// import { CenterShader } from "../HUD/shaders";
 // import { useSystemStore } from "../../store/systemStore";
 
 const cameraDistance = 100;
@@ -47,6 +48,7 @@ export const ThreeJsCanvas = () => {
 				}>
 					<SolarSystem />
 				</Suspense>
+				{/* <CenterShader /> */}
 				<ControlComponent />
         <KeyboardInit />
       </Canvas>
