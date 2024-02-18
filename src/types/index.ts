@@ -143,6 +143,7 @@ export type ObjectsAdditionalDataT = SolarObjectParamsBasicT & {
   type?: string | null;
   type2?: string;
   color?: Color | string | undefined;
+  moonsAmount?: number;
 }
 
 export interface SolarSystemStoreStateT {
