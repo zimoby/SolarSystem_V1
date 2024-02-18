@@ -1,4 +1,4 @@
-import { dayInSeconds, objectsRotationSpeed, yearInSeconds } from "../data/solarSystemData";
+import { dayInSeconds, moonsRotationSpeed, objectsRotationSpeed, yearInSeconds } from "../data/solarSystemData";
 
 export const calculateRelativeDistanceXY = (
   semimajorAxis10_6Km: number,
@@ -76,3 +76,27 @@ export const calculateTime = (
     (Math.PI * 2)
   );
 };
+
+// export const calculatePosition = ({name, positionVectorsRef, time, timeSpeed, timeOffset, supportData, siderealOrbitPeriodDays, quaternionRef}) => {
+
+//   // console.log("calculatePosition", supportData, time, timeSpeed, timeOffset, siderealOrbitPeriodDays);
+
+//   const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;
+//   const t = calculateTime(
+//     time,
+//     (siderealOrbitPeriodDays || 365) * moonsCompenstation,
+//     timeSpeed,
+//     timeOffset
+//   );
+
+//   positionVectorsRef.current[name].set(
+//     Math.cos(t) * supportData.distanceXY.x,
+//     0,
+//     Math.sin(t) * supportData.distanceXY.y
+//   );
+
+//   quaternionRef.current.setFromAxisAngle({x: 1, y: 0, z: 0}, supportData.angleRad);
+//   positionVectorsRef.current[name].applyQuaternion(quaternionRef.current);
+
+//   return positionVectorsRef;
+// }
