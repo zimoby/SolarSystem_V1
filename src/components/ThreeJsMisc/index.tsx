@@ -1,7 +1,7 @@
 import { OrbitControls, PerspectiveCamera, Stats, useKeyboardControls } from "@react-three/drei";
 import { Perf } from "r3f-perf";
 import { useEffect } from "react";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
 import { Controls } from "../../types";
 import { planetsNamesOrder } from "../../data/solarSystemData";
 import { useFrame, useThree } from "@react-three/fiber";
@@ -21,7 +21,7 @@ export const KeyboardInit = () => {
   const rightPressed = useKeyboardControls<Controls>(state => state.right);
   const leftPressed = useKeyboardControls<Controls>(state => state.left);
 
-  const activeObjectName = useSystemStore.getState().activeObjectName;
+  const activeObjectName = useSolarStore.getState().activeObjectName;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const planetsWithSun = ["sun", ...planetsNamesOrder];
@@ -47,7 +47,7 @@ export const ControlComponent = () => {
   const { camera } = useThree();
 
   useFrame(() => {
-    const newPosition = useSolarSystemStore.getState().properties[useSystemStore.getState().activeObjectName]?.position as THREE.Vector3 | undefined;
+    const newPosition = useSolarSystemStore.getState().properties[useSolarStore.getState().activeObjectName]?.position as THREE.Vector3 | undefined;
     if (newPosition) {
       camera.lookAt(newPosition.x, newPosition.y, newPosition.z);
     }

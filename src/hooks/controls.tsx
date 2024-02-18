@@ -1,6 +1,6 @@
 import { useControls } from "leva";
 import { useEffect } from "react";
-import { useSystemStore } from "../store/systemStore";
+import { useSolarStore } from "../store/systemStore";
 
 export const useSyncControlsWithStore = () => {
   const { timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, disableRandomObjects, disableMoons, disableTrash, orbitAngleOffset } =
@@ -52,7 +52,7 @@ export const useSyncControlsWithStore = () => {
       },
     });
 
-  const updateSystemSettings = useSystemStore((state) => state.updateSystemSettings);
+  const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
 
   useEffect(() => {
     updateSystemSettings({

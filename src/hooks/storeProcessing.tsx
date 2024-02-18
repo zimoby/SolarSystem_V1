@@ -1,6 +1,6 @@
-import { useSystemStore } from "../store/systemStore"
+import { useSolarStore } from "../store/systemStore"
 
 export const updateActiveName = (name: string) => {
-  useSystemStore.getState().updateSystemSettings({ activeObjectName: name })
+  useSolarStore.getState().updateSystemSettings({ activeObjectName: name })
   console.log("updateActiveName", name)
 }

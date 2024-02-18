@@ -1,9 +1,9 @@
 import { Circle, GradientTexture, GradientType } from "@react-three/drei";
 import { AdditiveBlending, DoubleSide, NormalBlending } from "three";
-import { useSystemStore } from "../../store/systemStore";
+import { useSolarStore } from "../../store/systemStore";
 
 export const OrbitDisk = ({ size = 10, opacity = 0.4, positionYoffset = 0 }) => {
-  const { objectsDistance } = useSystemStore();
+  const { objectsDistance } = useSolarStore();
   return (
     <group>
       <Circle args={[size, 64]} position={[0, positionYoffset + 1, 0]} rotation-x={Math.PI / 2}>

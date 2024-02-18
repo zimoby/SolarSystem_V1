@@ -1,6 +1,6 @@
 import { Circle, GradientTexture, GradientType, Sphere, useTexture } from "@react-three/drei";
 import sunTexture from "../../assets/2k_sun.jpg";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
 import { calculateObjectsRotation, calculateRelativeScale } from "../../utils/calculations";
 import { InfoAboutObject } from "../HUD/hud";
 import { useEffect, useMemo, useRef } from "react";
@@ -12,7 +12,7 @@ export const SunComponent = () => {
   const createSunTexture = useTexture(sunTexture);
   const sunData = useSolarSystemStore((state) => state.celestialBodies.stars.sun);
   
-  const { sunInitialized, objectsRelativeScale, timeOffset } = useSystemStore();
+  const { sunInitialized, objectsRelativeScale, timeOffset } = useSolarStore();
   // console.log("sunData", sunData?.volumetricMeanRadiusKm);
   const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1);
 
@@ -31,7 +31,7 @@ export const SunComponent = () => {
   useEffect(() => {
     if (!sunInitialized) {
       console.log("Sun init");
-      useSystemStore.getState().updateSystemSettings({ sunInitialized: true });
+      useSolarStore.getState().updateSystemSettings({ sunInitialized: true });
     }
   }, [sunInitialized]);
 

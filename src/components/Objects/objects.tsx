@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
 import { calculateRelativeScale } from "../../utils/calculations";
 import { PlanetHUDComponent } from "../HUD/hud";
 import { Point, PointMaterial, Points } from "@react-three/drei";
@@ -10,7 +10,7 @@ import { TextureImageData } from "three/src/textures/types.js";
 import { Group, Object3DEventMap, Vector3 } from "three";
 
 const ObjectsComponent = ({ planetName, params }: { planetName: string, params: ObjectsAdditionalDataT, planetTexture?: TextureImageData | null }) => {
-  const { randomObjectsInitialized } = useSystemStore();
+  const { randomObjectsInitialized } = useSolarStore();
 
 
   const planetSize: number = useMemo(() => {
@@ -18,12 +18,12 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
     if (!randomObjectsInitialized) { return 0.01; }
     return calculateRelativeScale(
       params.volumetricMeanRadiusKm ?? 0,
-      useSystemStore.getState().objectsRelativeScale,
+      useSolarStore.getState().objectsRelativeScale,
       planetName
     );
   }, [params.volumetricMeanRadiusKm, planetName, randomObjectsInitialized]);
 
-  // const { isInitialized, isInitialized2 } = useSystemStore.getState();
+  // const { isInitialized, isInitialized2 } = useSolarStore.getState();
 
   // console.log("planetName", planetName, isInitialized, isInitialized2, params);
 

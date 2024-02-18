@@ -2,7 +2,7 @@ import {
   useCelestialBodyUpdates,
   useInitiateSolarSystem,
 } from "../../hooks/dataProcessing";
-import { useSystemStore } from "../../store/systemStore";
+import { useSolarStore } from "../../store/systemStore";
 
 import { SunComponent } from "../Objects/sun";
 import RandomObjects from "../controls/randomObjects";
@@ -16,9 +16,9 @@ import { AsteroidsText } from "../Objects/asteroidsText";
 
 export const SolarSystem = () => {
   // const [allInitialized, setAllInitialized] = useState(false);
-  const { isInitialized, isInitialized2, disableTrash } = useSystemStore();
-  // const { isInitialized, isInitialized2, disableTrash, sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSystemStore();
-  // const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSystemStore();
+  const { isInitialized, isInitialized2, disableTrash } = useSolarStore();
+  // const { isInitialized, isInitialized2, disableTrash, sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSolarStore();
+  // const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSolarStore();
 
   useInitiateSolarSystem();
   useCelestialBodyUpdates();

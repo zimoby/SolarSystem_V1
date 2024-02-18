@@ -6,12 +6,12 @@ import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsM
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
 // import { CenterShader } from "../HUD/shaders";
-// import { useSystemStore } from "../../store/systemStore";
+// import { useSolarStore } from "../../store/systemStore";
 
 const cameraDistance = 100;
 
 export const ThreeJsCanvas = () => {
-	// const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized} = useSystemStore.getState();
+	// const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized} = useSolarStore.getState();
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [

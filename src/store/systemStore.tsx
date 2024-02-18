@@ -3,7 +3,7 @@ import { generateCrossingObjects, generateRandomObjects, generateTrash } from ".
 import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
 import { CalculatedObjectDataT, ObjectsRealtimeDataT, SolarSystemStoreStateT, SystemColorsStateT, SystemStoreStateT } from "../types";
 
-export const useSystemColorsStore = create<SystemColorsStateT>((set) => ({
+const useSystemColorsStore = (set): SystemColorsStateT => ({
   uiRandomColors: ["red", "green", "blue", "yellow", "purple", "orange", "pink"],
   hudColors: {
     lineUnderOrbit: { color: "green", opacity: 1 },
@@ -24,9 +24,9 @@ export const useSystemColorsStore = create<SystemColorsStateT>((set) => ({
     moon: "#f0f0f0",
   },
   updateColors: (updates) => set((state) => ({ ...state, ...updates })),
-}));
+});
 
-export const useSystemStore = create<SystemStoreStateT>((set) => ({
+const useSystemStore = (set): SystemStoreStateT => ({
   isInitialized: false,
   isInitialized2: false,
   dataInitialized: false,
@@ -55,7 +55,7 @@ export const useSystemStore = create<SystemStoreStateT>((set) => ({
   updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
   setInitialized: (isInitialized) => set({ isInitialized }),
   setInitialized2: (isInitialized2) => set({ isInitialized2 }),
-}));
+});
 
 const randomObjectsAmount = 10;
 
@@ -136,4 +136,10 @@ export const useSolarSystemStore = create<SolarSystemStoreStateT>((set) => ({
       },
     };
   }),
+}));
+
+
+export const useSolarStore = create((...a) => ({
+  ...useSystemColorsStore(...a),
+  ...useSystemStore(...a)
 }));

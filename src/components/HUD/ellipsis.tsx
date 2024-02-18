@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
 import {
   degreesToRadians,
 } from "../../utils/calculations";
@@ -26,7 +26,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, colo
   color = "white"
 
   const planetInclination = degreesToRadians(
-    (params.orbitInclinationDeg ?? 0) + useSystemStore.getState().orbitAngleOffset
+    (params.orbitInclinationDeg ?? 0) + useSolarStore.getState().orbitAngleOffset
   );
 
   useFrame((state) => {

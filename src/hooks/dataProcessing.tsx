@@ -9,7 +9,7 @@ import {
   starsScaleFactor,
 } from "../data/solarSystemData";
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
-import { useSolarSystemStore, useSystemColorsStore, useSystemStore } from "../store/systemStore";
+import { useSolarSystemStore, useSolarStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
 import {
   calculateRelativeDistanceXY,
@@ -48,9 +48,9 @@ const reorderPlanets: SolarObjectParamsBasicWithMoonsT = planetsNamesOrder.reduc
 );
 
 export const useInitiateSolarSystem = () => {
-  const { uiRandomColors } = useSystemColorsStore.getState();
+  const { uiRandomColors } = useSolarStore.getState();
   const { isInitialized, disablePlanets, disableMoons, disableRandomObjects, disableTrash } =
-    useSystemStore.getState();
+    useSolarStore.getState();
 
   const randomObjects: Record<string, SolarObjectParamsBasicT> = useMemo(() => {
     return !disableRandomObjects ? useSolarSystemStore.getState().celestialBodies.objects : {};
@@ -164,11 +164,11 @@ export const useInitiateSolarSystem = () => {
 
     useSolarSystemStore.getState().batchUpdateCelestialBodies(celestialBodiesUpdates as never);
     useSolarSystemStore.getState().batchUpdateProperties(propertiesUpdates);
-    useSystemStore.getState().updateSystemSettings({ dataInitialized: true });
+    useSolarStore.getState().updateSystemSettings({ dataInitialized: true });
 
     console.log("end init", celestialBodiesUpdates, propertiesUpdates);
 
-    useSystemStore.getState().setInitialized(true);
+    useSolarStore.getState().setInitialized(true);
   }, [
     disableMoons,
     disablePlanets,
@@ -212,7 +212,7 @@ export const useCelestialBodyUpdates = () => {
     objectsDistance,
     objectsRelativeScale,
     orbitAngleOffset,
-  } = useSystemStore.getState();
+  } = useSolarStore.getState();
   const { planets, moons, objects } = useSolarSystemStore.getState().celestialBodies;
 
   const combinedObjects = useMemo(() => {
@@ -251,7 +251,7 @@ export const useCelestialBodyUpdates = () => {
   useEffect(() => {
     if (!isInitialized) return;
 
-    useSystemStore
+    useSolarStore
       .getState()
       .updateSystemSettings({ maxDistance: maxDistance, minDistance: minDistance });
 
@@ -307,7 +307,7 @@ export const useCelestialBodyUpdates = () => {
     });
 
     objectsSupportDataRef.current = supportData;
-    useSystemStore.getState().setInitialized2(true);
+    useSolarStore.getState().setInitialized2(true);
     useSolarSystemStore.getState().batchUpdateAdditionalProperties(supportData);
     console.log("update supportData", supportData);
   }, [

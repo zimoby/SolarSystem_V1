@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { useSolarSystemStore, useSystemStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
 import { Html, Point, PointMaterial, Points } from "@react-three/drei";
 
 import { MathUtils, Vector3 } from "three";
@@ -247,7 +247,7 @@ const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotation
 
 export const TrashComponent = () => {
 
-  const { objectsDistance, maxDistance, minDistance } = useSystemStore.getState();
+  const { objectsDistance, maxDistance, minDistance } = useSolarStore.getState();
 
   const trashInner1 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner1);
   // const trashInner2 = useSolarSystemStore((state) => state.celestialBodies.trashCollection.trashInner2);
