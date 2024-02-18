@@ -259,7 +259,7 @@ export const TrashComponent = () => {
   const trashCross = useSolarStore((state) => state.celestialBodies.trashCollection.trashCross);
 
   const trashPositions = useSolarStore((state) => state.celestialBodies.trash);
-  const planetsData = useSolarStore((state) => state.celestialBodies.planets);
+  // const planetsData = useSolarStore((state) => state.celestialBodies.planets);
 
   const relativeScaleInner = useMemo(() => {
     return calculateRelativeDistanceXY( trashPositions.trashInner1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
@@ -273,8 +273,6 @@ export const TrashComponent = () => {
     return calculateRelativeDistanceXY( trashPositions.trashOuter1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
   }, [maxDistance, minDistance, objectsDistance, trashPositions.trashOuter1.semimajorAxis10_6Km]);
 
-  // console.log("trashInner1", relativeScaleInner);
-
   const generateInnerTrash = true;
   const generateMiddleTrash = true;
   const generateOuterTrash = true;
@@ -283,33 +281,7 @@ export const TrashComponent = () => {
   const innerSpeed = 10;
   const outerSpeed = 100;
 
-  // const ref1 = useRef();
-  // const ref2 = useRef();
-  // const ref3 = useRef();
-  //   const ref4 = useRef()
-  // useFrame((_, delta) => {
-
-  //   // console.log("delta", useSolarStore.getState().celestialBodies.trash.trashInner1.semimajorAxis10_6Km);
-  //   if (generateInnerTrash) {
-  //     // ref1.current.rotation.z = ref1.current.rotation.z + delta / innerSpeed;
-  //     // ref2.current.rotation.z = ref2.current.rotation.z + delta / (innerSpeed * 2);
-  //   }
-  //   if (generateOuterTrash) {
-  //     // ref3.current.rotation.z = ref3.current.rotation.z + delta / outerSpeed;
-  //   }
-  //   // ref4.current.rotation.z = ref4.current.rotation.z + delta/100
-  // });
-
-  // useFrame((state) => {
-  //   const time = state.clock.getElapsedTime();
-  //   planetRef.current.position.copy(useSolarPositionsStore.getState().properties[planetName]?.position);
-  //   planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs, timeSpeed);
-
-  //   guiRef.current.lookAt(camera.position);
-  // });
-
-
-  console.log("trashPositions", relativeScaleInner, planetsData.earth.semimajorAxis10_6Km);
+  // console.log("trashPositions", relativeScaleInner, planetsData.earth.semimajorAxis10_6Km);
 
   return (
     <group>
