@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import {
   calculateObjectsRotation,
 } from "../../utils/calculations";
@@ -267,7 +267,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
     if (!planetsInitialized) { return; }
     const time = state.clock.getElapsedTime();
     if (planetRef.current) {
-      planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position as THREE.Vector3);
+      planetRef.current.position.copy(useSolarPositionsStore.getState().properties[planetName]?.position as THREE.Vector3);
     }
     if (planetRotationRef.current) {
       planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs ?? 0, timeSpeed ?? 0);

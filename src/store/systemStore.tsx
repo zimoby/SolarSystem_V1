@@ -104,22 +104,6 @@ export const useSolarSystemStore = create<SolarSystemStoreStateT>((set) => ({
         ...updates,
       },
     })),
-  properties: {},
-  batchUpdateProperties: (updates) => set((state) => {
-    const filteredUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as Record<string, ObjectsRealtimeDataT>);
-  
-    return {
-      properties: {
-        ...state.properties,
-        ...filteredUpdates,
-      },
-    };
-  }),
   additionalProperties: {},
   batchUpdateAdditionalProperties: (updates) => set((state) => {
     const filteredUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
@@ -132,6 +116,25 @@ export const useSolarSystemStore = create<SolarSystemStoreStateT>((set) => ({
     return {
       additionalProperties: {
         ...state.additionalProperties,
+        ...filteredUpdates,
+      },
+    };
+  }),
+}));
+
+export const useSolarPositionsStore = create((set) => ({
+  properties: {},
+  batchUpdateProperties: (updates) => set((state) => {
+    const filteredUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as Record<string, ObjectsRealtimeDataT>);
+  
+    return {
+      properties: {
+        ...state.properties,
         ...filteredUpdates,
       },
     };

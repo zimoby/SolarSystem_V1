@@ -300,7 +300,7 @@ export const TrashComponent = () => {
 
   // useFrame((state) => {
   //   const time = state.clock.getElapsedTime();
-  //   planetRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position);
+  //   planetRef.current.position.copy(useSolarPositionsStore.getState().properties[planetName]?.position);
   //   planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs, timeSpeed);
 
   //   guiRef.current.lookAt(camera.position);

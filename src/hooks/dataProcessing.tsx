@@ -9,7 +9,7 @@ import {
   starsScaleFactor,
 } from "../data/solarSystemData";
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
-import { useSolarSystemStore, useSolarStore } from "../store/systemStore";
+import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
 import {
   calculateRelativeDistanceXY,
@@ -163,7 +163,7 @@ export const useInitiateSolarSystem = () => {
     processCelestialBody("stars", "sun", sunData, "system", 0);
 
     useSolarSystemStore.getState().batchUpdateCelestialBodies(celestialBodiesUpdates as never);
-    useSolarSystemStore.getState().batchUpdateProperties(propertiesUpdates);
+    useSolarPositionsStore.getState().batchUpdateProperties(propertiesUpdates);
     useSolarStore.getState().updateSystemSettings({ dataInitialized: true });
 
     console.log("end init", celestialBodiesUpdates, propertiesUpdates);
@@ -367,7 +367,7 @@ export const useCelestialBodyUpdates = () => {
       updatedObjectsData[name] = { position };
     });
 
-    useSolarSystemStore.getState().batchUpdateProperties(updatedObjectsData);
+    useSolarPositionsStore.getState().batchUpdateProperties(updatedObjectsData);
 
     // }
   });

@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import { calculateRelativeScale } from "../../utils/calculations";
 import { PlanetHUDComponent } from "../HUD/hud";
 import { Point, PointMaterial, Points } from "@react-three/drei";
@@ -32,7 +32,7 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
 
   useFrame(() => {
     if (objectRef.current && randomObjectsInitialized) {
-      objectRef.current.position.copy(useSolarSystemStore.getState().properties[planetName]?.position as Vector3);
+      objectRef.current.position.copy(useSolarPositionsStore.getState().properties[planetName]?.position as Vector3);
     }
   });
 

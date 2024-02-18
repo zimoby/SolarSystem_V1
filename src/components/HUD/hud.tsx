@@ -1,5 +1,5 @@
 import { Ref, forwardRef, useRef } from "react";
-import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
+import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Segment, Segments } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -31,7 +31,7 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetNa
   const segmentRef2 = useRef<SegmentRef>(null);
 
   useFrame(() => {
-    const newPosition = useSolarSystemStore.getState().properties[planetName]?.position as THREE.Vector3 | undefined;
+    const newPosition = useSolarPositionsStore.getState().properties[planetName]?.position as THREE.Vector3 | undefined;
     if (newPosition) {
 
       if (planetHuiRef.current) {
@@ -126,7 +126,7 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
     const time = state.clock.getElapsedTime();
     const timeToFrames = Math.floor(time * 60);
     if (timeToFrames % 15 === 0) {
-      const newPosition = useSolarSystemStore.getState().properties[params.name]?.position as THREE.Vector3 | undefined;
+      const newPosition = useSolarPositionsStore.getState().properties[params.name]?.position as THREE.Vector3 | undefined;
       if (newPosition && positionTextRef.current) {
         positionTextRef.current.innerText = `${newPosition.x.toFixed(2)} ${newPosition.y.toFixed(2)} ${newPosition.z.toFixed(2)}`;
       }
