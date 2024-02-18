@@ -15,6 +15,7 @@ export const SunComponent = () => {
   const sunInitialized = useSolarStore((state) => state.sunInitialized);
   const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
   const timeOffset = useSolarStore((state) => state.timeOffset);
+  const updateSunInitialized = useSolarStore((state) => state.updateSystemSettings);
 
   // console.log("sunData", sunData?.volumetricMeanRadiusKm);
   const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1);
@@ -34,7 +35,7 @@ export const SunComponent = () => {
   useEffect(() => {
     if (!sunInitialized) {
       console.log("Sun init");
-      useSolarStore.getState().updateSystemSettings({ sunInitialized: true });
+      updateSunInitialized({ sunInitialized: true });
     }
   }, [sunInitialized]);
 

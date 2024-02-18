@@ -6,15 +6,14 @@ const RandomObjects = () => {
   const getObjectsData = useSolarStore((state) => state.celestialBodies.objects);
   const randomObjectsInitialized = useSolarStore((state) => state.randomObjectsInitialized);
   const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects);
+  const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
 
   useEffect(() => {
     if (!randomObjectsInitialized) {
       console.log("RandomObjects init");
-      useSolarStore.getState().updateSystemSettings({ randomObjectsInitialized: true });
+      updateSystemSettings({ randomObjectsInitialized: true });
     }
-  
-  }, [randomObjectsInitialized]);
-
+  }, [randomObjectsInitialized, updateSystemSettings]);
 
   return (
     <>

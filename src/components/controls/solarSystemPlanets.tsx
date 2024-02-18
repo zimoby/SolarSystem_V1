@@ -25,6 +25,7 @@ import { OrbitDisk } from "../Objects/disk";
 const SolarSystemPlanets = () => {
   const getPlanetsData = useSolarStore((state) => state.celestialBodies.planets);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
+  const updatePlanetsInitialized = useSolarStore((state) => state.updateSystemSettings);
 
   const [
     createEarthTexture,
@@ -63,9 +64,9 @@ const SolarSystemPlanets = () => {
   useEffect(() => {
     if (!planetsInitialized) {
       console.log("SolarSystemPlanets init");
-      useSolarStore.getState().updateSystemSettings({ planetsInitialized: true });
+      updatePlanetsInitialized({ planetsInitialized: true });
     }
-  }, [planetsInitialized]);
+  }, [planetsInitialized, updatePlanetsInitialized]);
 
   return (
     <>
