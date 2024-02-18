@@ -120,7 +120,7 @@
         "inclinationOfEquatorDeg": 23.44,
         "moons": [
             {
-                "name": "moon",
+                "name": "Moon",
                 "volumetricMeanRadiusKm": 1737.1,
                 "distanceToPlanetKm": 384400,
                 "semimajorAxis10_6Km": 0.3844,
@@ -289,7 +289,7 @@
         "inclinationOfEquatorDeg": 3.13,
         "moons": [
             {
-                "name": "io",
+                "name": "Io",
                 "volumetricMeanRadiusKm": 1821.6,
                 "distanceToPlanetKm": 421700,
                 "semimajorAxis10_6Km": 0.4218,
@@ -309,7 +309,7 @@
                 "inclinationOfEquatorDeg": 0.05
             },
             {
-                "name": "europa",
+                "name": "Europa",
                 "volumetricMeanRadiusKm": 1560.8,
                 "distanceToPlanetKm": 671034,
                 "semimajorAxis10_6Km": 0.6711,
@@ -327,7 +327,7 @@
                 "lengthOfDayHrs": 85
             },
             {
-                "name": "ganymede",
+                "name": "Ganymede",
                 "volumetricMeanRadiusKm": 2634.1,
                 "distanceToPlanetKm": 1070412,
                 "semimajorAxis10_6Km": 1.0704,
@@ -345,7 +345,7 @@
                 "lengthOfDayHrs": 171.7
             },
             {
-                "name": "callisto",
+                "name": "Callisto",
                 "volumetricMeanRadiusKm": 2410.3,
                 "distanceToPlanetKm": 1882709,
                 "semimajorAxis10_6Km": 1.8827,
@@ -401,7 +401,7 @@
         "obliquityToOrbitDeg": 26.73,
         "moons": [
             {
-                "name": "titan",
+                "name": "Titan",
                 "volumetricMeanRadiusKm": 2575,
                 "distanceToPlanetKm": 1221870,
                 "semimajorAxis10_6Km": 1.2219,
@@ -421,7 +421,7 @@
                 "inclinationOfEquatorDeg": 0.33
             },
             {
-                "name": "rhea",
+                "name": "Rhea",
                 "volumetricMeanRadiusKm": 763.8,
                 "distanceToPlanetKm": 527040,
                 "semimajorAxis10_6Km": 0.527,
@@ -439,6 +439,26 @@
                 "lengthOfDayHrs": 108.4,
                 "obliquityToOrbitDeg": 0.35,
                 "inclinationOfEquatorDeg": 0.35
+            },
+            {
+                "name": "Lapetus",
+                "volumetricMeanRadiusKm": 734.5,
+                "distanceToPlanetKm": 3560840,
+                "semimajorAxis10_6Km": 3.5608,
+                "siderealOrbitPeriodDays": 79.33,
+                "tropicalOrbitPeriodDays": 79.33,
+                "perihelion10_6Km": 3.5607,
+                "aphelion10_6Km": 3.5609,
+                "synodicPeriodDays": 79.33,
+                "meanOrbitalVelocityKmS": 3.26,
+                "maxOrbitalVelocityKmS": 3.26,
+                "minOrbitalVelocityKmS": 3.26,
+                "orbitInclinationDeg": 15.47,
+                "orbitEccentricity": 0.0286,
+                "siderealRotationPeriodHrs": 1903.72,
+                "lengthOfDayHrs": 1903.72,
+                "obliquityToOrbitDeg": 15.47,
+                "inclinationOfEquatorDeg": 15.47
             }
         ]
     },
