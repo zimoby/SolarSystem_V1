@@ -1,5 +1,5 @@
 import { Ref, forwardRef, useRef } from "react";
-import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
+import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Segment, Segments } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -24,7 +24,9 @@ interface SegmentRef {
 const planetHui1Pos = new THREE.Vector3(0,0,0);
 
 export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "", planetSize = 0.01 }) => {
-  const { lineUnderOrbit, lineBelowOrbit } = useSolarStore.getState().hudColors;
+  const lineUnderOrbit = useSolarStore((state) => state.hudColors.lineUnderOrbit);
+  const lineBelowOrbit = useSolarStore((state) => state.hudColors.lineBelowOrbit);
+
   const planetHuiRef = useRef<THREE.Group>(null);
   const planetHuiRefCenter = useRef<THREE.Group>(null);
   const segmentRef = useRef<SegmentRef>(null);

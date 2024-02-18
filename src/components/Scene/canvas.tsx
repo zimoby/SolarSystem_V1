@@ -11,7 +11,6 @@ import { SolarSystem } from "./solarSystem";
 const cameraDistance = 100;
 
 export const ThreeJsCanvas = () => {
-	// const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized} = useSolarStore.getState();
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [

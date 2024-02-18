@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { useSolarSystemStore, useSolarStore } from "../../store/systemStore";
+import { useSolarStore } from "../../store/systemStore";
 import {
   degreesToRadians,
 } from "../../utils/calculations";
@@ -19,23 +19,17 @@ type ObjectEllipseProps = {
 
 export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, color = "grey", opacity = 1, type}) => {
   const [selected, setSelected] = useState(false);
-  const {distanceXY} = useSolarSystemStore.getState().additionalProperties[name] || { distanceXY: { x: 0, y: 0 } };
+  const distanceXY = useSolarStore((state) => state.additionalProperties[name]?.distanceXY) || { x: 0, y: 0 };
+  const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
+  const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
 
   const dashOffsetRef = useRef<THREE.Line>();
   // console.log("ObjectEllipse", params.orbitInclinationDeg);
   color = "white"
 
-  const planetInclination = degreesToRadians(
-    (params.orbitInclinationDeg ?? 0) + useSolarStore.getState().orbitAngleOffset
-  );
+  // console.log("ObjectEllipse", name, params.orbitInclinationDeg);
 
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime() * Math.PI * 2;
-    if (dashOffsetRef.current) {
-      // @ts-expect-error wrong use of dashOffset
-      dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
-    }
-  }); 
+  const planetInclination = degreesToRadians( (params.orbitInclinationDeg ?? 0) + orbitAngleOffset );
 
   const points = useMemo(() => 
     new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(64 * 1),
@@ -59,7 +53,17 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, colo
     return ((Math.random()) * decr - decr);
   }, []);
 
-  useCursor(selected);
+  // useCursor(selected);
+
+  useFrame((state) => {
+    if (!planetsInitialized) { return; }
+
+    const time = state.clock.getElapsedTime() * Math.PI * 2;
+    if (dashOffsetRef.current) {
+      // @ts-expect-error wrong use of dashOffset
+      dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
+    }
+  }); 
 
   return (
     <group>
@@ -93,7 +97,6 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, colo
             dashed={type === "moons"}
             dashSize={0.3}
             dashScale={10}
-            
           />
         </mesh>
       </group>

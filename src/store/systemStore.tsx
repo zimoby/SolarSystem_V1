@@ -64,7 +64,7 @@ const trashMiddleAmount = 1000;
 const trashOuterAmount = 2000;
 const trashCross = 100;
 
-export const useSolarSystemStore = create<SolarSystemStoreStateT>((set) => ({
+const useSolarSystemStore = (set) => ({
   celestialBodies: {
     stars: {},
     planets: {},
@@ -120,7 +120,7 @@ export const useSolarSystemStore = create<SolarSystemStoreStateT>((set) => ({
       },
     };
   }),
-}));
+});
 
 export const useSolarPositionsStore = create((set) => ({
   properties: {},
@@ -144,5 +144,6 @@ export const useSolarPositionsStore = create((set) => ({
 
 export const useSolarStore = create((...a) => ({
   ...useSystemColorsStore(...a),
-  ...useSystemStore(...a)
+  ...useSystemStore(...a),
+  ...useSolarSystemStore(...a),
 }));

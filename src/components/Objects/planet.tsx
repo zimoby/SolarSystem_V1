@@ -1,5 +1,5 @@
 import { useMemo, useRef } from "react";
-import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
+import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import {
   calculateObjectsRotation,
 } from "../../utils/calculations";
@@ -163,20 +163,12 @@ type PlanetComponentProps = {
 };
 
 const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, planetTexture = null, type = "planets" }) => {
-  const {
-    planetsInitialized,
-    timeSpeed
-  } = useSolarStore();
-
-  const { objectDefaultColors } = useSolarStore.getState();
-
-  const {
-    siderealRotationPeriodHrs,
-    planetaryRingSystem
-    // @ts-expect-error tired of typescript
-  } = useSolarSystemStore.getState().celestialBodies[type][planetName];
-
-  const { scale: planetSize } = useSolarSystemStore.getState().additionalProperties[planetName]
+  const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
+  const timeSpeed = useSolarStore((state) => state.timeSpeed);
+  const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
+  const siderealRotationPeriodHrs = useSolarStore((state) => state.celestialBodies[type][planetName].siderealRotationPeriodHrs);
+  const planetaryRingSystem = useSolarStore((state) => state.celestialBodies[type][planetName].planetaryRingSystem);
+  const planetSize = useSolarStore((state) => state.additionalProperties[planetName].scale);
     
   const planetRef = useRef<THREE.Group>(null);
   const planetRotationRef = useRef<THREE.Group>(null);
@@ -248,10 +240,10 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
 
   const moons = useMemo(() => {
     // if planetName === moonName, take the data 
-    const takeMoons = Object.keys(useSolarSystemStore.getState().celestialBodies.moons).filter((moonName) => {
-      return useSolarSystemStore.getState().celestialBodies.moons[moonName].type === planetName;
+    const takeMoons = Object.keys(useSolarStore.getState().celestialBodies.moons).filter((moonName) => {
+      return useSolarStore.getState().celestialBodies.moons[moonName].type === planetName;
     } ).map((moonName) => {
-      const moonData = useSolarSystemStore.getState().celestialBodies.moons[moonName];
+      const moonData = useSolarStore.getState().celestialBodies.moons[moonName];
       return {
         ...moonData,
         name: moonName,

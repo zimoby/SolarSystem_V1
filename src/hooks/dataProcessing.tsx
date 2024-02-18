@@ -9,7 +9,7 @@ import {
   starsScaleFactor,
 } from "../data/solarSystemData";
 import { filterObjectData, normalizeDataToEarth } from "../utils/dataProcessing";
-import { useSolarSystemStore, useSolarStore, useSolarPositionsStore } from "../store/systemStore";
+import { useSolarStore, useSolarPositionsStore } from "../store/systemStore";
 import { useFrame } from "@react-three/fiber";
 import {
   calculateRelativeDistanceXY,
@@ -48,23 +48,25 @@ const reorderPlanets: SolarObjectParamsBasicWithMoonsT = planetsNamesOrder.reduc
 );
 
 export const useInitiateSolarSystem = () => {
-  const { uiRandomColors } = useSolarStore.getState();
-  const { isInitialized, disablePlanets, disableMoons, disableRandomObjects, disableTrash } =
-    useSolarStore.getState();
+  const uiRandomColors = useSolarStore((state) => state.uiRandomColors);
+  const isInitialized = useSolarStore((state) => state.isInitialized);
+  const disableMoons = useSolarStore((state) => state.disableMoons);
+  const disablePlanets = useSolarStore((state) => state.disablePlanets);
+  const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects);
+  const disableTrash = useSolarStore((state) => state.disableTrash);
 
-  const randomObjects: Record<string, SolarObjectParamsBasicT> = useMemo(() => {
-    return !disableRandomObjects ? useSolarSystemStore.getState().celestialBodies.objects : {};
-  }, [disableRandomObjects]);
+  const objects = useSolarStore((state) => state.celestialBodies.objects);
+  const trash = useSolarStore((state) => state.celestialBodies.trash);
 
-  const trashObjects: Record<string, SolarObjectParamsBasicT> = useMemo(() => {
-    return !disableTrash ? useSolarSystemStore.getState().celestialBodies.trash : {};
-  }, [disableTrash]);
 
   useEffect(() => {
     if (isInitialized) {
       return;
     }
 
+    const randomObjects: Record<string, SolarObjectParamsBasicT> = !disableRandomObjects ? objects : {};
+    const trashObjects: Record<string, SolarObjectParamsBasicT> = !disableTrash ? trash : {};
+  
     console.log("start init");
 
     const celestialBodiesUpdates: Record<
@@ -162,23 +164,14 @@ export const useInitiateSolarSystem = () => {
     const sunData: SolarObjectParamsBasicT = starsData["sun"];
     processCelestialBody("stars", "sun", sunData, "system", 0);
 
-    useSolarSystemStore.getState().batchUpdateCelestialBodies(celestialBodiesUpdates as never);
+    useSolarStore.getState().batchUpdateCelestialBodies(celestialBodiesUpdates as never);
     useSolarPositionsStore.getState().batchUpdateProperties(propertiesUpdates);
     useSolarStore.getState().updateSystemSettings({ dataInitialized: true });
 
     console.log("end init", celestialBodiesUpdates, propertiesUpdates);
 
     useSolarStore.getState().setInitialized(true);
-  }, [
-    disableMoons,
-    disablePlanets,
-    disableRandomObjects,
-    disableTrash,
-    isInitialized,
-    randomObjects,
-    trashObjects,
-    uiRandomColors,
-  ]);
+  }, [disableMoons, disablePlanets, disableRandomObjects, disableTrash, isInitialized, objects, trash, uiRandomColors]);
 };
 
 interface SupportDataT {
@@ -213,7 +206,7 @@ export const useCelestialBodyUpdates = () => {
     objectsRelativeScale,
     orbitAngleOffset,
   } = useSolarStore.getState();
-  const { planets, moons, objects } = useSolarSystemStore.getState().celestialBodies;
+  const { planets, moons, objects } = useSolarStore.getState().celestialBodies;
 
   const combinedObjects = useMemo(() => {
     if (!isInitialized) return {};
@@ -308,7 +301,7 @@ export const useCelestialBodyUpdates = () => {
 
     objectsSupportDataRef.current = supportData;
     useSolarStore.getState().setInitialized2(true);
-    useSolarSystemStore.getState().batchUpdateAdditionalProperties(supportData);
+    useSolarStore.getState().batchUpdateAdditionalProperties(supportData);
     console.log("update supportData", supportData);
   }, [
     isInitialized,

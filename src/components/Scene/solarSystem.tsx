@@ -16,9 +16,9 @@ import { AsteroidsText } from "../Objects/asteroidsText";
 
 export const SolarSystem = () => {
   // const [allInitialized, setAllInitialized] = useState(false);
-  const { isInitialized, isInitialized2, disableTrash } = useSolarStore();
-  // const { isInitialized, isInitialized2, disableTrash, sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSolarStore();
-  // const { sunInitialized, planetsInitialized, randomObjectsInitialized, trashInitialized } = useSolarStore();
+  const isInitialized = useSolarStore((state) => state.isInitialized);
+  const isInitialized2 = useSolarStore((state) => state.isInitialized2);
+  const disableTrash = useSolarStore((state) => state.disableTrash);
 
   useInitiateSolarSystem();
   useCelestialBodyUpdates();
