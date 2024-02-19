@@ -1,47 +1,13 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSolarStore } from "../../store/systemStore";
-import { Html, Point, PointMaterial, Points } from "@react-three/drei";
+import { Html, Point, PointMaterial, Points, shaderMaterial } from "@react-three/drei";
 
-import { MathUtils, Vector3 } from "three";
-import { useFrame } from "@react-three/fiber";
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
+import { useFrame, extend, useThree } from "@react-three/fiber";
 import { calculateRelativeDistanceXY } from "../../utils/calculations";
 import { CrossingTrashParamsT, TrashParamsT } from "../../types";
 
-type SimplePointsWrapperProps = {
-  points: TrashParamsT[];
-  rotSpeed: number;
-  size: number;
-};
-
-const SimplePointsWrapper = ({ points, rotSpeed, size }: SimplePointsWrapperProps) => {
-  const ref1 = useRef<THREE.Points>();
-
-  useFrame((_, delta) => {
-    if (ref1.current) {
-      ref1.current.rotation.z += delta / rotSpeed;
-    }
-  });
-
-  return (
-    <Points
-      limit={points.length}
-      rotation-x={Math.PI / 2}
-      // @ts-expect-error tired of typescript
-      ref={ref1}
-    >
-      <PointMaterial
-        vertexColors
-        size={size}
-        sizeAttenuation={false}
-        depthWrite={true}
-        toneMapped={false}
-      />
-      {points.map((dot, i) => (
-        <Point key={i} position={dot.position} />
-      ))}
-    </Points>
-  );
-};
+import texture1 from "../../assets/dot_style01.png"
 
 type Position = {
   x: number;
@@ -76,9 +42,8 @@ const PointsCrossSolarSystem = ({ points }: {points: CrossingTrashParamsT[]}) =>
         pointRefs.current[i].position.y = dot.position.y;
         pointRefs.current[i].position.z = dot.position.z;
       }
-
     });
-  }, [points]); 
+  }, [points]);
 
   useFrame((_, delta) => {
     const speedFactor = delta * allSpeed;
@@ -206,45 +171,6 @@ const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotation
   );
 };
 
-// function Stars(props) {
-//   const ref = useRef()
-//   const [sphere] = useState(() => random.inRect(new Float32Array(5000), { sides: 1 }))
-//   useFrame((state, delta) => {
-//     ref.current.rotation.x -= delta / 10
-//     ref.current.rotation.y -= delta / 15
-//   })
-//   return (
-//     <group rotation={[0, 0, 0]}>
-//       <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}>
-//         <PointMaterial transparent color="#ffa0e0" size={0.5} sizeAttenuation={true} depthWrite={false} />
-//       </Points>
-//     </group>
-//   )
-// }
-
-// function Stars(props) {
-//   // const ref = useRef()
-//   // const [sphere] = useState(() => random.inSphere(new Float32Array(5000), { radius: 1.5 }))
-//   // useFrame((state, delta) => {
-//   //   ref.current.rotation.x -= delta / 10
-//   //   ref.current.rotation.y -= delta / 15
-//   // })
-
-//   const pointsRef = useRef([]);
-
-//   // const points = useMemo(
-
-
-
-//   return (
-//     <group rotation={[0, 0, 0]}>
-//        {/* <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}> */}
-//          <PointMaterial transparent color="#ffa0e0" size={1} sizeAttenuation={true} depthWrite={false} />
-//        {/* </Points> */}
-//      </group>
-//   )
-// }
-
 export const TrashComponent = () => {
 
   const objectsDistance = useSolarStore((state) => state.objectsDistance);
@@ -279,56 +205,305 @@ export const TrashComponent = () => {
   const generateCrossTrash = true;
 
   const innerSpeed = 10;
-  const outerSpeed = 100;
 
   // console.log("trashPositions", relativeScaleInner, planetsData.earth.semimajorAxis10_6Km);
 
   return (
     <group>
+      {/* <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.01} />
+      <Particles points={trashOuter1} rotSpeed={ innerSpeed * 10 } size={0.2} double={false} /> */}
       {/* <Stars /> */}
       {generateInnerTrash && (
         <>
         <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
-          <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
-          <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } />
+          {/* <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
+          <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } /> */}
+          <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.02} />
+
         </group>
-          {/* <Instances
-            scale={solarScale}
-            limit={trashInner1.length + trashInner2.length}
-            rotation-x={Math.PI / 2}
-          >
-            <icosahedronGeometry />
-            <meshStandardMaterial />
-            <group ref={ref1}>
-              {trashInner1.map((props, index) => (
-                <Instance key={index} {...props} />
-              ))}
-            </group>
-            <group ref={ref2}>
-              {trashInner2.map((props, index) => (
-                <Instance key={index} {...props} />
-              ))}
-            </group>
-          </Instances> */}
+
         </>
       )}
 
       {generateOuterTrash && (
         <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
-          <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } />
+          {/* <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } /> */}
+          <Particles points={trashOuter1} rotSpeed={ innerSpeed * 50 } size={0.5} double={false} />
+
         </group>
       )}
 
       {generateMiddleTrash && (
         <group scale={[relativeScaleMiddle.x, relativeScaleMiddle.x, relativeScaleMiddle.x]}>
-          <PointsOrbitRotation points={trashMiddle1} name={"dots"} />
+          {/* <PointsOrbitRotation points={trashMiddle1} name={"dots"} /> */}
           <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
+          <PointsOrbitRotationShader points={trashMiddle1} size={3} name={"identDots"} />
         </group>
       )}
 
       {generateCrossTrash && <group scale={[relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x]}>
-        <PointsCrossSolarSystem points={trashCross} />
+        {/* <PointsCrossSolarSystem points={trashCross} /> */}
+        <PointsCrossSolarSystemShader points={trashCross} size={20} />
       </group>}
     </group>
+  );
+};
+
+const ParticleShaderMaterial = shaderMaterial(
+  {
+    color: new Color(0xffffff),
+    size: 1.0,
+    cameraPosition: new Vector3(),
+  },
+  // Vertex Shader
+  `
+  uniform float size;
+  void main() {
+    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+    float distance = length(cameraPosition - worldPosition.xyz);
+    gl_PointSize = size * (300.0 / distance); // Adjust this formula as needed
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+  `,
+  // Fragment Shader
+  `
+  uniform vec3 color;
+  void main() {
+    float r = distance(gl_PointCoord, vec2(0.5, 0.5));
+    float delta = 0.02;
+    if (r > 0.5) discard;
+    gl_FragColor = vec4(color, 1.0);
+  }
+  `
+);
+
+// Extend R3F with the new material
+extend({ ParticleShaderMaterial });
+
+const Particles = ({ points, rotSpeed, size, double = false }) => {
+
+  const pointsRef1 = useRef<THREE.Points>();
+  const pointsRef2 = useRef<THREE.Points>();
+
+  const materialRef1 = useRef();
+
+  const { camera } = useThree();
+
+
+  // console.log("points", points);
+
+  const geom = useMemo(() => {
+    const geometry = new BufferGeometry();
+    const positions = points.flatMap(p => p.position);
+    geometry.setAttribute('position', new BufferAttribute(new Float32Array(positions), 3));
+    return geometry;
+  }, [points]);
+
+  useFrame(({clock}) => {
+    // console.log("camera", camera);
+    const t = clock.getElapsedTime() * Math.PI * 2;
+    if (pointsRef1.current && pointsRef2.current) {
+      pointsRef1.current.rotation.z = (t / rotSpeed) % (Math.PI * 2);
+
+      pointsRef2.current.rotation.z = (t / rotSpeed) % (Math.PI * 2);
+
+    }
+
+    if (materialRef1.current) {
+      materialRef1.current.uniforms.cameraPosition.value.copy(camera.position);
+    }
+
+  });
+
+
+  return (
+    <group>
+      <points geometry={geom} rotation-x={Math.PI / 2} ref={pointsRef1}>
+        <particleShaderMaterial
+          ref={materialRef1}
+          attach="material"
+          size={size}
+          color={'#FFFFFF'}
+        />
+      </points>
+      <points geometry={geom} rotation-x={Math.PI / 2} ref={pointsRef2}>
+        <particleShaderMaterial
+          // ref={materialRef}
+          attach="material"
+          size={size}
+          color={'#FFFFFF'}
+        />
+      </points>
+      
+    </group>
+  );
+};
+
+
+
+
+const OrbitShaderMaterial = shaderMaterial(
+  {
+    time: 0,
+    baseSpeed: 0.02,
+    distances: [],
+    angles: [],
+    color: new Color(0xffffff),
+    size: 1.0,
+  },
+  // Vertex Shader
+  `
+  attribute float distance;
+  attribute float angle;
+  uniform float time;
+  uniform float baseSpeed;
+  uniform float size;
+  void main() {
+    float effectiveSpeed = baseSpeed * (1.0 / (distance - 1.0)) * 10.0;
+    float newAngle = angle + time * effectiveSpeed;
+    vec3 transformed = position;
+    transformed.x = distance * cos(newAngle);
+    transformed.y = distance * sin(newAngle);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
+    gl_PointSize = size;
+  }
+  `,
+  // Fragment Shader
+  `
+  uniform vec3 color;
+  void main() {
+    float r = distance(gl_PointCoord, vec2(0.5, 0.5));
+    float delta = 0.02;
+    if (r > 0.5) discard;
+    gl_FragColor = vec4(color, 1.0);
+  }
+  `
+);
+
+extend({ OrbitShaderMaterial });
+
+const PointsOrbitRotationShader = ({ points, size, name }) => {
+  // const { clock } = useThree();
+  const materialRef = useRef();
+  const distances = points.map(dot => dot.distance);
+  const angles = points.map(dot => dot.angle);
+
+  const geom = useMemo(() => {
+    const geometry = new BufferGeometry();
+
+    const positions = new Float32Array(points.length * 3); // Fill with your positions
+    const distanceAttr = new Float32Array(distances);
+    const angleAttr = new Float32Array(angles);
+
+    geometry.setAttribute('position', new BufferAttribute(positions, 3));
+    geometry.setAttribute('distance', new BufferAttribute(distanceAttr, 1));
+    geometry.setAttribute('angle', new BufferAttribute(angleAttr, 1));
+
+    return geometry;
+  }, [angles, distances, points.length]);
+
+
+  useFrame(({ clock }) => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+    }
+  });
+
+  return (
+    <points geometry={geom} rotation-x={Math.PI / 2}>
+      <orbitShaderMaterial
+        ref={materialRef}
+        attach="material"
+        time={0}
+        baseSpeed={0.02}
+        color={'#FFFFFF'}
+        size={size.toFixed(2)}
+        distances={distances}
+        angles={angles}
+      />
+    </points>
+  );
+};
+
+const loader = new TextureLoader();
+
+
+const vertexShader = `
+  uniform float time;
+  uniform vec3 boundaries;
+  uniform float velocityMultiplier;
+  uniform float size;
+  attribute vec3 velocity;
+
+  void main() {
+    vec3 pos = position + velocity * velocityMultiplier * time;
+    // Simulate wrapping (this is a simplified example)
+    pos = mod(pos + boundaries, boundaries * 2.0) - boundaries;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    gl_PointSize = size; // Fixed size for simplicity
+
+  }
+`
+
+const fragmentShader = `
+  uniform vec3 color;
+  uniform sampler2D uTexture;
+  void main() {
+    vec4 textureColor = texture2D(uTexture, gl_PointCoord);
+    gl_FragColor = vec4(color * textureColor.rgb, textureColor.a);
+
+  }
+`
+
+
+const PointsCrossSolarSystemShader = ({ points, size }) => {
+  // const shaderMaterialRef = useRef();
+  const { clock } = useThree();
+
+  // console.log("strokeTexture", strokeTexture);
+
+  const strokeTexture = loader.load(texture1, function() {
+    console.log("Texture loaded successfully");
+  }, undefined, function(err) {
+    console.error("Error loading texture", err);
+  });
+
+  const velocityMultiplier = 5.0;
+
+  const shaderMaterial = useMemo(() => new ShaderMaterial({
+    uniforms: {
+      color: { value: new Color(0xffffff) },
+      time: { value: 0 },
+      boundaries: { value: new Vector3(10, 10, 3) },
+      velocityMultiplier: { value: velocityMultiplier },
+      size: { value: size },
+      uTexture: { value: strokeTexture },
+    },
+    vertexShader,
+    fragmentShader,
+    transparent: true,
+  }), [size, strokeTexture]);
+
+  console.log("shaderMaterial", shaderMaterial);
+
+
+  const positions = useMemo(() => points.map(p => [p.position.x, p.position.y, p.position.z]).flat(), [points]);
+  const velocities = useMemo(() => points.map(p => [p.velocity.x, p.velocity.y, p.velocity.z]).flat(), [points]);
+
+  useFrame(() => {
+    shaderMaterial.uniforms.time.value = clock.getElapsedTime();
+    shaderMaterial.depthTest = false;
+    shaderMaterial.depthWrite = false;
+  });
+
+  const geom = useMemo(() => {
+    const geometry = new BufferGeometry();
+    geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('velocity', new Float32BufferAttribute(velocities, 3));
+    return geometry;
+  }, [positions, velocities]);
+
+  return (
+    <points geometry={geom} material={shaderMaterial} rotation-x={Math.PI / 2} />
   );
 };

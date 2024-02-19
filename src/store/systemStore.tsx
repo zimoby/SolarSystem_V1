@@ -61,7 +61,7 @@ const randomObjectsAmount = 10;
 
 const trashInnerAmount = 1000;
 const trashMiddleAmount = 1000;
-const trashOuterAmount = 2000;
+const trashOuterAmount = 4000;
 const trashCross = 100;
 
 const useSolarSystemStore = (set) => ({
