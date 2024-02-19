@@ -1,6 +1,6 @@
 import { OrbitControls, PerspectiveCamera, Stats, useKeyboardControls } from "@react-three/drei";
 import { Perf } from "r3f-perf";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import { Controls } from "../../types";
 import { planetsNamesOrder } from "../../data/solarSystemData";
@@ -45,11 +45,27 @@ export const ControlComponent = () => {
   const cameraDistance = 100;
 
   const { camera } = useThree();
+  const currentPositionRef = useRef<THREE.Vector3 | undefined>();
+  
+  // const controlRef = useRef<OrbitControls>(null);
+
+  
+
+  useEffect(() => {
+    const unsubscribeSolarPositions = useSolarPositionsStore.subscribe((state) => {
+      const newPosition = state.properties[useSolarStore.getState().activeObjectName]?.position;
+      currentPositionRef.current = newPosition;
+    });
+
+    return () => {
+      unsubscribeSolarPositions();
+    };
+  }, []);
 
   useFrame(() => {
-    const newPosition = useSolarPositionsStore.getState().properties[useSolarStore.getState().activeObjectName]?.position as THREE.Vector3 | undefined;
-    if (newPosition) {
-      camera.lookAt(newPosition.x, newPosition.y, newPosition.z);
+    
+    if (currentPositionRef.current) {
+      camera.lookAt(currentPositionRef.current.x, currentPositionRef.current.y, currentPositionRef.current.z);
     }
   });
 
@@ -57,7 +73,7 @@ export const ControlComponent = () => {
     <>
       <PerspectiveCamera  makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
       <OrbitControls 
-        makeDefault
+        // ref={controlRef}
         dampingFactor={0.3}
         rotateSpeed={0.5}
       />

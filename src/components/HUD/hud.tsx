@@ -1,4 +1,4 @@
-import { Ref, forwardRef, useRef } from "react";
+import { Ref, forwardRef, useEffect, useRef } from "react";
 import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Segment, Segments } from "@react-three/drei";
@@ -23,36 +23,73 @@ interface SegmentRef {
 
 const planetHui1Pos = new THREE.Vector3(0,0,0);
 
-export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({ planetName, extendData = true, typeOfObject = "", planetSize = 0.01 }) => {
-  const lineUnderOrbit = useSolarStore((state) => state.hudColors.lineUnderOrbit);
-  const lineBelowOrbit = useSolarStore((state) => state.hudColors.lineBelowOrbit);
-
+export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
+  planetName,
+  extendData = true,
+  typeOfObject = "",
+  planetSize = 0.01
+}) => {
   const planetHuiRef = useRef<THREE.Group>(null);
   const planetHuiRefCenter = useRef<THREE.Group>(null);
   const segmentRef = useRef<SegmentRef>(null);
   const segmentRef2 = useRef<SegmentRef>(null);
 
-  useFrame(() => {
-    const newPosition = useSolarPositionsStore.getState().properties[planetName]?.position as THREE.Vector3 | undefined;
-    if (newPosition) {
+  const newPositionRef = useRef<THREE.Vector3 | undefined>();
+  const lineUnderOrbitRef = useRef(useSolarStore.getState().hudColors.lineUnderOrbit);
+  const lineBelowOrbitRef = useRef(useSolarStore.getState().hudColors.lineBelowOrbit);
 
+  useEffect(() => {
+    const unsubscribePosition = useSolarPositionsStore.subscribe(
+      (state) => {
+        const newPosition = state.properties[planetName]?.position;
+        if (newPosition) {
+          if (newPositionRef.current) {
+            newPositionRef.current.set(newPosition.x, newPosition.y, newPosition.z);
+          } else {
+            // console.log("newPositionRef.current", newPosition);
+            newPositionRef.current = new THREE.Vector3(newPosition.x, newPosition.y, newPosition.z);
+          }
+        }
+      },
+      (state) => state.properties[planetName]?.position
+    );
+
+    const unsubscribeColor = useSolarStore.subscribe(
+      (state) => {
+        lineUnderOrbitRef.current = state.hudColors.lineUnderOrbit;
+        lineBelowOrbitRef.current = state.hudColors.lineBelowOrbit;
+      },
+      (state) => state.hudColors
+    );
+
+    // Cleanup on unmount
+    return () => {
+      unsubscribePosition();
+      unsubscribeColor();
+    };
+  }, [planetName]);
+
+
+  useFrame(() => {
+    if (newPositionRef.current) {
+      // Update positions based on the latest state
       if (planetHuiRef.current) {
-        planetHuiRef.current.position.copy(planetHui1Pos.set(newPosition.x, newPosition.y - planetSize, newPosition.z));
+        planetHuiRef.current.position.copy(planetHui1Pos.set(newPositionRef.current.x, newPositionRef.current.y - planetSize, newPositionRef.current.z));
       }
 
       if (planetHuiRefCenter.current) {
-        planetHuiRefCenter.current.position.set(newPosition.x, newPosition.y, newPosition.z);
+        planetHuiRefCenter.current.position.copy(newPositionRef.current);
       }
 
       if (segmentRef.current) {
-        segmentRef.current.start.set(0,0,0);
-        segmentRef.current.end.copy(newPosition);
+        segmentRef.current.start.set(0, 0, 0);
+        segmentRef.current.end.copy(newPositionRef.current);
       }
 
       if (segmentRef2.current) {
-        segmentRef2.current.start.set(newPosition.x, 0, newPosition.z);
-        segmentRef2.current.end.copy(newPosition);
-        segmentRef2.current.color.set( newPosition.y > 0 ? lineUnderOrbit.color : lineBelowOrbit.color );
+        segmentRef2.current.start.set(newPositionRef.current.x, 0, newPositionRef.current.z);
+        segmentRef2.current.end.copy(newPositionRef.current);
+        segmentRef2.current.color.set(newPositionRef.current.y > 0 ? lineUnderOrbitRef.current.color : lineBelowOrbitRef.current.color);
       }
     }
   });
@@ -104,7 +141,6 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
   let bgStyle;
   switch (typeOfObject) {
     case "object":
-      // bgStyle = "bg-red-600/70";
       bgStyle = "ml-3 mb-2";
       textStyle = "uppercase text-2xs";
       break;

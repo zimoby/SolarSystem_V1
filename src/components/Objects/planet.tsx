@@ -201,7 +201,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
     return curve.getPoints(64); // Adjust the number of points as needed
   }, [planetSize]);
 
-  const guiRef = useRef<THREE.Mesh>(null);
+  // const guiRef = useRef<THREE.Mesh>(null);
 
   //--------- processings size
 
@@ -265,9 +265,9 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
       planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs ?? 0, timeSpeed ?? 0);
     }
 
-    if (guiRef.current) {
-      guiRef.current.lookAt(camera.position);
-    }
+    // if (guiRef.current) {
+    //   guiRef.current.lookAt(camera.position);
+    // }
   });
 
   return (

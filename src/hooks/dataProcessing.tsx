@@ -244,9 +244,7 @@ export const useCelestialBodyUpdates = () => {
   useEffect(() => {
     if (!isInitialized) return;
 
-    useSolarStore
-      .getState()
-      .updateSystemSettings({ maxDistance: maxDistance, minDistance: minDistance });
+    useSolarStore.getState().updateSystemSettings({ maxDistance: maxDistance, minDistance: minDistance });
 
     const supportData: ObjectsSupportDataT = {};
 
@@ -314,31 +312,13 @@ export const useCelestialBodyUpdates = () => {
   ]);
 
   useFrame((state) => {
-    if (!isInitialized) return;
-    if (!isInitialized2) return;
+    if (!isInitialized || !isInitialized2) return;
 
     const time = state.clock.getElapsedTime();
     const updatedObjectsData: Record<string, ObjectsRealtimeDataT> = {};
 
-    // const time = state.clock.getElapsedTime();
-    // const timeToFrames = Math.floor(time * 60);
-    // if (timeToFrames % 2 === 0) {
-
     Object.keys(combinedObjects).forEach((name) => {
-      
       const supportData = objectsSupportDataRef.current[name];
-
-      // const calculatedPosition = calculatePosition({
-      //   name,
-      //   positionVectorsRef,
-      //   time,
-      //   timeSpeed,
-      //   timeOffset,
-      //   supportData,
-      //   siderealOrbitPeriodDays: combinedObjects[name].siderealOrbitPeriodDays,
-      //   quaternionRef,
-      // });
-
       const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;
       const t = calculateTime(
         time,
@@ -362,6 +342,5 @@ export const useCelestialBodyUpdates = () => {
 
     useSolarPositionsStore.getState().batchUpdateProperties(updatedObjectsData);
 
-    // }
   });
 };
