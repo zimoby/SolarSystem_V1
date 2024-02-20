@@ -13,6 +13,7 @@
     "@react-spring/web": "^9.7.3",
     "@react-three/drei": "^9.97.0",
     "@react-three/fiber": "^8.15.16",
+    "@react-three/postprocessing": "^2.16.0",
     "leva": "^0.9.35",
     "lodash": "^4.17.21",
     "maath": "^0.10.7",
