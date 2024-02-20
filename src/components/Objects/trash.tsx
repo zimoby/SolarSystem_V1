@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSolarStore } from "../../store/systemStore";
-import { Html, Point, PointMaterial, Points, shaderMaterial } from "@react-three/drei";
+import { Html, Point, PointMaterial, Points, shaderMaterial, useTexture } from "@react-three/drei";
 
-import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Texture, TextureLoader, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Texture, TextureLoader, Vector2, Vector3 } from "three";
 import { useFrame, extend, useThree } from "@react-three/fiber";
 import { calculateRelativeDistanceXY } from "../../utils/calculations";
 import { CrossingTrashParamsT, TrashParamsT } from "../../types";
 
-import texture1 from "../../assets/dot_style01.png"
+import textureAtlasSrc from "../../assets/dot_style_atlas.png"
 
 type Position = {
   x: number;
@@ -286,6 +286,7 @@ const Particles = ({ points, rotSpeed, size, double = false }) => {
   const pointsRef2 = useRef<THREE.Points>();
 
   const materialRef1 = useRef();
+  const materialRef2 = useRef();
 
   const { camera } = useThree();
 
@@ -309,12 +310,12 @@ const Particles = ({ points, rotSpeed, size, double = false }) => {
 
     }
 
-    if (materialRef1.current) {
+    if (materialRef1.current && materialRef2.current) {
       materialRef1.current.uniforms.cameraPosition.value.copy(camera.position);
+      materialRef2.current.uniforms.cameraPosition.value.copy(camera.position);
     }
 
   });
-
 
   return (
     <group>
@@ -328,7 +329,7 @@ const Particles = ({ points, rotSpeed, size, double = false }) => {
       </points>
       <points geometry={geom} rotation-x={Math.PI / 2} ref={pointsRef2}>
         <particleShaderMaterial
-          // ref={materialRef}
+          ref={materialRef2}
           attach="material"
           size={size}
           color={'#FFFFFF'}
@@ -351,24 +352,22 @@ const OrbitShaderMaterial = shaderMaterial(
     color: new Color(0xffffff),
     size: 1.0,
   },
-  // Vertex Shader
   `
-  attribute float distance;
-  attribute float angle;
-  uniform float time;
-  uniform float baseSpeed;
-  uniform float size;
-  void main() {
-    float effectiveSpeed = baseSpeed * (1.0 / (distance - 1.0)) * 10.0;
-    float newAngle = angle + time * effectiveSpeed;
-    vec3 transformed = position;
-    transformed.x = distance * cos(newAngle);
-    transformed.y = distance * sin(newAngle);
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
-    gl_PointSize = size;
-  }
+    attribute float distance;
+    attribute float angle;
+    uniform float time;
+    uniform float baseSpeed;
+    uniform float size;
+    void main() {
+      float effectiveSpeed = baseSpeed * (1.0 / (distance - 1.0)) * 10.0;
+      float newAngle = angle + time * effectiveSpeed;
+      vec3 transformed = position;
+      transformed.x = distance * cos(newAngle);
+      transformed.y = distance * sin(newAngle);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
+      gl_PointSize = size;
+    }
   `,
-  // Fragment Shader
   `
   uniform vec3 color;
   void main() {
@@ -402,7 +401,6 @@ const PointsOrbitRotationShader = ({ points, size, name }) => {
     return geometry;
   }, [angles, distances, points.length]);
 
-
   useFrame(({ clock }) => {
     if (materialRef.current) {
       materialRef.current.uniforms.time.value = clock.getElapsedTime();
@@ -416,7 +414,6 @@ const PointsOrbitRotationShader = ({ points, size, name }) => {
         attach="material"
         time={0}
         baseSpeed={0.02}
-        color={'#FFFFFF'}
         size={size.toFixed(2)}
         distances={distances}
         angles={angles}
@@ -425,50 +422,68 @@ const PointsOrbitRotationShader = ({ points, size, name }) => {
   );
 };
 
-const loader = new TextureLoader();
-
-
 const vertexShader = `
   uniform float time;
   uniform vec3 boundaries;
   uniform float velocityMultiplier;
   uniform float size;
+  uniform vec2 atlasSize;
   attribute vec3 velocity;
+  attribute vec3 color;
+  attribute float textureIndex;
+
+  varying vec3 vColor;
+  varying vec2 vUv;
 
   void main() {
-    vec3 pos = position + velocity * velocityMultiplier * time;
-    // Simulate wrapping (this is a simplified example)
-    pos = mod(pos + boundaries, boundaries * 2.0) - boundaries;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    gl_PointSize = size; // Fixed size for simplicity
+      vec3 pos = position + velocity * velocityMultiplier * time;
+      pos = mod(pos + boundaries, boundaries * 2.0) - boundaries;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      gl_PointSize = size;
 
+      vColor = color;
+
+      float nx = mod(textureIndex, atlasSize.x);
+      float ny = floor(textureIndex / atlasSize.x);
+      float offsetX = nx / atlasSize.x;
+      float offsetY = ny / atlasSize.y;
+      vUv = vec2(offsetX, offsetY);
   }
 `
 
 const fragmentShader = `
-  uniform vec3 color;
   uniform sampler2D uTexture;
-  void main() {
-    vec4 textureColor = texture2D(uTexture, gl_PointCoord);
-    gl_FragColor = vec4(color * textureColor.rgb, textureColor.a);
+  uniform vec2 atlasSize;
+  varying vec3 vColor;
+  varying vec2 vUv;
 
+  void main() {
+      vec2 uv = vUv + gl_PointCoord * (1.0 / atlasSize.x);
+      vec4 textureColor = texture2D(uTexture, uv);
+      gl_FragColor = vec4(vColor * textureColor.rgb, textureColor.a);
   }
 `
+
+const randomColorArray = [
+  new Color(0xff0000),
+  new Color(0x00ff00),
+  new Color(0x0000ff),
+  new Color(0xffc0cb),
+];
+const amountOfImages = 4;
+const atlasDimensions = Math.sqrt(amountOfImages);
+
+const velocityMultiplier = 5.0;
+
 
 
 const PointsCrossSolarSystemShader = ({ points, size }) => {
   // const shaderMaterialRef = useRef();
   const { clock } = useThree();
 
-  // console.log("strokeTexture", strokeTexture);
 
-  const strokeTexture = loader.load(texture1, function() {
-    console.log("Texture loaded successfully");
-  }, undefined, function(err) {
-    console.error("Error loading texture", err);
-  });
+  const textureAtlas = useTexture(textureAtlasSrc);
 
-  const velocityMultiplier = 5.0;
 
   const shaderMaterial = useMemo(() => new ShaderMaterial({
     uniforms: {
@@ -477,18 +492,24 @@ const PointsCrossSolarSystemShader = ({ points, size }) => {
       boundaries: { value: new Vector3(10, 10, 3) },
       velocityMultiplier: { value: velocityMultiplier },
       size: { value: size },
-      uTexture: { value: strokeTexture },
+      uTexture: { value: textureAtlas },
+      atlasSize: { value: new Vector2(atlasDimensions, atlasDimensions) },
     },
     vertexShader,
     fragmentShader,
     transparent: true,
-  }), [size, strokeTexture]);
-
-  console.log("shaderMaterial", shaderMaterial);
+  }), [size, textureAtlas]);
 
 
-  const positions = useMemo(() => points.map(p => [p.position.x, p.position.y, p.position.z]).flat(), [points]);
-  const velocities = useMemo(() => points.map(p => [p.velocity.x, p.velocity.y, p.velocity.z]).flat(), [points]);
+  const [positions, velocities, randomColors, randomTextures] = useMemo(() => {
+    const positions = points.map(p => [p.position.x, p.position.y, p.position.z]).flat();
+    const velocities = points.map(p => [p.velocity.x, p.velocity.y, p.velocity.z]).flat();
+    const randomColors = points.map(() => randomColorArray[Math.floor(Math.random() * randomColorArray.length)]);
+    const randomTextures = points.map(() => Math.floor(Math.random() * amountOfImages));
+
+    return [positions, velocities, randomColors, randomTextures];
+  }, [points]);
+  
 
   useFrame(() => {
     shaderMaterial.uniforms.time.value = clock.getElapsedTime();
@@ -500,8 +521,11 @@ const PointsCrossSolarSystemShader = ({ points, size }) => {
     const geometry = new BufferGeometry();
     geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
     geometry.setAttribute('velocity', new Float32BufferAttribute(velocities, 3));
+    geometry.setAttribute('color', new BufferAttribute(new Float32Array(randomColors.flatMap(c => c.toArray())), 3));
+    geometry.setAttribute('textureIndex', new BufferAttribute(new Float32Array(randomTextures), 1));
+    console.log("geom", geometry);
     return geometry;
-  }, [positions, velocities]);
+  }, [positions, randomColors, randomTextures, velocities]);
 
   return (
     <points geometry={geom} material={shaderMaterial} rotation-x={Math.PI / 2} />
