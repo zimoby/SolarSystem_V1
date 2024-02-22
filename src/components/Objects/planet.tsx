@@ -1,13 +1,13 @@
 import { useMemo, useRef } from "react";
 import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import {
-  calculateObjectsRotation,
+  calculateObjectsRotation, degreesToRadians,
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Line, Sphere, Trail, useTexture } from "@react-three/drei";
+import { Line, Plane, Sphere, Trail, shaderMaterial, useTexture } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
-import { useFrame, useThree } from "@react-three/fiber";
+import { extend, useFrame, useThree } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
 import saturnRing from "../../assets/saturnringcolor.jpg";
@@ -20,6 +20,45 @@ import earthClouds from "../../assets/earthcloudmap.jpg";
 import earthCloudsAlpha from "../../assets/earthcloudmaptrans.jpg";
 import { SolarObjectParamsBasicWithMoonsT } from "../../types";
 
+import moonTexture from "../../assets/2k_moon.jpg";
+
+import { resolveLygia } from "resolve-lygia"
+
+
+const ColorShiftMaterial = shaderMaterial(
+  { uTime: 0.0, uResolution: new THREE.Vector2(600, 600), side: THREE.DoubleSide},
+  // vertex shader
+  resolveLygia(`
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `),
+  // fragment shader
+  resolveLygia(`
+    uniform float time;
+    varying vec2 vUv;
+    uniform vec2 uResolution;
+    uniform float uTime;
+
+    #include "lygia/generative/fbm.glsl"
+
+
+    void main() {
+      vec4 color = vec4(vec3(0.0), 1.0);
+      vec2 pixel = 1.0/uResolution.xy;
+      vec2 st = gl_FragCoord.xy * pixel;
+      float d3 = fbm(vec3(st * 5.0, uTime)) * 0.5 + 0.5;
+
+      color += vec4(vec3(d3), st.x);
+
+      gl_FragColor.rgba = color;
+    }
+  `)
+);
+
+extend({ ColorShiftMaterial });
 
 // https://github.com/dataarts/webgl-globe/blob/8d746a3dbf95e57ec3c6c2c6effe920c95135253/globe/globe.js
 // const Shaders = {
@@ -83,8 +122,6 @@ type PlanetInfoCirclesProps = {
 
 const PlanetInfoCircles = ({ planetName, planetSize, params }: PlanetInfoCirclesProps) => {
   const filteredParams: Record<string, number> = filterParamsOnlyNumbers(params);
-
-  // console.log("filteredParams", filteredParams);
 
   const normalizedValuesTo2MathPI = Object.keys(filteredParams).map((key) => {
     let circleValue = 0;
@@ -166,12 +203,28 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
+  // const planetParams = useSolarStore((state) => state.celestialBodies[type][planetName]);
   const siderealRotationPeriodHrs = useSolarStore((state) => state.celestialBodies[type][planetName].siderealRotationPeriodHrs);
+  const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][planetName].obliquityToOrbitDeg);
   const planetaryRingSystem = useSolarStore((state) => state.celestialBodies[type][planetName].planetaryRingSystem);
   const planetSize = useSolarStore((state) => state.additionalProperties[planetName].scale);
     
   const planetRef = useRef<THREE.Group>(null);
   const planetRotationRef = useRef<THREE.Group>(null);
+  const planetShaderRef = useRef<THREE.Mesh>(null);
+
+  const [
+    createMoonTexture,
+  ] = useTexture([
+    moonTexture,
+  ]);
+
+
+  // console.log("SolarSystemPlanets");
+
+  const mapedMoonsTextures = {
+    moon: createMoonTexture,
+  };
 
   const [earthCloudsTexture, earthAlphaTexture] = useTexture([earthClouds, earthCloudsAlpha]);
   let cloudsTexture = null;
@@ -217,7 +270,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
   //   return curve.getPoints(32); // Adjust the number of points as needed
   // }, [planetSize]);
 
-  const { camera } = useThree();
+  // const { camera } = useThree();
 
   // const shader = Shaders['atmosphere'];
   // const uniforms = THREE.UniformsUtils.clone(shader.uniforms);
@@ -265,10 +318,15 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
       planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs ?? 0, timeSpeed ?? 0);
     }
 
+    if (planetShaderRef.current) {
+      planetShaderRef.current.uniforms.uTime.value = time;
+    }
+
     // if (guiRef.current) {
     //   guiRef.current.lookAt(camera.position);
     // }
   });
+
 
   return (
     <group>
@@ -277,11 +335,13 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         planetSize={planetSize}
         extendData={type == "planets"}
       />
-      <ObjectEllipse
-        params={params}
-        name={planetName}
-        type={type}
-      />
+      <group>
+        <ObjectEllipse
+          params={params}
+          name={planetName}
+          type={type}
+        />
+      </group>
       {/* <Trail
         local
         width={planetSize * 100}
@@ -291,7 +351,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         // @ts-expect-error tired of typescript
         target={planetRef}
       /> */}
-      <group ref={planetRef}>
+      <group ref={planetRef}  rotation-x={degreesToRadians(obliquityToOrbitDeg)}>
         {/* <mesh ref={guiRef}>
           <PlanetInfoCircles
             planetName={planetName}
@@ -301,12 +361,13 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         </mesh> */}
         <group>
           {moons.map((moon, index) => {
+            console.log("moon", moon);
             return (
               <PlanetComponent
                 key={index}
                 planetName={moon.name}
                 params={moon}
-                planetTexture={planetTexture}
+                planetTexture={mapedMoonsTextures[moon.name.toLowerCase()]}
                 type="moons"
               />
             ); 
@@ -315,7 +376,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         {planetaryRingSystem &&
           <PlanetRing planetName={planetName} planetSize={planetSize} />
         }
-        <group ref={planetRotationRef}>
+        <group ref={planetRotationRef} >
           <mesh rotation-y={Math.PI / 2}>
             <Line
               points={planetEllipseRotation}
@@ -338,6 +399,11 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
             />
 
           </Sphere>
+          {/* <mesh>
+            <Sphere args={[planetSize * 1.1]}>
+              <colorShiftMaterial key={ColorShiftMaterial.key} uTime={0} ref={planetShaderRef} />
+            </Sphere>
+          </mesh> */}
           {/* <Sphere
             key={planetName}
             args={[planetSize * 1.1]}

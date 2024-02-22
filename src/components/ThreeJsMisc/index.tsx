@@ -11,7 +11,7 @@ export const AppStatsPerformance = () => {
   return (
     <group>
       <Stats />
-      <Perf position="bottom-left" />
+      {/* <Perf position="bottom-left" /> */}
     </group>
   );
 };
@@ -21,7 +21,7 @@ export const KeyboardInit = () => {
   const rightPressed = useKeyboardControls<Controls>(state => state.right);
   const leftPressed = useKeyboardControls<Controls>(state => state.left);
 
-  const activeObjectName = useSolarStore(state => state.activeObjectName);
+  const activeObjectName = useSolarStore.getState().activeObjectName;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const planetsWithSun = ["sun", ...planetsNamesOrder];
@@ -47,14 +47,11 @@ export const ControlComponent = () => {
   const { camera } = useThree();
   const currentPositionRef = useRef<THREE.Vector3 | undefined>();
   
-  // const controlRef = useRef<OrbitControls>(null);
-
-  
 
   useEffect(() => {
     const unsubscribeSolarPositions = useSolarPositionsStore.subscribe((state) => {
       const newPosition = state.properties[useSolarStore.getState().activeObjectName]?.position;
-      currentPositionRef.current = newPosition;
+      currentPositionRef.current = newPosition as THREE.Vector3 | undefined;
     });
 
     return () => {

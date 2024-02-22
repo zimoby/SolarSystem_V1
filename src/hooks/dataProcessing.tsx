@@ -35,9 +35,10 @@ const usedProperties: string[] = [
   "orbitEccentricity",
   "anchorXYOffset",
   "planetaryRingSystem",
+  "obliquityToOrbitDeg",
 ];
 
-const ignoreToNormalize: string[] = ["orbitEccentricity"];
+const ignoreToNormalize: string[] = ["orbitEccentricity", "obliquityToOrbitDeg"];
 
 const reorderPlanets: SolarObjectParamsBasicWithMoonsT = planetsNamesOrder.reduce(
   (acc, planetName) => ({
@@ -46,6 +47,8 @@ const reorderPlanets: SolarObjectParamsBasicWithMoonsT = planetsNamesOrder.reduc
   }),
   {} as SolarObjectParamsBasicWithMoonsT
 );
+
+const sunData: SolarObjectParamsBasicT = starsData["sun"];
 
 export const useInitiateSolarSystem = () => {
   const uiRandomColors = useSolarStore((state) => state.uiRandomColors);
@@ -67,6 +70,18 @@ export const useInitiateSolarSystem = () => {
     const randomObjects: Record<string, SolarObjectParamsBasicT> = !disableRandomObjects ? objects : {};
     const trashObjects: Record<string, SolarObjectParamsBasicT> = !disableTrash ? trash : {};
   
+    useSolarStore.getState().updateSystemSettings({
+      activeObjectInfo: {
+        sun: sunData,
+      ...reorderPlanets,
+      ...randomObjects
+    }});
+
+    // console.log("all objects data", {
+    //   ...reorderPlanets,
+    //   ...randomObjects
+    // })
+
     console.log("start init");
 
     const celestialBodiesUpdates: Record<
@@ -161,7 +176,7 @@ export const useInitiateSolarSystem = () => {
       });
     }
 
-    const sunData: SolarObjectParamsBasicT = starsData["sun"];
+    
     processCelestialBody("stars", "sun", sunData, "system", 0);
 
     useSolarStore.getState().batchUpdateCelestialBodies(celestialBodiesUpdates as never);
@@ -217,6 +232,7 @@ export const useCelestialBodyUpdates = () => {
     };
   }, [isInitialized, planets, moons, objects]);
 
+
   const [maxDistance, minDistance] = useMemo(() => {
     if (!isInitialized) return [0, 1];
     const distances = Object.keys(combinedObjects).reduce(
@@ -244,7 +260,13 @@ export const useCelestialBodyUpdates = () => {
   useEffect(() => {
     if (!isInitialized) return;
 
-    useSolarStore.getState().updateSystemSettings({ maxDistance: maxDistance, minDistance: minDistance });
+    useSolarStore.getState().updateSystemSettings({
+      maxDistance: maxDistance,
+      minDistance: minDistance,
+      // activeObjectInfo: combinedObjects
+    });
+
+    // console.log("all objects data", combinedObjects)
 
     const supportData: ObjectsSupportDataT = {};
 

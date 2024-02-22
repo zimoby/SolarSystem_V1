@@ -175,7 +175,7 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
     <group ref={ref as Ref<THREE.Group<THREE.Object3DEventMap>>} >
       <Html center>
         <div
-          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer`}
+          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer z-0 hover:bg-orange-400 hover:z-50`}
           style={{ transform: "translate(50%, 75%)" }}
           onClick={() => {
             updateActiveName(params.name);

@@ -1,9 +1,14 @@
-import { create } from "zustand";
+import { create, StateCreator } from "zustand";
 import { generateCrossingObjects, generateRandomObjects, generateTrash } from "../utils/generators";
 import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
-import { CalculatedObjectDataT, ObjectsRealtimeDataT, SolarSystemStoreStateT, SystemColorsStateT, SystemStoreStateT } from "../types";
+import { CalculatedObjectDataT, ObjectsRealtimeDataT, SolarSystemStoreRealtimeStateT, SolarSystemStoreStateT, SystemColorsStateT, SystemStoreStateT } from "../types";
 
-const useSystemColorsStore = (set): SystemColorsStateT => ({
+const useSystemColorsSlice: StateCreator<
+    SystemColorsStateT,
+    [],
+    [],
+    SystemColorsStateT
+  > = (set) => ({
   uiRandomColors: ["red", "green", "blue", "yellow", "purple", "orange", "pink"],
   hudColors: {
     lineUnderOrbit: { color: "green", opacity: 1 },
@@ -26,7 +31,12 @@ const useSystemColorsStore = (set): SystemColorsStateT => ({
   updateColors: (updates) => set((state) => ({ ...state, ...updates })),
 });
 
-const useSystemStore = (set): SystemStoreStateT => ({
+const useSystemStore: StateCreator<
+    SystemStoreStateT,
+    [],
+    [],
+    SystemStoreStateT
+  > = (set) => ({
   isInitialized: false,
   isInitialized2: false,
   dataInitialized: false,
@@ -42,6 +52,7 @@ const useSystemStore = (set): SystemStoreStateT => ({
   disableTrash: false,
 
   activeObjectName: "sun",
+  activeObjectInfo: {},
 
   timeSpeed: 1,
   timeOffset: 0,
@@ -64,7 +75,12 @@ const trashMiddleAmount = 1000;
 const trashOuterAmount = 4000;
 const trashCross = 100;
 
-const useSolarSystemStore = (set) => ({
+const useSolarSystemStore: StateCreator<
+    SolarSystemStoreStateT,
+    [],
+    [],
+    SolarSystemStoreStateT
+  > = (set) => ({
   celestialBodies: {
     stars: {},
     planets: {},
@@ -122,7 +138,7 @@ const useSolarSystemStore = (set) => ({
   }),
 });
 
-export const useSolarPositionsStore = create((set) => ({
+export const useSolarPositionsStore = create<SolarSystemStoreRealtimeStateT>((set) => ({
   properties: {},
   batchUpdateProperties: (updates) => set((state) => {
     const filteredUpdates = Object.entries(updates).reduce((acc, [key, value]) => {
@@ -142,8 +158,8 @@ export const useSolarPositionsStore = create((set) => ({
 }));
 
 
-export const useSolarStore = create((...a) => ({
-  ...useSystemColorsStore(...a),
+export const useSolarStore = create<SystemColorsStateT & SystemStoreStateT & SolarSystemStoreStateT>()((...a) => ({
+  ...useSystemColorsSlice(...a),
   ...useSystemStore(...a),
   ...useSolarSystemStore(...a),
 }));

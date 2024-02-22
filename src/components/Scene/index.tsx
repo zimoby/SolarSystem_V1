@@ -1,17 +1,19 @@
 import { GizmoHelper, GizmoViewport, Grid, Stars } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
+import { EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { useEffect, useRef } from "react";
 import { PointLight } from "three";
 
 export const SceneSetup = () => {
 
   const { ...gridConfig } = {
-    cellSize: 0.1,
+    cellSize: 0.2,
     cellThickness: 0.5,
     cellColor: "#ffffff", //6f6f6f
     sectionSize: 1,
     sectionThickness: 1,
     sectionColor: "yellow",
-    fadeDistance: 40,
+    fadeDistance: 100,
     fadeStrength: 3,
     followCamera: false,
     infiniteGrid: true,
@@ -32,7 +34,7 @@ export const SceneSetup = () => {
   //   light2.visible = true;
   //   light2.shadow.bias = 0.0001;
   //   light2.shadow.mapSize.width = 4096; // default
-  //   light2.shadow.mapSize.height = 4096; // default
+  //   light2.shadow.mapSize.height = 4096; // default3
   //   light2.shadow.darkness = 0.1;
   //   light2.shadow.camera.near = 1000000;
   //   light2.shadow.camera.far = 3e9; // default
@@ -55,6 +57,8 @@ export const SceneSetup = () => {
     }
   }, []);
 
+  // const {camera} = useThree();
+
   // console.log("lightRef", lightRef);
   // const lightTest = new PointLight(0xffffff, 1, 0);
   // lightTest.position.set(0, 0, 0);
@@ -64,13 +68,14 @@ export const SceneSetup = () => {
   return (
     <>
       
-{/* 
-      <EffectComposer>
-        <Bloom height={200} mipmapBlur/>
-        <Noise opacity={0.2} blendFunction={BlendFunction.MULTIPLY}/>
-        <Vignette  offset={0.3} darkness={0.5} />
-        <ToneMapping />
-      </EffectComposer> */}
+
+      {/* <EffectComposer camera={camera}> */}
+        {/* <Bloom height={200} mipmapBlur/> */}
+        {/* <Noise opacity={0.2}/> */}
+        {/* <Noise opacity={0.2} blendFunction={BlendFunction.MULTIPLY}/> */}
+        {/* <Vignette eskil={false} offset={0.1} darkness={1.1} /> */}
+        {/* <ToneMapping /> */}
+      {/* </EffectComposer> */}
 
       {/* <Environment background files={[skyStars]} /> */}
       {/* <Environment preset="sunset"  /> */}
@@ -94,7 +99,7 @@ export const SceneSetup = () => {
       <ambientLight intensity={0.4} />
       <Stars />
 
-      <Grid position={[0, 0.3, 0]} args={[10, 10]} {...gridConfig} />
+      <Grid position={[0, -2, 0]} args={[10, 10]} {...gridConfig} />
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
         <GizmoViewport axisColors={["#9d4b4b", "#2f7f4f", "#3b5b9d"]} labelColor="white" />
       </GizmoHelper>

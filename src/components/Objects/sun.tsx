@@ -37,7 +37,7 @@ export const SunComponent = () => {
       console.log("Sun init");
       updateSunInitialized({ sunInitialized: true });
     }
-  }, [sunInitialized]);
+  }, [sunInitialized, updateSunInitialized]);
 
   useFrame((state) => {
     if (!sunData || !sunInitialized) { return; }

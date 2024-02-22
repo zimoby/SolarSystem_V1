@@ -219,6 +219,7 @@ export const TrashComponent = () => {
           {/* <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
           <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } /> */}
           <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.02} />
+          <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.02} />
 
         </group>
 
@@ -229,6 +230,7 @@ export const TrashComponent = () => {
         <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
           {/* <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } /> */}
           <Particles points={trashOuter1} rotSpeed={ innerSpeed * 50 } size={0.5} double={false} />
+          {/* <Particles points={trashOuter1} rotSpeed={ innerSpeed * 25 } size={0.5} double={false} /> */}
 
         </group>
       )}
@@ -252,12 +254,15 @@ export const TrashComponent = () => {
 const ParticleShaderMaterial = shaderMaterial(
   {
     color: new Color(0xffffff),
+    time: 0,
     size: 1.0,
     cameraPosition: new Vector3(),
   },
   // Vertex Shader
   `
   uniform float size;
+  uniform float time;
+
   void main() {
     vec4 worldPosition = modelMatrix * vec4(position, 1.0);
     float distance = length(cameraPosition - worldPosition.xyz);
@@ -281,38 +286,26 @@ const ParticleShaderMaterial = shaderMaterial(
 extend({ ParticleShaderMaterial });
 
 const Particles = ({ points, rotSpeed, size, double = false }) => {
-
   const pointsRef1 = useRef<THREE.Points>();
-  const pointsRef2 = useRef<THREE.Points>();
-
-  const materialRef1 = useRef();
-  const materialRef2 = useRef();
-
-  const { camera } = useThree();
-
-
-  // console.log("points", points);
+  const materialRef = useRef();
 
   const geom = useMemo(() => {
     const geometry = new BufferGeometry();
-    const positions = points.flatMap(p => p.position);
+    const positions = points.flatMap((p) => p.position);
     geometry.setAttribute('position', new BufferAttribute(new Float32Array(positions), 3));
     return geometry;
   }, [points]);
 
-  useFrame(({clock}) => {
+  useFrame(({ clock }) => {
     // console.log("camera", camera);
     const t = clock.getElapsedTime() * Math.PI * 2;
-    if (pointsRef1.current && pointsRef2.current) {
+    if (pointsRef1.current) {
       pointsRef1.current.rotation.z = (t / rotSpeed) % (Math.PI * 2);
-
-      pointsRef2.current.rotation.z = (t / rotSpeed) % (Math.PI * 2);
-
+      // pointsRef2.current.rotation.z = (t / rotSpeed / 2) % (Math.PI * 2);
     }
 
-    if (materialRef1.current && materialRef2.current) {
-      materialRef1.current.uniforms.cameraPosition.value.copy(camera.position);
-      materialRef2.current.uniforms.cameraPosition.value.copy(camera.position);
+    if (materialRef.current) {
+      materialRef.current.uniforms.time.value = clock.getElapsedTime();
     }
 
   });
@@ -321,27 +314,16 @@ const Particles = ({ points, rotSpeed, size, double = false }) => {
     <group>
       <points geometry={geom} rotation-x={Math.PI / 2} ref={pointsRef1}>
         <particleShaderMaterial
-          ref={materialRef1}
+          ref={materialRef}
+          time={0}
           attach="material"
           size={size}
           color={'#FFFFFF'}
         />
       </points>
-      <points geometry={geom} rotation-x={Math.PI / 2} ref={pointsRef2}>
-        <particleShaderMaterial
-          ref={materialRef2}
-          attach="material"
-          size={size}
-          color={'#FFFFFF'}
-        />
-      </points>
-      
     </group>
   );
 };
-
-
-
 
 const OrbitShaderMaterial = shaderMaterial(
   {
@@ -523,7 +505,7 @@ const PointsCrossSolarSystemShader = ({ points, size }) => {
     geometry.setAttribute('velocity', new Float32BufferAttribute(velocities, 3));
     geometry.setAttribute('color', new BufferAttribute(new Float32Array(randomColors.flatMap(c => c.toArray())), 3));
     geometry.setAttribute('textureIndex', new BufferAttribute(new Float32Array(randomTextures), 1));
-    console.log("geom", geometry);
+    // console.log("geom", geometry);
     return geometry;
   }, [positions, randomColors, randomTextures, velocities]);
 

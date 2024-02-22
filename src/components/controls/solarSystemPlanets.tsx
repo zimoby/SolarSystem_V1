@@ -2,6 +2,7 @@ import { useTexture } from "@react-three/drei";
 import PlanetComponent from "../Objects/planet";
 
 import earthTexture from "../../assets/2k_earth_daymap.jpg";
+
 import jupiterTexture from "../../assets/2k_jupiter.jpg";
 import marsTexture from "../../assets/2k_mars.jpg";
 import mercuryTexture from "../../assets/2k_mercury.jpg";
@@ -35,7 +36,8 @@ const SolarSystemPlanets = () => {
     createNeptuneTexture,
     createSaturnTexture,
     createUranusTexture,
-    createVenusTexture
+    createVenusTexture,
+    // createMoonTexture,
   ] = useTexture([
     earthTexture,
     jupiterTexture,
@@ -44,7 +46,8 @@ const SolarSystemPlanets = () => {
     neptuneTexture,
     saturnTexture,
     uranusTexture,
-    venusTexture
+    venusTexture,
+    // moonTexture,
   ]);
 
 
@@ -52,6 +55,7 @@ const SolarSystemPlanets = () => {
 
   const mapedTextures = {
     earth: createEarthTexture,
+    // moon: createMoonTexture,
     jupiter: createJupiterTexture,
     mars: createMarsTexture,
     mercury: createMercuryTexture,

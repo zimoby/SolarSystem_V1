@@ -178,3 +178,8 @@ export interface SolarSystemStoreStateT {
     updates: Partial<SolarSystemStoreStateT["additionalProperties"]>
   ) => void;
 }
+
+export interface SolarSystemStoreRealtimeStateT {
+  properties: { [key: string]: ObjectsRealtimeDataT };
+  batchUpdateProperties: (updates: Partial<SolarSystemStoreRealtimeStateT["properties"]>) => void;
+}
