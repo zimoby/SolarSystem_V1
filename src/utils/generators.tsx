@@ -124,6 +124,7 @@ export const generateRandomObjects = (objectNumber = 10) => {
       orbitInclinationDeg: Math.random() * 360,
       siderealRotationPeriodHrs: 0,
       orbitEccentricity: Math.random(),
+      obliquityToOrbitDeg: 0
     };
   }
   return randomObjects;

@@ -13,7 +13,7 @@ export const ActiveObjectInfo = () => {
 
     const objInfoIntoArray = useMemo(() => {
         return Object.entries(objectsInfo[activeObjectName] || {})
-            .filter(([name]) => (name !== "moons" && name !== "name"))
+            .filter(([name]) => (name !== "moons" && name !== "name" && name !== "anchorXYOffset"))
             .map(([name, value]) => ({ name, value: String(value) }));
     }, [objectsInfo, activeObjectName]);
 
@@ -33,14 +33,17 @@ export const ActiveObjectInfo = () => {
     return (
         <div className="absolute bottom-0 left-0 m-2">
             <div className="relative p-2 select-none">
-                <div 
-                    className="absolute top-0 left-0 font-sans text-lg -m-1 text-red-600 cursor-pointer hover:scale-150 hover:text-neutral-50"
+                <div className="cursor-pointer hover:text-red-600"
                     onClick={() => setShowMoreActiveInfo(!showMoreActiveInfo)}
                 >
-                    +
-                </div>
-                <div className="uppercase font-bold text-2xl font-sans">
-                    {activeObjectName}
+                    <div 
+                        className="absolute top-0 left-0 font-sans text-lg -m-1 text-red-600  hover:scale-150 hover:text-neutral-50"
+                    >
+                        +
+                    </div>
+                    <div className="uppercase font-bold text-2xl font-sans">
+                        {activeObjectName}
+                    </div>
                 </div>
                 <animated.div style={{ overflow: 'hidden', ...animation }}>
                     <div ref={showMoreActiveInfo ? ref : undefined} className="text-2xs leading-3">

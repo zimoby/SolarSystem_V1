@@ -27,7 +27,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 }) => {
   const [selected, setSelected] = useState(false);
   const distanceXY = useSolarStore((state) => state.additionalProperties[name]?.distanceXY) || { x: 0, y: 0 };
-  const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][name].obliquityToOrbitDeg);
+  // const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][name].obliquityToOrbitDeg ?? 0);
   const objData = useSolarStore((state) => state.additionalProperties[name]);
   const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
@@ -106,7 +106,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   const {camera} = useThree();
 
-  console.log("ObjectEllipse", name, 1+ useSolarStore.getState().additionalProperties[name]?.scale * 2);
+  // console.log("ObjectEllipse", name, 1+ useSolarStore.getState().additionalProperties[name]?.scale * 2);
 
   useFrame(() => {
     const objectPosition = useSolarPositionsStore.getState().properties[name]?.position as THREE.Vector3;
