@@ -31,6 +31,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
   const objData = useSolarStore((state) => state.additionalProperties[name]);
   const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
+  const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
 
   console.log("ObjectEllipse", objData);
 
@@ -43,8 +44,8 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
   const planetInclination = degreesToRadians( (params.orbitInclinationDeg ?? 0) + orbitAngleOffset );
 
   const points = useMemo(() => 
-    new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(64 * 1),
-    [distanceXY.x, distanceXY.y]
+    new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(orbitPathDetalization),
+    [distanceXY.x, distanceXY.y, orbitPathDetalization]
   );
   
   const pointsDependOnInclination = useMemo(() => {
@@ -56,8 +57,8 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
       0,
       Math.PI * 2,
       false
-    ).getPoints(64);
-  }, [distanceXY.x, distanceXY.y, planetInclination]);
+    ).getPoints(orbitPathDetalization);
+  }, [distanceXY.x, distanceXY.y, orbitPathDetalization, planetInclination]);
 
   const SelectedTube = useMemo(() => {
     const relScale = objData.scale * 0.3;

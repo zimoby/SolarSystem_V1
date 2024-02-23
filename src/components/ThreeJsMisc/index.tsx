@@ -6,6 +6,7 @@ import { Controls } from "../../types";
 import { planetsNamesOrder } from "../../data/solarSystemData";
 import { useFrame, useThree } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
+import { Vector3 } from "three";
 
 export const AppStatsPerformance = () => {
   return (
@@ -46,6 +47,7 @@ export const ControlComponent = () => {
 
   const { camera } = useThree();
   const currentPositionRef = useRef<THREE.Vector3 | undefined>();
+  const orbitControlsRef = useRef<OrbitControls>(null);
   
 
   useEffect(() => {
@@ -59,10 +61,35 @@ export const ControlComponent = () => {
     };
   }, []);
 
+  // console.log("orbitControlsRef", orbitControlsRef);
+
   useFrame(() => {
+
     
     if (currentPositionRef.current) {
+      // const desiredOffset = new Vector3(0, 10, -30);
+      // const targetPosition = currentPositionRef.current;
+      // const desiredPosition = targetPosition.clone().add(desiredOffset);
+      // camera.position.lerp(desiredPosition, 0.1);
+      // camera.lookAt(targetPosition);
+
+      
+      // const targetPosition = currentPositionRef.current;
+      // const controls = orbitControlsRef.current;
+      // controls.target.set(targetPosition.x, targetPosition.y, targetPosition.z);
+      // // controls.position0.set(targetPosition.x, targetPosition.y,  targetPosition.z);
+
+
+      // controls.update();
+
+
+
+      // camera.position.lerp(desiredPosition, 0.1);
       camera.lookAt(currentPositionRef.current.x, currentPositionRef.current.y, currentPositionRef.current.z);
+      // camera.lookAt(targetPosition);
+
+      // camera.position.set(currentPositionRef.current.x, currentPositionRef.current.y, currentPositionRef.current.z + cameraDistance);
+      // camera.position.set(currentPositionRef.current.x + cameraPosition.x, currentPositionRef.current.y + cameraPosition.y, currentPositionRef.current.z + cameraPosition.z);
     }
   });
 
@@ -70,7 +97,7 @@ export const ControlComponent = () => {
     <>
       <PerspectiveCamera  makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
       <OrbitControls 
-        // ref={controlRef}
+        ref={orbitControlsRef}
         dampingFactor={0.3}
         rotateSpeed={0.5}
       />

@@ -63,6 +63,8 @@ const useSystemStore: StateCreator<
   maxDistance: 100,
   minDistance: 0.3,
 
+  orbitPathDetalization: 128,
+
   updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
   setInitialized: (isInitialized) => set({ isInitialized }),
   setInitialized2: (isInitialized2) => set({ isInitialized2 }),

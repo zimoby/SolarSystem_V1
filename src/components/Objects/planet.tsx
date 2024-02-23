@@ -209,6 +209,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
+  const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
   // const planetParams = useSolarStore((state) => state.celestialBodies[type][planetName]);
   const siderealRotationPeriodHrs = useSolarStore((state) => state.celestialBodies[type][planetName].siderealRotationPeriodHrs);
   const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][planetName].obliquityToOrbitDeg);
@@ -257,8 +258,8 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
       0
     );
 
-    return curve.getPoints(64); // Adjust the number of points as needed
-  }, [planetSize]);
+    return curve.getPoints(orbitPathDetalization); // Adjust the number of points as needed
+  }, [orbitPathDetalization, planetSize]);
 
   // const guiRef = useRef<THREE.Mesh>(null);
 
