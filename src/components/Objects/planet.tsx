@@ -400,7 +400,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
           </mesh>
           <Sphere
             key={planetName}
-            args={[planetSize]}
+            args={[planetSize, 64, 32]}
             receiveShadow={true}
             castShadow={true}
             onClick={() => {
