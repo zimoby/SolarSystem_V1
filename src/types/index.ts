@@ -120,6 +120,9 @@ export interface SystemStoreStateT {
   orbitAngleOffset: number;
   maxDistance: number;
   minDistance: number;
+
+  orbitPathDetalization: number;
+
   updateSystemSettings: (updates: Partial<SystemStoreStateT>) => void;
   setInitialized: (isInitialized: boolean) => void;
   setInitialized2: (isInitialized2: boolean) => void;
