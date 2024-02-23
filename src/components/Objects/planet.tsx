@@ -199,7 +199,13 @@ type PlanetComponentProps = {
   type: string;
 };
 
-const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, planetTexture = null, type = "planets" }) => {
+const PlanetComponent: React.FC<PlanetComponentProps> = ({
+  planetName,
+  params,
+  planetTexture = null,
+  type = "planets",
+  rotationCorrection = 0
+}) => {
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
@@ -327,6 +333,11 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
     // }
   });
 
+  const extraRotation = degreesToRadians(obliquityToOrbitDeg);
+
+
+  // console.log("planetName", planetName, rotationCorrection);
+
 
   return (
     <group>
@@ -335,11 +346,12 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         planetSize={planetSize}
         extendData={type == "planets"}
       />
-      <group>
+      <group rotation={[0,0,0]}>
         <ObjectEllipse
           params={params}
           name={planetName}
           type={type}
+          extraRotation={rotationCorrection}
         />
       </group>
       {/* <Trail
@@ -351,7 +363,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
         // @ts-expect-error tired of typescript
         target={planetRef}
       /> */}
-      <group ref={planetRef}  rotation-x={degreesToRadians(obliquityToOrbitDeg)}>
+      <group ref={planetRef}  rotation-x={extraRotation}>
         {/* <mesh ref={guiRef}>
           <PlanetInfoCircles
             planetName={planetName}
@@ -369,6 +381,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({ planetName, params, p
                 params={moon}
                 planetTexture={mapedMoonsTextures[moon.name.toLowerCase()]}
                 type="moons"
+                rotationCorrection={extraRotation}
               />
             ); 
           } )}
@@ -447,8 +460,12 @@ type PlanetRingProps = {
 };
 
 const PlanetRing: React.FC<PlanetRingProps> = ({ planetName, planetSize }) => {
-  const [ringTextureSaturn, alphaTextureSaturn] = useTexture([saturnRing, saturnRingAlpha]);
-  const [ringTextureUranus, alphaTextureUranus] = useTexture([uranusRing, uranusRingAlpha]);
+  const [
+    ringTextureSaturn, alphaTextureSaturn,
+    ringTextureUranus, alphaTextureUranus] = useTexture([
+      saturnRing, saturnRingAlpha,
+      uranusRing, uranusRingAlpha
+    ]);
   const ringRef = useRef<THREE.Mesh>(null);
 
   let extraRotation = 0;

@@ -17,7 +17,14 @@ type ObjectEllipseProps = {
   type?: string;
 };
 
-export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, color = "grey", opacity = 1, type}) => {
+export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
+  params,
+  name,
+  color = "grey",
+  opacity = 1,
+  type,
+  extraRotation
+}) => {
   const [selected, setSelected] = useState(false);
   const distanceXY = useSolarStore((state) => state.additionalProperties[name]?.distanceXY) || { x: 0, y: 0 };
   const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][name].obliquityToOrbitDeg);
@@ -96,13 +103,15 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({ params, name, colo
 
   return (
     <group>
-      <mesh position={[0, randomZposition - 0.5, 0]} >
-        <OrbitDisk size={distanceXY.x} opacity={0.1} positionYoffset={0} />
-      </mesh>
+      <group rotation={[-extraRotation,0,0]} >
+        <mesh position={[0, randomZposition - 0.5, 0]}>
+          <OrbitDisk size={distanceXY.x} opacity={0.1} positionYoffset={0} />
+        </mesh>
+      </group>
       <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(false)}>
-
         {type === "planets" && SelectedTube}
         <mesh rotation-x={Math.PI / 2}>
+        {/* <mesh rotation-x={Math.PI / 2 - extraRotation}> */}
           <Line
             // @ts-expect-error i'm tired of this
             ref={dashOffsetRef}
