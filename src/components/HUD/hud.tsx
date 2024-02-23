@@ -35,8 +35,9 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
   const segmentRef2 = useRef<SegmentRef>(null);
 
   const newPositionRef = useRef<THREE.Vector3 | undefined>();
-  const lineUnderOrbitRef = useRef(useSolarStore.getState().hudColors.lineUnderOrbit);
-  const lineBelowOrbitRef = useRef(useSolarStore.getState().hudColors.lineBelowOrbit);
+  // const lineUnderOrbitRef = useRef(useSolarStore.getState().hudColors.lineUnderOrbit);
+  // const lineBelowOrbitRef = useRef(useSolarStore.getState().hudColors.lineBelowOrbit);
+  // const directLineColorRef = useRef(useSolarStore.getState().hudColors.directLine);
 
   useEffect(() => {
     const unsubscribePosition = useSolarPositionsStore.subscribe(
@@ -54,18 +55,18 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
       (state) => state.properties[planetName]?.position
     );
 
-    const unsubscribeColor = useSolarStore.subscribe(
-      (state) => {
-        lineUnderOrbitRef.current = state.hudColors.lineUnderOrbit;
-        lineBelowOrbitRef.current = state.hudColors.lineBelowOrbit;
-      },
-      (state) => state.hudColors
-    );
+    // const unsubscribeColor = useSolarStore.subscribe(
+    //   (state) => {
+    //     lineUnderOrbitRef.current = state.hudColors.lineUnderOrbit;
+    //     lineBelowOrbitRef.current = state.hudColors.lineBelowOrbit;
+    //   },
+    //   (state) => state.hudColors
+    // );
 
     // Cleanup on unmount
     return () => {
       unsubscribePosition();
-      unsubscribeColor();
+      // unsubscribeColor();
     };
   }, [planetName]);
 
@@ -84,12 +85,15 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
       if (segmentRef.current) {
         segmentRef.current.start.set(0, 0, 0);
         segmentRef.current.end.copy(newPositionRef.current);
+        segmentRef.current.color.set(useSolarStore.getState().hudColors.directLine.color)
       }
 
       if (segmentRef2.current) {
         segmentRef2.current.start.set(newPositionRef.current.x, 0, newPositionRef.current.z);
         segmentRef2.current.end.copy(newPositionRef.current);
-        segmentRef2.current.color.set(newPositionRef.current.y > 0 ? lineUnderOrbitRef.current.color : lineBelowOrbitRef.current.color);
+        segmentRef2.current.color.set(newPositionRef.current.y > 0 ?
+          useSolarStore.getState().hudColors.lineUnderOrbit.color :
+          useSolarStore.getState().hudColors.lineBelowOrbit.color);
       }
     }
   });

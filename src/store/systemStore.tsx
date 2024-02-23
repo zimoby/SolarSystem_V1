@@ -13,7 +13,7 @@ const useSystemColorsSlice: StateCreator<
   hudColors: {
     lineUnderOrbit: { color: "green", opacity: 1 },
     lineBelowOrbit: { color: "red", opacity: 1 },
-    directLine: { color: "white", opacity: 1 },
+    directLine: { color: "gold", opacity: 1 },
   },
   objectDefaultColors: {
     sun: "#ffcc00",
@@ -27,6 +27,13 @@ const useSystemColorsSlice: StateCreator<
     neptune: "#add8e6",
     pluto: "#a9a9a9",
     moon: "#f0f0f0",
+    io: "#f0f0f0",
+    europa: "#f0f0f0",
+    ganymede: "#f0f0f0",
+    callisto: "#f0f0f0",
+    titan: "#f0f0f0",
+    rhea: "#f0f0f0",
+    lapetus: "#f0f0f0",
   },
   updateColors: (updates) => set((state) => ({ ...state, ...updates })),
 });
