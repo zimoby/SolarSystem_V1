@@ -49,7 +49,7 @@ export const SceneSetup = () => {
       lightRef.current.position.set(0, 0.5, 0);
       lightRef.current.shadow.bias = 0.0001;
       // lightRef.current.shadow.darkness = 0.1;
-      lightRef.current.intensity = 5;
+      lightRef.current.intensity = 2.5;
       lightRef.current.distance = 0;
       lightRef.current.decay = 0;
 
