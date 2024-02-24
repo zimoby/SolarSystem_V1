@@ -14,8 +14,8 @@ export const normalizeDataToEarth = (
       return {
         ...acc,
         [key]: {
-          x: ((objData[key as keyof OnlyNumbericSolarObjectParamsBasicT] as unknown as { x: number; y: number; })?.x / distOfEarthToSun10_6Km ?? 0),
-          y: ((objData[key as keyof OnlyNumbericSolarObjectParamsBasicT] as unknown as { x: number; y: number; })?.y / distOfEarthToSun10_6Km ?? 0),
+          x: ((objData[key as keyof OnlyNumbericSolarObjectParamsBasicT] as unknown as { x: number; y: number; })?.x / distOfEarthToSun10_6Km),
+          y: ((objData[key as keyof OnlyNumbericSolarObjectParamsBasicT] as unknown as { x: number; y: number; })?.y / distOfEarthToSun10_6Km),
         },
       }
     }

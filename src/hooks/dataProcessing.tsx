@@ -273,7 +273,7 @@ export const useCelestialBodyUpdates = () => {
       const distanceXY = calculateRelativeDistanceXY(
         (semimajorAxis10_6Km ?? 0.1) * moonsDistanceCompensation2,
         orbitEccentricity ?? 0,
-        objectsDistance / moonsDistanceCompensation ?? 1,
+        objectsDistance / moonsDistanceCompensation,
         maxDistance ?? 1,
         minDistance ?? 0.3,
         name ?? ""
