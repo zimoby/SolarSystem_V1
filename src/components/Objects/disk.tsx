@@ -16,7 +16,7 @@ export const OrbitDisk = ({ size = 10, opacity = 0.4, positionYoffset = 0 }) => 
         >
           <GradientTexture
             stops={[0, 0.35 / (objectsDistance * 0.7), 1]}
-            colors={["yellow", "purple", "blue"]}
+            colors={["#FFDA00", "purple", "blue"]}
             size={1024}
             width={1024}
             type={GradientType.Radial as never}

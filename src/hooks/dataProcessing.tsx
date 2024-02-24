@@ -38,7 +38,7 @@ const usedProperties: string[] = [
   "obliquityToOrbitDeg",
 ];
 
-const ignoreToNormalize: string[] = ["orbitEccentricity", "obliquityToOrbitDeg"];
+const ignoreToNormalize: string[] = ["orbitEccentricity", "obliquityToOrbitDeg", "anchorXYOffset"];
 
 const reorderPlanets: SolarObjectParamsBasicWithMoonsT = planetsNamesOrder.reduce(
   (acc, planetName) => ({
@@ -99,6 +99,7 @@ export const useInitiateSolarSystem = () => {
     ): void => {
 
       const filteredData: SolarObjectParamsBasicT = filterObjectData(data, usedProperties)
+      // console.log("filteredData", name, filteredData)
       const normalizedData: SolarObjectParamsBasicT = normalizeDataToEarth(filteredData, ignoreToNormalize)
 
       const parentVolumetricMeanRadiusKm = type === "moons" ? celestialBodiesUpdates["planets"][parentName]?.volumetricMeanRadiusKm ?? 1 : 1;
@@ -127,7 +128,7 @@ export const useInitiateSolarSystem = () => {
       celestialBodiesUpdates[type][name] = additionalProcessingParams;
       propertiesUpdates[name] = {
         position: new THREE.Vector3(0, 0, 0),
-        rotation: new THREE.Euler(0, 0, 0),
+        // rotation: new THREE.Euler(0, 0, 0),
       };
     };
 
@@ -176,7 +177,6 @@ export const useInitiateSolarSystem = () => {
       });
     }
 
-    
     processCelestialBody("stars", "sun", sunData, "system", 0);
 
     useSolarStore.getState().batchUpdateCelestialBodies(celestialBodiesUpdates as never);
@@ -195,6 +195,7 @@ interface SupportDataT {
     y: number;
   };
   angleRad: number;
+  rotationY: number;
   type?: string;
   scale: number;
 }
@@ -307,10 +308,17 @@ export const useCelestialBodyUpdates = () => {
         name ?? ""
       );
 
+      const rotationY = (combinedObjects[name].type2 === "objects") ? Math.random() * Math.PI * 2 : 0;
+      const rotationOffset = Math.random() * Math.PI * 2;
+
+      // console.log(name, rotationOffset)
+
       supportData[name] = {
         distanceXY,
         angleRad,
         scale,
+        rotationY,
+        rotationOffset,
         type: combinedObjects[name].type2,
       };
 
@@ -340,6 +348,12 @@ export const useCelestialBodyUpdates = () => {
     const updatedObjectsData: Record<string, ObjectsRealtimeDataT> = {};
 
     Object.keys(combinedObjects).forEach((name) => {
+      const anchorPoint = (combinedObjects[name]?.anchorXYOffset?.y ?? 0);
+      // const startTimeOffset = combinedObjects[name]?.rotationOffset ?? 0;
+      const startTimeOffset = useSolarStore.getState().additionalProperties[name]?.rotationOffset ?? 0;
+
+      // console.log("combinedObjects", name, startTimeOffset)
+
       const supportData = objectsSupportDataRef.current[name];
       const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;
       const t = calculateTime(
@@ -351,9 +365,9 @@ export const useCelestialBodyUpdates = () => {
 
       const position = positionVectorsRef.current[name];
       position.set(
-        Math.cos(t) * supportData.distanceXY.x,
+        Math.cos(t + startTimeOffset) * (supportData.distanceXY.x),
         0,
-        Math.sin(t) * supportData.distanceXY.y
+        Math.sin(t + startTimeOffset) * (supportData.distanceXY.y) + 0// + (combinedObjects[name].anchorXYOffset.y ??)
       );
 
       quaternionRef.current.setFromAxisAngle({x: 1, y: 0, z: 0}, supportData.angleRad);

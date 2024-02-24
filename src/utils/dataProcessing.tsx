@@ -1,4 +1,5 @@
 import solarData from "../data/data.json";
+import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
 import { OnlyNumbericSolarObjectParamsBasicT, SolarObjectParamsBasicT } from "../types";
 
 
@@ -9,6 +10,16 @@ export const normalizeDataToEarth = (
   const earthData = solarData["earth"] as OnlyNumbericSolarObjectParamsBasicT;
   const normalizedData = Object.keys(objData).reduce((acc, key) => {
 
+    if (key === "anchorXYOffset") {
+      return {
+        ...acc,
+        [key]: {
+          x: ((objData[key as keyof OnlyNumbericSolarObjectParamsBasicT] as unknown as { x: number; y: number; })?.x / distOfEarthToSun10_6Km ?? 0),
+          y: ((objData[key as keyof OnlyNumbericSolarObjectParamsBasicT] as unknown as { x: number; y: number; })?.y / distOfEarthToSun10_6Km ?? 0),
+        },
+      }
+    }
+
     if (typeof earthData[key as keyof OnlyNumbericSolarObjectParamsBasicT] === "undefined") {
       return acc;
     }
@@ -16,15 +27,10 @@ export const normalizeDataToEarth = (
     const planetValue = objData[key as keyof OnlyNumbericSolarObjectParamsBasicT];
     const earthValue = earthData[key as keyof OnlyNumbericSolarObjectParamsBasicT];
 
-    if (key === "anchorXYOffset") {
-      return {
-        ...acc,
-        [key]: {
-          x: ((planetValue as unknown as { x: number; y: number; })?.x ?? 0),
-          y: ((planetValue as unknown as { x: number; y: number; })?.y ?? 0),
-        },
-      }
-    } else if (
+    // console.log("planetValue", key);
+
+
+    if (
       typeof planetValue !== "number" ||
       typeof earthValue !== "number" ||
       earthValue === 0 ||

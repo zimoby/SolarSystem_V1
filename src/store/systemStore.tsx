@@ -14,6 +14,7 @@ const useSystemColorsSlice: StateCreator<
     lineUnderOrbit: { color: "green", opacity: 1 },
     lineBelowOrbit: { color: "red", opacity: 1 },
     directLine: { color: "gold", opacity: 1 },
+    directLineObject: { color: "blue", opacity: 1 },
   },
   objectDefaultColors: {
     sun: "#ffcc00",

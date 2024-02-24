@@ -12,6 +12,7 @@ import { Group, Object3DEventMap, Vector3 } from "three";
 const ObjectsComponent = ({ planetName, params }: { planetName: string, params: ObjectsAdditionalDataT, planetTexture?: TextureImageData | null }) => {
   const randomObjectsInitialized = useSolarStore((state) => state.randomObjectsInitialized);
   const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
+  const objData = useSolarStore((state) => state.additionalProperties[planetName]);
 
   const planetSize: number = useMemo(() => {
     // console.log("test", planetName, params.volumetricMeanRadiusKm);
@@ -35,7 +36,7 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
   });
 
   return (
-    <group>
+    <group rotation-y={objData.rotationY}>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} extendData={false} typeOfObject={typeOfObject} />
       <ObjectEllipse params={params} name={planetName} color={params.color} opacity={0.3} />
       <group ref={objectRef}>

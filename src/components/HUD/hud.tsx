@@ -39,6 +39,14 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
   // const lineBelowOrbitRef = useRef(useSolarStore.getState().hudColors.lineBelowOrbit);
   // const directLineColorRef = useRef(useSolarStore.getState().hudColors.directLine);
 
+
+  let selectionType = "";
+  let directLineColor = useSolarStore.getState().hudColors.directLine.color;;
+  if (typeOfObject === "object") {
+    selectionType = "border border-dashed ";
+    directLineColor = useSolarStore.getState().hudColors.directLineObject.color;
+  }
+
   useEffect(() => {
     const unsubscribePosition = useSolarPositionsStore.subscribe(
       (state) => {
@@ -85,7 +93,7 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
       if (segmentRef.current) {
         segmentRef.current.start.set(0, 0, 0);
         segmentRef.current.end.copy(newPositionRef.current);
-        segmentRef.current.color.set(useSolarStore.getState().hudColors.directLine.color)
+        segmentRef.current.color.set(directLineColor)
       }
 
       if (segmentRef2.current) {
@@ -98,10 +106,8 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
     }
   });
 
-  let selectionType = ""
-  if (typeOfObject === "object") {
-    selectionType = "border border-dashed ";
-  }
+  // console.log("objType", planetName, typeOfObject)
+
 
   return (
     <group>

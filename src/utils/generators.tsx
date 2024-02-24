@@ -121,7 +121,7 @@ export const generateRandomObjects = (objectNumber = 10) => {
       semimajorAxis10_6Km: randomDistance,
       anchorXYOffset: { x: 0, y: (Math.random() - 0.5) * (randomDistance / 2) },
       siderealOrbitPeriodDays: Math.random() * 1000 + 400,
-      orbitInclinationDeg: Math.random() * 360,
+      orbitInclinationDeg: Math.random() * 180,
       siderealRotationPeriodHrs: 0,
       orbitEccentricity: Math.random(),
       obliquityToOrbitDeg: 0

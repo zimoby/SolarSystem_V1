@@ -45,6 +45,9 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   const planetInclination = degreesToRadians( (params.orbitInclinationDeg ?? 0) + orbitAngleOffset );
 
+  const anchorXYOffset = (params.anchorXYOffset?.y ?? 0) ;
+
+
   const points = useMemo(() => 
     new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(orbitPathDetalization),
     [distanceXY.x, distanceXY.y, orbitPathDetalization]
@@ -94,6 +97,20 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   // useCursor(selected);
 
+  // useFrame((state) => {
+  //   if (!planetsInitialized) { return; }
+
+  //   const time = state.clock.getElapsedTime() * Math.PI * 2;
+  //   if (dashOffsetRef.current) {
+  //     // @ts-expect-error wrong use of dashOffset
+  //     dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
+  //   }
+  // }); 
+
+  const {camera} = useThree();
+
+  // console.log("ObjectEllipse", name, 1+ useSolarStore.getState().additionalProperties[name]?.scale * 2);
+
   useFrame((state) => {
     if (!planetsInitialized) { return; }
 
@@ -102,13 +119,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
       // @ts-expect-error wrong use of dashOffset
       dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
     }
-  }); 
-
-  const {camera} = useThree();
-
-  // console.log("ObjectEllipse", name, 1+ useSolarStore.getState().additionalProperties[name]?.scale * 2);
-
-  useFrame(() => {
+    
     const objectPosition = useSolarPositionsStore.getState().properties[name]?.position as THREE.Vector3;
     const activeScale = useSolarStore.getState().additionalProperties[name]?.scale;
     const distance = camera.position.distanceTo(objectPosition);
@@ -139,6 +150,9 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     }
   });
 
+  // console.log(name, anchorXYOffset, { params})
+
+
   return (
     <group>
       <group rotation={[-extraRotation,0,0]} >
@@ -146,14 +160,17 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
           <OrbitDisk size={distanceXY.x} opacity={0.1} positionYoffset={0} />
         </mesh>
       </group>
-      <group onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(false)}>
+      <group
+        rotation={[0,0,0]}
+        onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(false)}
+      >
         {type === "planets" && SelectedTube}
         <mesh rotation-x={Math.PI / 2}>
         {/* <mesh rotation-x={Math.PI / 2 - extraRotation}> */}
           <Line
             // @ts-expect-error i'm tired of this
-            name="dashOffsetLine"
             ref={dashOffsetRef}
+            name="dashOffsetLine"
             position={[0, 0, 0]}
             points={pointsDependOnInclination}
             color={!selected ? color : "yellow"}
