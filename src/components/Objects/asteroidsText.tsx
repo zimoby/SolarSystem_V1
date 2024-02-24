@@ -1,5 +1,5 @@
-import { CurveModifier, Text, Text3D } from "@react-three/drei"
-import { useEffect, useMemo, useRef } from "react"
+import { CurveModifier } from "@react-three/drei"
+import { useMemo, useRef } from "react"
 import { CatmullRomCurve3, Vector3 } from "three"
 import { FontLoader, TextGeometry } from "three-stdlib";
 
@@ -15,6 +15,7 @@ export const AsteroidsText = () => {
     return new Vector3(x, 0, z);
   });
 
+  // @ts-expect-error i'm tired of this
   const font = new FontLoader().parse(testFont);
 
   const curveRef = useRef()
@@ -31,7 +32,7 @@ export const AsteroidsText = () => {
       height,
       curveSegments,
     })
-  }, [])
+  }, [font])
 
   // useEffect(() => {
   //   if(curveRef.current && curve) {
@@ -43,7 +44,11 @@ export const AsteroidsText = () => {
 
   return (
 
-    <CurveModifier ref={curveRef} curve={curve}>
+    <CurveModifier
+      // @ts-expect-error i'm tired of this
+      ref={curveRef}
+      curve={curve}
+    >
       <mesh position={[0, 0, 0]} rotation={[0,0, 0]}>
         <meshPhongMaterial color="white" />
         <primitive object={textGeo} />

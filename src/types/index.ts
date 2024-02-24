@@ -89,6 +89,7 @@ export interface SystemColorsStateT {
   hudColors: {
     lineUnderOrbit: { color: string; opacity: number };
     lineBelowOrbit: { color: string; opacity: number };
+    directLineObject: { color: string; opacity: number };
     directLine: { color: string; opacity: number };
   };
   objectDefaultColors: { [key: string]: string };
@@ -137,16 +138,6 @@ export interface ObjectsRealtimeDataT {
   rotation?: Euler;
 }
 
-export interface CalculatedObjectDataT {
-  distanceXY: {
-    x: number;
-    y: number;
-  };
-  angleRad: number;
-  scale: number;
-  rotationOffset: number;
-}
-
 export type ObjectsAdditionalDataT = SolarObjectParamsBasicT & {
   type?: string | null;
   type2?: string;
@@ -181,7 +172,7 @@ export interface SolarSystemStoreStateT {
   // properties: Record<string, ObjectsRealtimeDataT>;
   // properties: { [key: string]: ObjectsRealtimeDataT };
   // batchUpdateProperties: (updates: Partial<SolarSystemStoreStateT["properties"]>) => void;
-  additionalProperties: { [key: string]: CalculatedObjectDataT };
+  additionalProperties: ObjectsSupportDataT;
   batchUpdateAdditionalProperties: (
     updates: Partial<SolarSystemStoreStateT["additionalProperties"]>
   ) => void;
@@ -192,7 +183,7 @@ export interface SolarSystemStoreRealtimeStateT {
   batchUpdateProperties: (updates: Partial<SolarSystemStoreRealtimeStateT["properties"]>) => void;
 }
 
-interface SupportDataT {
+export interface SupportDataT {
   distanceXY: {
     x: number;
     y: number;
@@ -211,3 +202,20 @@ export interface ObjectsSupportDataT {
 export interface PositionVectorsT {
   [key: string]: THREE.Vector3;
 }
+
+export type ObjectEllipseProps = {
+  params: ObjectsAdditionalDataT;
+  name: string;
+  color?: THREE.Color | string;
+  opacity?: number;
+  type?: string;
+  extraRotation?: number;
+};
+
+export type PlanetComponentProps = {
+  planetName: string;
+  params: SolarObjectParamsBasicWithMoonsT;
+  planetTexture?: THREE.Texture | null;
+  type: string;
+  rotationCorrection?: number;
+};

@@ -1,106 +1,109 @@
-import { useEffect, useMemo, useRef } from "react";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
+import { useMemo, useRef } from "react";
 import { useSolarStore } from "../../store/systemStore";
 import { Html, Point, PointMaterial, Points, shaderMaterial, useTexture } from "@react-three/drei";
 
-import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Texture, TextureLoader, Vector2, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Vector2, Vector3 } from "three";
 import { useFrame, extend, useThree } from "@react-three/fiber";
 import { calculateRelativeDistanceXY } from "../../utils/calculations";
-import { CrossingTrashParamsT, TrashParamsT } from "../../types";
+import { TrashParamsT } from "../../types";
 
 import textureAtlasSrc from "../../assets/dot_style_atlas.png"
 
-type Position = {
-  x: number;
-  y: number;
-  z: number;
-};
+// type Position = {
+//   x: number;
+//   y: number;
+//   z: number;
+// };
 
-const wrapIntoBoundaries = (pos: Position, boundary: number[]): Position => {
-  const newPos: Position = { ...pos };
-  if (pos.x > boundary[0]) newPos.x = -boundary[0];
-  if (pos.x < -boundary[0]) newPos.x = boundary[0];
-  if (pos.y > boundary[1]) newPos.y = -boundary[1];
-  if (pos.y < -boundary[1]) newPos.y = boundary[1];
-  if (pos.z > boundary[2]) newPos.z = -boundary[2];
-  if (pos.z < -boundary[2]) newPos.z = boundary[2];
-  return newPos;
-};
+// const wrapIntoBoundaries = (pos: Position, boundary: number[]): Position => {
+//   const newPos: Position = { ...pos };
+//   if (pos.x > boundary[0]) newPos.x = -boundary[0];
+//   if (pos.x < -boundary[0]) newPos.x = boundary[0];
+//   if (pos.y > boundary[1]) newPos.y = -boundary[1];
+//   if (pos.y < -boundary[1]) newPos.y = boundary[1];
+//   if (pos.z > boundary[2]) newPos.z = -boundary[2];
+//   if (pos.z < -boundary[2]) newPos.z = boundary[2];
+//   return newPos;
+// };
 
-const PointsCrossSolarSystem = ({ points }: {points: CrossingTrashParamsT[]}) => {
-  const pointRefs = useRef<THREE.Points[]>([]);
-  const pointsVectorRefs = useRef<Vector3[]>([]);
-  const boundary = [10, 10, 3];
-  const allSpeed = 10;
+// const PointsCrossSolarSystem = ({ points }: {points: CrossingTrashParamsT[]}) => {
+//   const pointRefs = useRef<THREE.Points[]>([]);
+//   const pointsVectorRefs = useRef<Vector3[]>([]);
+//   const boundary = [10, 10, 3];
+//   const allSpeed = 10;
 
-  useEffect(() => {
-    pointRefs.current = points.map((_, i) => pointRefs.current[i]);
-    pointsVectorRefs.current = points.map((dot) => new Vector3(dot.position.x, dot.position.y, dot.position.z));
+//   useEffect(() => {
+//     pointRefs.current = points.map((_, i) => pointRefs.current[i]);
+//     pointsVectorRefs.current = points.map((dot) => new Vector3(dot.position.x, dot.position.y, dot.position.z));
 
-    points.forEach((dot, i) => {
-      if (pointRefs.current[i]) {
-        pointRefs.current[i].position.x = dot.position.x;
-        pointRefs.current[i].position.y = dot.position.y;
-        pointRefs.current[i].position.z = dot.position.z;
-      }
-    });
-  }, [points]);
+//     points.forEach((dot, i) => {
+//       if (pointRefs.current[i]) {
+//         pointRefs.current[i].position.x = dot.position.x;
+//         pointRefs.current[i].position.y = dot.position.y;
+//         pointRefs.current[i].position.z = dot.position.z;
+//       }
+//     });
+//   }, [points]);
 
-  useFrame((_, delta) => {
-    const speedFactor = delta * allSpeed;
+//   useFrame((_, delta) => {
+//     const speedFactor = delta * allSpeed;
 
-    points.forEach((dot, i) => {
-      const currentRef = pointRefs.current[i];
-      if (currentRef) {
-        const newPos = {
-          x: currentRef.position.x + dot.velocity.x * speedFactor,
-          y: currentRef.position.y + dot.velocity.y * speedFactor,
-          z: currentRef.position.z + dot.velocity.z * speedFactor,
-        };
+//     points.forEach((dot, i) => {
+//       const currentRef = pointRefs.current[i];
+//       if (currentRef) {
+//         const newPos = {
+//           x: currentRef.position.x + dot.velocity.x * speedFactor,
+//           y: currentRef.position.y + dot.velocity.y * speedFactor,
+//           z: currentRef.position.z + dot.velocity.z * speedFactor,
+//         };
   
-        const wrappedPos = wrapIntoBoundaries(newPos, boundary);
+//         const wrappedPos = wrapIntoBoundaries(newPos, boundary);
   
-        currentRef.position.set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
-        pointsVectorRefs.current[i].set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
+//         currentRef.position.set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
+//         pointsVectorRefs.current[i].set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
         
-      }
-    });
-  });
+//       }
+//     });
+//   });
 
-  const style0 = "" 
-  const style1 = "size-2 border border-red-500 opacity-50";
-  const style2 = "size-2 border rotate-45 border-yellow-500 opacity-50";
-  const style3 = "size-2 border rounded-full border-green-500 opacity-50";
-  const style4 = "size-2 border border-dashed border-blue-500 opacity-50";
-  const style5 = "size-3 border-4 border-double rotate-45 border-pink-500 opacity-50";
+//   const style0 = "" 
+//   const style1 = "size-2 border border-red-500 opacity-50";
+//   const style2 = "size-2 border rotate-45 border-yellow-500 opacity-50";
+//   const style3 = "size-2 border rounded-full border-green-500 opacity-50";
+//   const style4 = "size-2 border border-dashed border-blue-500 opacity-50";
+//   const style5 = "size-3 border-4 border-double rotate-45 border-pink-500 opacity-50";
 
-  const dotStyles = [style0, style1, style2, style3, style4, style5];
+//   const dotStyles = [style0, style1, style2, style3, style4, style5];
 
-  const selectRandomStyle = () => {
-    return Math.floor(Math.random() * dotStyles.length);
-  }
+//   const selectRandomStyle = () => {
+//     return Math.floor(Math.random() * dotStyles.length);
+//   }
 
-  return (
-    <>
-      {/* <NeuralNetwork2 ref={pointsVectorRefs} /> */}
-      <Points limit={points.length} rotation-x={Math.PI / 2}>
-        <PointMaterial
-          vertexColors
-          size={1}
-          sizeAttenuation={false}
-          depthWrite={false}
-          toneMapped={false}
-        />
-        {points.map((_dot, i) => (
-          <Point key={i} ref={(el) => (pointRefs.current[i] = el as unknown as THREE.Points)}>
-            <Html center>
-              <div className={dotStyles[selectRandomStyle()]} />
-            </Html>
-          </Point>
-        ))}
-      </Points>
-    </>
-  );
-};
+//   return (
+//     <>
+//       {/* <NeuralNetwork2 ref={pointsVectorRefs} /> */}
+//       <Points limit={points.length} rotation-x={Math.PI / 2}>
+//         <PointMaterial
+//           vertexColors
+//           size={1}
+//           sizeAttenuation={false}
+//           depthWrite={false}
+//           toneMapped={false}
+//         />
+//         {points.map((_dot, i) => (
+//           <Point key={i} ref={(el) => (pointRefs.current[i] = el as unknown as THREE.Points)}>
+//             <Html center>
+//               <div className={dotStyles[selectRandomStyle()]} />
+//             </Html>
+//           </Point>
+//         ))}
+//       </Points>
+//     </>
+//   );
+// };
 
 type PointsOrbitRotationProps = {
   points: TrashParamsT[];
@@ -258,34 +261,31 @@ const ParticleShaderMaterial = shaderMaterial(
     size: 1.0,
     cameraPosition: new Vector3(),
   },
-  // Vertex Shader
   `
-  uniform float size;
-  uniform float time;
+    uniform float size;
+    uniform float time;
 
-  void main() {
-    vec4 worldPosition = modelMatrix * vec4(position, 1.0);
-    float distance = length(cameraPosition - worldPosition.xyz);
-    gl_PointSize = size * (300.0 / distance); // Adjust this formula as needed
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
+    void main() {
+      vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+      float distance = length(cameraPosition - worldPosition.xyz);
+      gl_PointSize = size * (300.0 / distance); // Adjust this formula as needed
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
   `,
-  // Fragment Shader
   `
-  uniform vec3 color;
-  void main() {
-    float r = distance(gl_PointCoord, vec2(0.5, 0.5));
-    float delta = 0.02;
-    if (r > 0.5) discard;
-    gl_FragColor = vec4(color, 1.0);
-  }
+    uniform vec3 color;
+    void main() {
+      float r = distance(gl_PointCoord, vec2(0.5, 0.5));
+      float delta = 0.02;
+      if (r > 0.5) discard;
+      gl_FragColor = vec4(color, 1.0);
+    }
   `
 );
 
-// Extend R3F with the new material
 extend({ ParticleShaderMaterial });
 
-const Particles = ({ points, rotSpeed, size, double = false }) => {
+const Particles = ({ points, rotSpeed, size }) => {
   const pointsRef1 = useRef<THREE.Points>();
   const materialRef = useRef();
 
@@ -312,7 +312,12 @@ const Particles = ({ points, rotSpeed, size, double = false }) => {
 
   return (
     <group>
-      <points geometry={geom} rotation-x={Math.PI / 2} ref={pointsRef1}>
+      <points
+        geometry={geom}
+        rotation-x={Math.PI / 2}
+        // @ts-expect-error wrong type
+        ref={pointsRef1}
+      >
         <particleShaderMaterial
           ref={materialRef}
           time={0}
@@ -363,7 +368,7 @@ const OrbitShaderMaterial = shaderMaterial(
 
 extend({ OrbitShaderMaterial });
 
-const PointsOrbitRotationShader = ({ points, size, name }) => {
+const PointsOrbitRotationShader = ({ points, size }) => {
   // const { clock } = useThree();
   const materialRef = useRef();
   const distances = points.map(dot => dot.distance);

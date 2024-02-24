@@ -1,4 +1,4 @@
-import { dayInSeconds, moonsRotationSpeed, objectsRotationSpeed, yearInSeconds } from "../data/solarSystemData";
+import { dayInSeconds, objectsRotationSpeed, yearInSeconds } from "../data/solarSystemData";
 
 export const calculateRelativeDistanceXY = (
   semimajorAxis10_6Km: number,

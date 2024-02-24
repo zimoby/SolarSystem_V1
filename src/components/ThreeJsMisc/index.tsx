@@ -1,12 +1,10 @@
 import { OrbitControls, PerspectiveCamera, Stats, useKeyboardControls } from "@react-three/drei";
-import { Perf } from "r3f-perf";
 import { useEffect, useRef } from "react";
 import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import { Controls } from "../../types";
 import { planetsNamesOrder } from "../../data/solarSystemData";
 import { useFrame, useThree } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
-import { Vector3 } from "three";
 
 export const AppStatsPerformance = () => {
   return (
@@ -47,7 +45,7 @@ export const ControlComponent = () => {
 
   const { camera } = useThree();
   const currentPositionRef = useRef<THREE.Vector3 | undefined>();
-  const orbitControlsRef = useRef<OrbitControls>(null);
+  const orbitControlsRef = useRef(null);
   
 
   useEffect(() => {

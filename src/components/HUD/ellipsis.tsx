@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useSolarPositionsStore, useSolarStore } from "../../store/systemStore";
 import {
   degreesToRadians,
@@ -7,15 +7,8 @@ import * as THREE from "three";
 import { Line, Ring } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { OrbitDisk } from "../Objects/disk";
-import { ObjectsAdditionalDataT } from "../../types";
-
-type ObjectEllipseProps = {
-  params: ObjectsAdditionalDataT;
-  name: string;
-  color?: THREE.Color | string;
-  opacity?: number;
-  type?: string;
-};
+import { ObjectEllipseProps } from "../../types";
+import { LineMaterial } from "three-stdlib";
 
 export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
   params,
@@ -23,7 +16,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
   color = "grey",
   opacity = 0.75,
   type,
-  extraRotation
+  extraRotation = 0,
 }) => {
   const [selected, setSelected] = useState(false);
   const distanceXY = useSolarStore((state) => state.additionalProperties[name]?.distanceXY) || { x: 0, y: 0 };
@@ -45,8 +38,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   const planetInclination = degreesToRadians( (params.orbitInclinationDeg ?? 0) + orbitAngleOffset );
 
-  const anchorXYOffset = (params.anchorXYOffset?.y ?? 0) ;
-
+  // const anchorXYOffset = (params.anchorXYOffset?.y ?? 0) ;
 
   const points = useMemo(() => 
     new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(orbitPathDetalization),
@@ -95,21 +87,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     return ((Math.random()) * decr - decr);
   }, []);
 
-  // useCursor(selected);
-
-  // useFrame((state) => {
-  //   if (!planetsInitialized) { return; }
-
-  //   const time = state.clock.getElapsedTime() * Math.PI * 2;
-  //   if (dashOffsetRef.current) {
-  //     // @ts-expect-error wrong use of dashOffset
-  //     dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
-  //   }
-  // }); 
-
   const {camera} = useThree();
-
-  // console.log("ObjectEllipse", name, 1+ useSolarStore.getState().additionalProperties[name]?.scale * 2);
 
   useFrame((state) => {
     if (!planetsInitialized) { return; }
@@ -137,15 +115,15 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     const relativeOpacity = Math.min(Math.max(distRelativeOpacity, 0), 1) * (distRelativeOpacity);
 
     if (dashOffsetRef.current && orbitLineRef.current) {
-      // console.log("opacity", dashOffsetRef.current.material);
-      dashOffsetRef.current.material.dashScale = (1 / distance) * 2000;
+      const material = dashOffsetRef.current.material as LineMaterial;
+      material.dashScale = (1 / distance) * 2000;
 
       if (activeObject === name) {
-        dashOffsetRef.current.material.opacity = relativeOpacity / 2;
-        orbitLineRef.current.material.opacity = relativeOpacity;
+        material.opacity = relativeOpacity / 2;
+        (orbitLineRef.current.material as LineMaterial).opacity = relativeOpacity;
       } else {
-        dashOffsetRef.current.material.opacity = opacity / 2;
-        orbitLineRef.current.material.opacity = opacity;
+        material.opacity = opacity / 2;
+        (orbitLineRef.current.material as LineMaterial).opacity = opacity;
       }
     }
   });
@@ -184,6 +162,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
         </mesh>
         <mesh rotation-x={Math.PI / 2 + planetInclination}>
           <Line
+            // @ts-expect-error i'm tired of this
             ref={orbitLineRef}
             position={[0, 0, 0]} // (params.anchorXYOffset?.y ?? 0)
             points={points}

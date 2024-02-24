@@ -5,7 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
-import { EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+// import { EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 // import { CenterShader } from "../HUD/shaders";
 // import { useSolarStore } from "../../store/systemStore";
 

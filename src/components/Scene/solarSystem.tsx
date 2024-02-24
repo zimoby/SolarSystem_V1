@@ -8,9 +8,9 @@ import { SunComponent } from "../Objects/sun";
 import RandomObjects from "../controls/randomObjects";
 import SolarSystemPlanets from "../controls/solarSystemPlanets";
 import { TrashComponent } from "../Objects/trash";
-import { ActiveObjectInfo } from "./info";
+// import { ActiveObjectInfo } from "./info";
 // import { CenterShader } from "../HUD/shaders";
-import { AsteroidsText } from "../Objects/asteroidsText";
+// import { AsteroidsText } from "../Objects/asteroidsText";
 
 // import { useEffect, useState } from "react";
 // import skyStars from "../../assets/2k_stars_milky_way.jpg";
@@ -42,7 +42,7 @@ export const SolarSystem = () => {
           <SunComponent />
           <SolarSystemPlanets />
           <RandomObjects />
-          {/* {!disableTrash && <TrashComponent />} */}
+          {!disableTrash && <TrashComponent />}
           {/* <AsteroidsText /> */}
           {/* <CenterShader /> */}
         </group>

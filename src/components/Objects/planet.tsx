@@ -5,9 +5,9 @@ import {
 } from "../../utils/calculations";
 import * as THREE from "three";
 import { PlanetHUDComponent } from "../HUD/hud";
-import { Line, Plane, Sphere, Trail, shaderMaterial, useTexture } from "@react-three/drei";
+import { Line, Sphere, shaderMaterial, useTexture } from "@react-three/drei";
 import { ObjectEllipse } from "../HUD/ellipsis";
-import { extend, useFrame, useThree } from "@react-three/fiber";
+import { extend, useFrame } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
 import saturnRing from "../../assets/saturnringcolor.jpg";
@@ -18,10 +18,11 @@ import uranusRingAlpha from "../../assets/uranusringtrans.gif";
 
 import earthClouds from "../../assets/earthcloudmap.jpg";
 import earthCloudsAlpha from "../../assets/earthcloudmaptrans.jpg";
-import { SolarObjectParamsBasicWithMoonsT } from "../../types";
+import { PlanetComponentProps } from "../../types";
 
 import moonTexture from "../../assets/2k_moon.jpg";
 
+// @ts-expect-error tired of typescript
 import { resolveLygia } from "resolve-lygia"
 
 
@@ -106,98 +107,92 @@ extend({ ColorShiftMaterial });
 //   }
 // };
 
-const filterParamsOnlyNumbers = (params: SolarObjectParamsBasicWithMoonsT): Record<string, number> => {
-  return Object.fromEntries(
-    Object.entries(params).filter(([, value]) => {
-      return typeof value === "number";
-    })
-  ) as Record<string, number>;
-}
+// const filterParamsOnlyNumbers = (params: SolarObjectParamsBasicWithMoonsT): Record<string, number> => {
+//   return Object.fromEntries(
+//     Object.entries(params).filter(([, value]) => {
+//       return typeof value === "number";
+//     })
+//   ) as Record<string, number>;
+// }
 
-type PlanetInfoCirclesProps = {
-  planetName: string;
-  planetSize: number;
-  params: SolarObjectParamsBasicWithMoonsT;
-};
+// type PlanetInfoCirclesProps = {
+//   planetName: string;
+//   planetSize: number;
+//   params: SolarObjectParamsBasicWithMoonsT;
+// };
 
-const PlanetInfoCircles = ({ planetName, planetSize, params }: PlanetInfoCirclesProps) => {
-  const filteredParams: Record<string, number> = filterParamsOnlyNumbers(params);
+// const PlanetInfoCircles = ({ planetName, planetSize, params }: PlanetInfoCirclesProps) => {
+//   const filteredParams: Record<string, number> = filterParamsOnlyNumbers(params);
 
-  const normalizedValuesTo2MathPI = Object.keys(filteredParams).map((key) => {
-    let circleValue = 0;
-    switch (key) {
-      case "orbitEccentricity":
-        circleValue = filteredParams[key] * 10;
-        break;
-      case "orbitInclinationDeg":
-        circleValue = (filteredParams[key] * (2 * Math.PI)) / 360;
-        break;
-      case "semimajorAxis10_6Km":
-        circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
-        break;
-      case "siderealOrbitPeriodDays":
-        circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
-        break;
-      case "siderealRotationPeriodHrs":
-        circleValue = (filteredParams[key] / 24) * 2 * Math.PI;
-        break;
-      default:
-        circleValue = 0;
-    }
+//   const normalizedValuesTo2MathPI = Object.keys(filteredParams).map((key) => {
+//     let circleValue = 0;
+//     switch (key) {
+//       case "orbitEccentricity":
+//         circleValue = filteredParams[key] * 10;
+//         break;
+//       case "orbitInclinationDeg":
+//         circleValue = (filteredParams[key] * (2 * Math.PI)) / 360;
+//         break;
+//       case "semimajorAxis10_6Km":
+//         circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
+//         break;
+//       case "siderealOrbitPeriodDays":
+//         circleValue = (filteredParams[key] / 10) * 2 * Math.PI;
+//         break;
+//       case "siderealRotationPeriodHrs":
+//         circleValue = (filteredParams[key] / 24) * 2 * Math.PI;
+//         break;
+//       default:
+//         circleValue = 0;
+//     }
 
-    return { name: key, value: circleValue };
-  });
+//     return { name: key, value: circleValue };
+//   });
 
-  return (
-    <group key={planetName + "hui-info"}>
-      {normalizedValuesTo2MathPI.map((circle, index) => {
-        const curve = new THREE.EllipseCurve(
-          0, 0,
-          planetSize + planetSize * (index + 1) * 0.2, planetSize + planetSize * (index + 1) * 0.2,
-          // planetSize + (index + 1) / 15, planetSize + (index + 1) / 15,
-          0, circle.value,
-          false,
-          0
-        );
+//   return (
+//     <group key={planetName + "hui-info"}>
+//       {normalizedValuesTo2MathPI.map((circle, index) => {
+//         const curve = new THREE.EllipseCurve(
+//           0, 0,
+//           planetSize + planetSize * (index + 1) * 0.2, planetSize + planetSize * (index + 1) * 0.2,
+//           // planetSize + (index + 1) / 15, planetSize + (index + 1) / 15,
+//           0, circle.value,
+//           false,
+//           0
+//         );
 
-        const points = curve.getPoints(64); // Adjust the number of points as needed
+//         const points = curve.getPoints(64); // Adjust the number of points as needed
 
-        return (
-          <group key={planetName + "hui-info" + index}>
-            <Line
-              key={index}
-              points={points}
-              color={"white"}
-              lineWidth={2}
-            />
-            {/* <group>
-              <Html position-x={planetSize + (index + 1) / 15}>
-                <div className=" text-3xs leading-3 whitespace-nowrap select-none">
-                  {circle.name}
-                </div>
-              </Html>
-            </group> */}
-          </group>
-        );
-      })}
-    </group>
-  );
+//         return (
+//           <group key={planetName + "hui-info" + index}>
+//             <Line
+//               key={index}
+//               points={points}
+//               color={"white"}
+//               lineWidth={2}
+//             />
+//             {/* <group>
+//               <Html position-x={planetSize + (index + 1) / 15}>
+//                 <div className=" text-3xs leading-3 whitespace-nowrap select-none">
+//                   {circle.name}
+//                 </div>
+//               </Html>
+//             </group> */}
+//           </group>
+//         );
+//       })}
+//     </group>
+//   );
 
 
 
-  // return (
-  //   <group>
+//   // return (
+//   //   <group>
 
-  //   </group>
-  // )
-};
+//   //   </group>
+//   // )
+// };
 
-type PlanetComponentProps = {
-  planetName: string;
-  params: SolarObjectParamsBasicWithMoonsT;
-  planetTexture?: THREE.Texture | null;
-  type: string;
-};
 
 const PlanetComponent: React.FC<PlanetComponentProps> = ({
   planetName,
@@ -210,9 +205,12 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
   const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
-  // const planetParams = useSolarStore((state) => state.celestialBodies[type][planetName]);
+
+  // @ts-expect-error tired of typescript
   const siderealRotationPeriodHrs = useSolarStore((state) => state.celestialBodies[type][planetName].siderealRotationPeriodHrs);
+  // @ts-expect-error tired of typescript
   const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][planetName].obliquityToOrbitDeg);
+  // @ts-expect-error tired of typescript
   const planetaryRingSystem = useSolarStore((state) => state.celestialBodies[type][planetName].planetaryRingSystem);
   const planetSize = useSolarStore((state) => state.additionalProperties[planetName].scale);
     
@@ -326,6 +324,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
     }
 
     if (planetShaderRef.current) {
+      // @ts-expect-error tired of typescript
       planetShaderRef.current.uniforms.uTime.value = time;
     }
 
@@ -380,7 +379,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
                 key={index}
                 planetName={moon.name}
                 params={moon}
-                planetTexture={mapedMoonsTextures[moon.name.toLowerCase()]}
+                planetTexture={mapedMoonsTextures[moon.name.toLowerCase() as keyof typeof mapedMoonsTextures]}
                 type="moons"
                 rotationCorrection={extraRotation}
               />

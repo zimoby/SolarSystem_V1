@@ -1,7 +1,7 @@
 import { create, StateCreator } from "zustand";
 import { generateCrossingObjects, generateRandomObjects, generateTrash } from "../utils/generators";
 import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
-import { CalculatedObjectDataT, ObjectsRealtimeDataT, SolarSystemStoreRealtimeStateT, SolarSystemStoreStateT, SystemColorsStateT, SystemStoreStateT } from "../types";
+import { ObjectsRealtimeDataT, ObjectsSupportDataT, SolarSystemStoreRealtimeStateT, SolarSystemStoreStateT, SystemColorsStateT, SystemStoreStateT } from "../types";
 
 const useSystemColorsSlice: StateCreator<
     SystemColorsStateT,
@@ -137,7 +137,7 @@ const useSolarSystemStore: StateCreator<
         acc[key] = value;
       }
       return acc;
-    }, {} as Record<string, CalculatedObjectDataT>);
+    }, {} as ObjectsSupportDataT);
   
     return {
       additionalProperties: {
