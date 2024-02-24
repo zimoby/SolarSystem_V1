@@ -10,8 +10,6 @@ export enum Controls {
 }
 
 export type CelestialBodyType = "planets" | "moons" | "objects" | "trash" | "stars";
-
-
 export interface OnlyNumbericSolarObjectParamsBasicT {
   mass10_24Kg?: number;
   volume10_10Km3?: number;
@@ -97,6 +95,10 @@ export interface SystemColorsStateT {
   updateColors: (updates: Partial<SystemColorsStateT>) => void;
 }
 
+interface CollectedSolarObjectInfo {
+  [key: string]: SolarObjectParamsBasicT;
+}
+
 export interface SystemStoreStateT {
   isInitialized: boolean;
   isInitialized2: boolean;
@@ -113,6 +115,8 @@ export interface SystemStoreStateT {
   disableTrash: boolean;
 
   activeObjectName: string;
+  activeObjectInfo: CollectedSolarObjectInfo;
+
   timeSpeed: number;
   timeOffset: number;
   objectsDistance: number;
@@ -140,6 +144,7 @@ export interface CalculatedObjectDataT {
   };
   angleRad: number;
   scale: number;
+  rotationOffset: number;
 }
 
 export type ObjectsAdditionalDataT = SolarObjectParamsBasicT & {
@@ -185,4 +190,24 @@ export interface SolarSystemStoreStateT {
 export interface SolarSystemStoreRealtimeStateT {
   properties: { [key: string]: ObjectsRealtimeDataT };
   batchUpdateProperties: (updates: Partial<SolarSystemStoreRealtimeStateT["properties"]>) => void;
+}
+
+interface SupportDataT {
+  distanceXY: {
+    x: number;
+    y: number;
+  };
+  angleRad: number;
+  rotationY: number;
+  rotationOffset: number;
+  type?: string;
+  scale: number;
+}
+
+export interface ObjectsSupportDataT {
+  [key: string]: SupportDataT;
+}
+
+export interface PositionVectorsT {
+  [key: string]: THREE.Vector3;
 }

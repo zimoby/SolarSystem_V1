@@ -22,6 +22,8 @@ import {
   CelestialBodyType,
   ObjectsAdditionalDataT,
   ObjectsRealtimeDataT,
+  ObjectsSupportDataT,
+  PositionVectorsT,
   SolarObjectParamsBasicT,
   SolarObjectParamsBasicWithMoonsT,
 } from "../types";
@@ -71,16 +73,12 @@ export const useInitiateSolarSystem = () => {
     const trashObjects: Record<string, SolarObjectParamsBasicT> = !disableTrash ? trash : {};
   
     useSolarStore.getState().updateSystemSettings({
+      // @ts-expect-error tired of typing
       activeObjectInfo: {
         sun: sunData,
       ...reorderPlanets,
       ...randomObjects
     }});
-
-    // console.log("all objects data", {
-    //   ...reorderPlanets,
-    //   ...randomObjects
-    // })
 
     console.log("start init");
 
@@ -188,25 +186,6 @@ export const useInitiateSolarSystem = () => {
     useSolarStore.getState().setInitialized(true);
   }, [disableMoons, disablePlanets, disableRandomObjects, disableTrash, isInitialized, objects, trash, uiRandomColors]);
 };
-
-interface SupportDataT {
-  distanceXY: {
-    x: number;
-    y: number;
-  };
-  angleRad: number;
-  rotationY: number;
-  type?: string;
-  scale: number;
-}
-
-interface ObjectsSupportDataT {
-  [key: string]: SupportDataT;
-}
-
-interface PositionVectorsT {
-  [key: string]: THREE.Vector3;
-}
 
 export const useCelestialBodyUpdates = () => {
   const positionVectorsRef = useRef<PositionVectorsT>({});
@@ -348,7 +327,7 @@ export const useCelestialBodyUpdates = () => {
     const updatedObjectsData: Record<string, ObjectsRealtimeDataT> = {};
 
     Object.keys(combinedObjects).forEach((name) => {
-      const anchorPoint = (combinedObjects[name]?.anchorXYOffset?.y ?? 0);
+      // const anchorPoint = (combinedObjects[name]?.anchorXYOffset?.y ?? 0);
       // const startTimeOffset = combinedObjects[name]?.rotationOffset ?? 0;
       const startTimeOffset = useSolarStore.getState().additionalProperties[name]?.rotationOffset ?? 0;
 

@@ -41,7 +41,7 @@ export const SolarSystem = () => {
         <group>
           <SunComponent />
           <SolarSystemPlanets />
-          {/* <RandomObjects /> */}
+          <RandomObjects />
           {/* {!disableTrash && <TrashComponent />} */}
           {/* <AsteroidsText /> */}
           {/* <CenterShader /> */}
