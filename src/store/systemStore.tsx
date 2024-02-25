@@ -45,6 +45,9 @@ const useSystemStore: StateCreator<
     [],
     SystemStoreStateT
   > = (set) => ({
+
+  DEV_MODE: import.meta.env.VITE_APP_MODE,
+    
   isInitialized: false,
   isInitialized2: false,
   dataInitialized: false,
@@ -73,7 +76,10 @@ const useSystemStore: StateCreator<
 
   orbitPathDetalization: 128,
 
-  updateSystemSettings: (updates) => set((state) => ({ ...state, ...updates })),
+  updateSystemSettings: (updates) => {
+    // console.log("Updating system settings:", updates);
+    set((state) => ({ ...state, ...updates }));
+  },
   setInitialized: (isInitialized) => set({ isInitialized }),
   setInitialized2: (isInitialized2) => set({ isInitialized2 }),
 });
