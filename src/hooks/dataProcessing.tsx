@@ -65,6 +65,8 @@ export const useInitiateSolarSystem = () => {
   const objects = useSolarStore((state) => state.celestialBodies.objects);
   const trash = useSolarStore((state) => state.celestialBodies.trash);
 
+  console.log("development mode check: ", DEV_MODE)
+
 
   useEffect(() => {
     if (isInitialized) {
@@ -82,7 +84,7 @@ export const useInitiateSolarSystem = () => {
       ...randomObjects
     }});
 
-    console.log("development mode check: ", DEV_MODE)
+    
     
 
     console.log("start init");

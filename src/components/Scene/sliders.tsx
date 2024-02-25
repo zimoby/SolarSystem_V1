@@ -62,11 +62,11 @@ const SliderWithInput = ({ label, value, min, max, step, onUpdate }: SliderWithI
 export const SolarSystemControls = () => {
     const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
 
-    const disableMoons = useSolarStore((state) => state.disableMoons);
-    const disableTrash = useSolarStore((state) => state.disableTrash);
-    const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects);
+    // const disableMoons = useSolarStore((state) => state.disableMoons);
+    // const disableTrash = useSolarStore((state) => state.disableTrash);
+    // const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects);
     const timeSpeed = useSolarStore((state) => state.timeSpeed / 100000) ;
-    const timeOffset = useSolarStore((state) => state.timeOffset);
+    // const timeOffset = useSolarStore((state) => state.timeOffset);
 
     const handleSliderUpdate = (value: number, param: string) => {
         updateSystemSettings({ [param]: value * 100000 });
