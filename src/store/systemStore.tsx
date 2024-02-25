@@ -65,7 +65,7 @@ const useSystemStore: StateCreator<
   activeObjectName: "sun",
   activeObjectInfo: {},
 
-  timeSpeed: 1,
+  timeSpeed: 50 * 100000,
   timeOffset: 0,
   objectsDistance: 1,
   objectsRelativeScale: 1,

@@ -5,6 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { AppStatsPerformance, ControlComponent, KeyboardInit } from "../ThreeJsMisc";
 import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
+import { useSolarStore } from "../../store/systemStore";
 // import { EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 // import { CenterShader } from "../HUD/shaders";
 // import { useSolarStore } from "../../store/systemStore";
@@ -12,6 +13,7 @@ import { SolarSystem } from "./solarSystem";
 const cameraDistance = 100;
 
 export const ThreeJsCanvas = () => {
+  const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
@@ -48,7 +50,7 @@ export const ThreeJsCanvas = () => {
 				{/* <NeuralNetwork2 ref={particlePositionsRef} /> */}
 
 				{/* <LogoIntroAnimation /> */}
-        <AppStatsPerformance />
+        {DEV_MODE && <AppStatsPerformance />}
 				<SceneSetup />
 				<Suspense fallback={
 					<Html center>

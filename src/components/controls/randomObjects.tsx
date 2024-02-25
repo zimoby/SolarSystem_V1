@@ -8,12 +8,14 @@ const RandomObjects = () => {
   const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects);
   const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
 
+  const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
+
   useEffect(() => {
     if (!randomObjectsInitialized) {
-      console.log("RandomObjects init");
+      DEV_MODE && console.log("RandomObjects init");
       updateSystemSettings({ randomObjectsInitialized: true });
     }
-  }, [randomObjectsInitialized, updateSystemSettings]);
+  }, [DEV_MODE, randomObjectsInitialized, updateSystemSettings]);
 
   return (
     <>
