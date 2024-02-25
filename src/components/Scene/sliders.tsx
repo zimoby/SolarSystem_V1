@@ -116,16 +116,16 @@ export const SolarSystemControls = () => {
                         label="Time Speed"
                         value={timeSpeed / 100000}
                         min={0}
-                        max={100}
+                        max={200}
                         step={1}
                         onUpdate={(e) => handleSliderUpdate(e, "timeSpeed", 100000)}
                     />
                     <SliderWithInput 
                         label="Time Offset"
                         value={timeOffset}
-                        min={-360}
-                        max={360}
-                        step={1}
+                        min={-1}
+                        max={1}
+                        step={0.1}
                         onUpdate={(e) => handleSliderUpdate(e, "timeOffset")}
                     />
                 </div>

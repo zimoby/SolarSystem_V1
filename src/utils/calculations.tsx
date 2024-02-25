@@ -56,8 +56,8 @@ export const calculateTime = (
   timeOffset: number
 ): number => {
   return (
-    (((time * Math.PI * 2) / yearInSeconds / periodDays) * timeSpeed +
-      (timeOffset * (Math.PI * 2)) / 365) %
+    ((((time / yearInSeconds / periodDays) * Math.PI * 2) ) * timeSpeed +
+      (timeOffset * (Math.PI * 2))) %
     (Math.PI * 2)
   );
 };

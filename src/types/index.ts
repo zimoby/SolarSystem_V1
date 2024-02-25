@@ -101,7 +101,7 @@ interface CollectedSolarObjectInfo {
 }
 
 export interface SystemStoreStateT {
-  DEV_MODE: string;
+  DEV_MODE: boolean;
   
   isInitialized: boolean;
   isInitialized2: boolean;

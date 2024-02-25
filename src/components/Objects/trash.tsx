@@ -19,10 +19,13 @@ type PointsOrbitRotationProps = {
 };
 
 const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotationProps) => {
+  const timeSpeed = useSolarStore((state) => state.timeSpeed);
+  const timeOffset = useSolarStore((state) => state.timeOffset);
+
   const pointRefs = useRef<THREE.Points[]>([]);
   pointRefs.current = points.map((_, i) => pointRefs.current[i]);
 
-  const baseSpeed = 0.02;
+  const baseSpeed = 30;
   const extraMultiply = 3;
 
   const dotsSpeedMultiplier = useMemo(() => {
@@ -30,8 +33,13 @@ const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotation
     return points.map((dot) => (1 / (dot.distance - 1)) * mult);
   }, [points, text]);
 
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime() * Math.PI * 2;
+  useFrame(( { clock } ) => {
+    const t = calculateTime(
+      clock.getElapsedTime(),
+      365,
+      timeSpeed,
+      timeOffset
+    );
 
     points.forEach((dot, i) => {
       const currentRef = pointRefs.current[i];
@@ -267,6 +275,9 @@ const OrbitShaderMaterial = shaderMaterial(
 extend({ OrbitShaderMaterial });
 
 const PointsOrbitRotationShader = ({ points, size }) => {
+  const timeSpeed = useSolarStore((state) => state.timeSpeed);
+  const timeOffset = useSolarStore((state) => state.timeOffset);
+
   const materialRef = useRef();
   const distances = points.map(dot => dot.distance);
   const angles = points.map(dot => dot.angle);
@@ -286,8 +297,17 @@ const PointsOrbitRotationShader = ({ points, size }) => {
   }, [angles, distances, points.length]);
 
   useFrame(({ clock }) => {
+
+    const t = calculateTime(
+      clock.getElapsedTime(),
+      365,
+      timeSpeed,
+      timeOffset
+    );
+
+
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = clock.getElapsedTime();
+      materialRef.current.uniforms.time.value = t * 400;
     }
   });
 
@@ -360,7 +380,8 @@ const atlasDimensions = Math.sqrt(amountOfImages);
 const velocityMultiplier = 5.0;
 
 const PointsCrossSolarSystemShader = ({ points, size }) => {
-  const { clock } = useThree();
+  const timeSpeed = useSolarStore((state) => state.timeSpeed);
+  const timeOffset = useSolarStore((state) => state.timeOffset);
 
   const textureAtlas = useTexture(textureAtlasSrc);
 
@@ -389,8 +410,15 @@ const PointsCrossSolarSystemShader = ({ points, size }) => {
   }, [points]);
   
 
-  useFrame(() => {
-    shaderMaterial.uniforms.time.value = clock.getElapsedTime();
+  useFrame(({ clock }) => {
+    const t = calculateTime(
+      clock.getElapsedTime(),
+      365,
+      timeSpeed,
+      timeOffset
+    );
+
+    shaderMaterial.uniforms.time.value = t * 400;
     shaderMaterial.depthTest = false;
     shaderMaterial.depthWrite = false;
   });
