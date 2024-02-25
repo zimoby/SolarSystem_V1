@@ -55,6 +55,7 @@ export const useSyncControlsWithStore = () => {
   const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
 
   useEffect(() => {
+    // console.log("syncing controls with store");
     updateSystemSettings({
       // solarScale: Math.pow(objectsDistance, 2),
 
@@ -68,7 +69,6 @@ export const useSyncControlsWithStore = () => {
       disableRandomObjects,
     });
   }, [
-    
     timeSpeed,
     timeOffset,
     objectsDistance,

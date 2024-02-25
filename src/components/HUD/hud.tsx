@@ -35,17 +35,17 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
   const segmentRef2 = useRef<SegmentRef>(null);
 
   const newPositionRef = useRef<THREE.Vector3 | undefined>();
-  // const lineUnderOrbitRef = useRef(useSolarStore.getState().hudColors.lineUnderOrbit);
-  // const lineBelowOrbitRef = useRef(useSolarStore.getState().hudColors.lineBelowOrbit);
-  // const directLineColorRef = useRef(useSolarStore.getState().hudColors.directLine);
 
+  const directLineColor = useSolarStore((state) => {
+    switch (typeOfObject) {
+      case "object":
+        return state.hudColors.directLineObject.color
+      default:
+        return state.hudColors.directLine.color;
+    }
+  });
 
-  let selectionType = "";
-  let directLineColor = useSolarStore.getState().hudColors.directLine.color;
-  if (typeOfObject === "object") {
-    selectionType = "border border-dashed ";
-    directLineColor = useSolarStore.getState().hudColors.directLineObject.color;
-  }
+  const selectionType = typeOfObject === "object" ? "border border-dashed " : "";
 
   useEffect(() => {
     const unsubscribePosition = useSolarPositionsStore.subscribe(

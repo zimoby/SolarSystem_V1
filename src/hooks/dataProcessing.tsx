@@ -192,16 +192,17 @@ export const useCelestialBodyUpdates = () => {
   const objectsSupportDataRef = useRef<ObjectsSupportDataT>({});
   const quaternionRef = useRef(new THREE.Quaternion());
 
-  const {
-    isInitialized,
-    isInitialized2,
-    timeSpeed,
-    timeOffset,
-    objectsDistance,
-    objectsRelativeScale,
-    orbitAngleOffset,
-  } = useSolarStore.getState();
-  const { planets, moons, objects } = useSolarStore.getState().celestialBodies;
+  const isInitialized = useSolarStore((state) => state.isInitialized);
+  const isInitialized2 = useSolarStore((state) => state.isInitialized2);
+  const timeSpeed = useSolarStore((state) => state.timeSpeed);
+  const timeOffset = useSolarStore((state) => state.timeOffset);
+  const objectsDistance = useSolarStore((state) => state.objectsDistance);
+  const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
+  const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
+
+  const planets = useSolarStore((state) => state.celestialBodies.planets);
+  const moons = useSolarStore((state) => state.celestialBodies.moons);
+  const objects = useSolarStore((state) => state.celestialBodies.objects);
 
   const combinedObjects = useMemo(() => {
     if (!isInitialized) return {};

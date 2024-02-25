@@ -373,7 +373,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
         </mesh> */}
         <group>
           {moons.map((moon, index) => {
-            console.log("moon", moon);
+            // console.log("moon", moon);
             return (
               <PlanetComponent
                 key={index}
