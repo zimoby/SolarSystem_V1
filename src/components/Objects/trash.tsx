@@ -7,7 +7,7 @@ import { Html, Point, PointMaterial, Points, shaderMaterial, useTexture } from "
 
 import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Vector2, Vector3 } from "three";
 import { useFrame, extend, useThree } from "@react-three/fiber";
-import { calculateRelativeDistanceXY } from "../../utils/calculations";
+import { calculateRelativeDistanceXY, calculateTime } from "../../utils/calculations";
 import { TrashParamsT } from "../../types";
 
 import textureAtlasSrc from "../../assets/dot_style_atlas.png"
@@ -207,7 +207,7 @@ export const TrashComponent = () => {
   const generateOuterTrash = true;
   const generateCrossTrash = true;
 
-  const innerSpeed = 10;
+  const innerSpeed = 1;
 
   // console.log("trashPositions", relativeScaleInner, planetsData.earth.semimajorAxis10_6Km);
 
@@ -289,6 +289,11 @@ const Particles = ({ points, rotSpeed, size }) => {
   const pointsRef1 = useRef<THREE.Points>();
   const materialRef = useRef();
 
+  const timeSpeed = useSolarStore((state) => state.timeSpeed);
+  const timeOffset = useSolarStore((state) => state.timeOffset);
+
+  console.log("timeSpeed", timeSpeed);
+
   const geom = useMemo(() => {
     const geometry = new BufferGeometry();
     const positions = points.flatMap((p) => p.position);
@@ -298,9 +303,20 @@ const Particles = ({ points, rotSpeed, size }) => {
 
   useFrame(({ clock }) => {
     // console.log("camera", camera);
-    const t = clock.getElapsedTime() * Math.PI * 2;
+    // const time = clock.getElapsedTime();
+    // const t_old = clock.getElapsedTime() * Math.PI * 2 / rotSpeed;
+
+    const t = calculateTime(
+      clock.getElapsedTime(),
+      365,
+      timeSpeed,
+      timeOffset
+    );
+
+    // console.log("timeSpeed", t_old);
+
     if (pointsRef1.current) {
-      pointsRef1.current.rotation.z = (t / rotSpeed) % (Math.PI * 2);
+      pointsRef1.current.rotation.z = t * 50 / rotSpeed;
       // pointsRef2.current.rotation.z = (t / rotSpeed / 2) % (Math.PI * 2);
     }
 
