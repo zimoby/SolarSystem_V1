@@ -14,15 +14,6 @@ import { useSolarStore } from "../../store/systemStore";
 import { useEffect } from "react";
 import { OrbitDisk } from "../Objects/disk";
 
-// function SelectToZoom({ children }) {
-//   const api = useBounds()
-//   return (
-//     <group onClick={(e) => (e.stopPropagation(), e.delta <= 2 && api.refresh(e.object).fit())} onPointerMissed={(e) => e.button === 0 && api.refresh().fit()}>
-//       {children}
-//     </group>
-//   )
-// }
-
 const SolarSystemPlanets = () => {
   const getPlanetsData = useSolarStore((state) => state.celestialBodies.planets);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
@@ -39,7 +30,6 @@ const SolarSystemPlanets = () => {
     createSaturnTexture,
     createUranusTexture,
     createVenusTexture,
-    // createMoonTexture,
   ] = useTexture([
     earthTexture,
     jupiterTexture,
@@ -49,15 +39,10 @@ const SolarSystemPlanets = () => {
     saturnTexture,
     uranusTexture,
     venusTexture,
-    // moonTexture,
   ]);
-
-
-  // console.log("SolarSystemPlanets");
 
   const mapedTextures = {
     earth: createEarthTexture,
-    // moon: createMoonTexture,
     jupiter: createJupiterTexture,
     mars: createMarsTexture,
     mercury: createMercuryTexture,
@@ -78,8 +63,6 @@ const SolarSystemPlanets = () => {
     <>
       {Object.keys(getPlanetsData).map((planetName, index) => {
         return (
-          // <Bounds fit clip observe margin={1.2}>
-          //   <SelectToZoom>
           <PlanetComponent
             key={planetName + index}
             planetName={planetName}
@@ -87,8 +70,6 @@ const SolarSystemPlanets = () => {
             planetTexture={mapedTextures[planetName as keyof typeof mapedTextures]}
             type="planets"
           />
-          // </SelectToZoom>
-          // </Bounds>
         );
       })}
       <OrbitDisk size={40} positionYoffset={-2} opacity={0.1} />

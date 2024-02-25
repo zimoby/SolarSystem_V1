@@ -12,99 +12,6 @@ import { TrashParamsT } from "../../types";
 
 import textureAtlasSrc from "../../assets/dot_style_atlas.png"
 
-// type Position = {
-//   x: number;
-//   y: number;
-//   z: number;
-// };
-
-// const wrapIntoBoundaries = (pos: Position, boundary: number[]): Position => {
-//   const newPos: Position = { ...pos };
-//   if (pos.x > boundary[0]) newPos.x = -boundary[0];
-//   if (pos.x < -boundary[0]) newPos.x = boundary[0];
-//   if (pos.y > boundary[1]) newPos.y = -boundary[1];
-//   if (pos.y < -boundary[1]) newPos.y = boundary[1];
-//   if (pos.z > boundary[2]) newPos.z = -boundary[2];
-//   if (pos.z < -boundary[2]) newPos.z = boundary[2];
-//   return newPos;
-// };
-
-// const PointsCrossSolarSystem = ({ points }: {points: CrossingTrashParamsT[]}) => {
-//   const pointRefs = useRef<THREE.Points[]>([]);
-//   const pointsVectorRefs = useRef<Vector3[]>([]);
-//   const boundary = [10, 10, 3];
-//   const allSpeed = 10;
-
-//   useEffect(() => {
-//     pointRefs.current = points.map((_, i) => pointRefs.current[i]);
-//     pointsVectorRefs.current = points.map((dot) => new Vector3(dot.position.x, dot.position.y, dot.position.z));
-
-//     points.forEach((dot, i) => {
-//       if (pointRefs.current[i]) {
-//         pointRefs.current[i].position.x = dot.position.x;
-//         pointRefs.current[i].position.y = dot.position.y;
-//         pointRefs.current[i].position.z = dot.position.z;
-//       }
-//     });
-//   }, [points]);
-
-//   useFrame((_, delta) => {
-//     const speedFactor = delta * allSpeed;
-
-//     points.forEach((dot, i) => {
-//       const currentRef = pointRefs.current[i];
-//       if (currentRef) {
-//         const newPos = {
-//           x: currentRef.position.x + dot.velocity.x * speedFactor,
-//           y: currentRef.position.y + dot.velocity.y * speedFactor,
-//           z: currentRef.position.z + dot.velocity.z * speedFactor,
-//         };
-  
-//         const wrappedPos = wrapIntoBoundaries(newPos, boundary);
-  
-//         currentRef.position.set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
-//         pointsVectorRefs.current[i].set(wrappedPos.x, wrappedPos.y, wrappedPos.z);
-        
-//       }
-//     });
-//   });
-
-//   const style0 = "" 
-//   const style1 = "size-2 border border-red-500 opacity-50";
-//   const style2 = "size-2 border rotate-45 border-yellow-500 opacity-50";
-//   const style3 = "size-2 border rounded-full border-green-500 opacity-50";
-//   const style4 = "size-2 border border-dashed border-blue-500 opacity-50";
-//   const style5 = "size-3 border-4 border-double rotate-45 border-pink-500 opacity-50";
-
-//   const dotStyles = [style0, style1, style2, style3, style4, style5];
-
-//   const selectRandomStyle = () => {
-//     return Math.floor(Math.random() * dotStyles.length);
-//   }
-
-//   return (
-//     <>
-//       {/* <NeuralNetwork2 ref={pointsVectorRefs} /> */}
-//       <Points limit={points.length} rotation-x={Math.PI / 2}>
-//         <PointMaterial
-//           vertexColors
-//           size={1}
-//           sizeAttenuation={false}
-//           depthWrite={false}
-//           toneMapped={false}
-//         />
-//         {points.map((_dot, i) => (
-//           <Point key={i} ref={(el) => (pointRefs.current[i] = el as unknown as THREE.Points)}>
-//             <Html center>
-//               <div className={dotStyles[selectRandomStyle()]} />
-//             </Html>
-//           </Point>
-//         ))}
-//       </Points>
-//     </>
-//   );
-// };
-
 type PointsOrbitRotationProps = {
   points: TrashParamsT[];
   text?: boolean;
@@ -181,14 +88,12 @@ export const TrashComponent = () => {
   const minDistance = useSolarStore((state) => state.minDistance);
 
   const trashInner1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashInner1);
-  // const trashInner2 = useSolarStore((state) => state.celestialBodies.trashCollection.trashInner2);
   const trashMiddle1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle1);
   const trashMiddle2 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle2);
   const trashOuter1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashOuter1);
   const trashCross = useSolarStore((state) => state.celestialBodies.trashCollection.trashCross);
 
   const trashPositions = useSolarStore((state) => state.celestialBodies.trash);
-  // const planetsData = useSolarStore((state) => state.celestialBodies.planets);
 
   const relativeScaleInner = useMemo(() => {
     return calculateRelativeDistanceXY( trashPositions.trashInner1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
@@ -209,45 +114,31 @@ export const TrashComponent = () => {
 
   const innerSpeed = 1;
 
-  // console.log("trashPositions", relativeScaleInner, planetsData.earth.semimajorAxis10_6Km);
-
   return (
     <group>
-      {/* <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.01} />
-      <Particles points={trashOuter1} rotSpeed={ innerSpeed * 10 } size={0.2} double={false} /> */}
-      {/* <Stars /> */}
       {generateInnerTrash && (
         <>
-        <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
-          {/* <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed } size={ 1 } />
-          <SimplePointsWrapper points={trashInner1} rotSpeed={ innerSpeed * 2 } size={ 1 } /> */}
-          <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.02} />
-          <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.02} />
-
-        </group>
-
+          <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
+            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.02} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.02} />
+          </group>
         </>
       )}
 
       {generateOuterTrash && (
         <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
-          {/* <SimplePointsWrapper points={trashOuter1} rotSpeed={ outerSpeed } size={ 1 } /> */}
           <Particles points={trashOuter1} rotSpeed={ innerSpeed * 50 } size={0.5} double={false} />
-          {/* <Particles points={trashOuter1} rotSpeed={ innerSpeed * 25 } size={0.5} double={false} /> */}
-
         </group>
       )}
 
       {generateMiddleTrash && (
         <group scale={[relativeScaleMiddle.x, relativeScaleMiddle.x, relativeScaleMiddle.x]}>
-          {/* <PointsOrbitRotation points={trashMiddle1} name={"dots"} /> */}
           <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
           <PointsOrbitRotationShader points={trashMiddle1} size={3} name={"identDots"} />
         </group>
       )}
 
       {generateCrossTrash && <group scale={[relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x]}>
-        {/* <PointsCrossSolarSystem points={trashCross} /> */}
         <PointsCrossSolarSystemShader points={trashCross} size={20} />
       </group>}
     </group>
@@ -268,7 +159,7 @@ const ParticleShaderMaterial = shaderMaterial(
     void main() {
       vec4 worldPosition = modelMatrix * vec4(position, 1.0);
       float distance = length(cameraPosition - worldPosition.xyz);
-      gl_PointSize = size * (300.0 / distance); // Adjust this formula as needed
+      gl_PointSize = size * (300.0 / distance);
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `,
@@ -292,8 +183,6 @@ const Particles = ({ points, rotSpeed, size }) => {
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const timeOffset = useSolarStore((state) => state.timeOffset);
 
-  // console.log("timeSpeed", timeSpeed);
-
   const geom = useMemo(() => {
     const geometry = new BufferGeometry();
     const positions = points.flatMap((p) => p.position);
@@ -302,10 +191,6 @@ const Particles = ({ points, rotSpeed, size }) => {
   }, [points]);
 
   useFrame(({ clock }) => {
-    // console.log("camera", camera);
-    // const time = clock.getElapsedTime();
-    // const t_old = clock.getElapsedTime() * Math.PI * 2 / rotSpeed;
-
     const t = calculateTime(
       clock.getElapsedTime(),
       365,
@@ -313,11 +198,8 @@ const Particles = ({ points, rotSpeed, size }) => {
       timeOffset
     );
 
-    // console.log("timeSpeed", t_old);
-
     if (pointsRef1.current) {
       pointsRef1.current.rotation.z = t * 50 / rotSpeed;
-      // pointsRef2.current.rotation.z = (t / rotSpeed / 2) % (Math.PI * 2);
     }
 
     if (materialRef.current) {
@@ -385,7 +267,6 @@ const OrbitShaderMaterial = shaderMaterial(
 extend({ OrbitShaderMaterial });
 
 const PointsOrbitRotationShader = ({ points, size }) => {
-  // const { clock } = useThree();
   const materialRef = useRef();
   const distances = points.map(dot => dot.distance);
   const angles = points.map(dot => dot.angle);
@@ -393,7 +274,7 @@ const PointsOrbitRotationShader = ({ points, size }) => {
   const geom = useMemo(() => {
     const geometry = new BufferGeometry();
 
-    const positions = new Float32Array(points.length * 3); // Fill with your positions
+    const positions = new Float32Array(points.length * 3);
     const distanceAttr = new Float32Array(distances);
     const angleAttr = new Float32Array(angles);
 
@@ -478,15 +359,10 @@ const atlasDimensions = Math.sqrt(amountOfImages);
 
 const velocityMultiplier = 5.0;
 
-
-
 const PointsCrossSolarSystemShader = ({ points, size }) => {
-  // const shaderMaterialRef = useRef();
   const { clock } = useThree();
 
-
   const textureAtlas = useTexture(textureAtlasSrc);
-
 
   const shaderMaterial = useMemo(() => new ShaderMaterial({
     uniforms: {
@@ -502,7 +378,6 @@ const PointsCrossSolarSystemShader = ({ points, size }) => {
     fragmentShader,
     transparent: true,
   }), [size, textureAtlas]);
-
 
   const [positions, velocities, randomColors, randomTextures] = useMemo(() => {
     const positions = points.map(p => [p.position.x, p.position.y, p.position.z]).flat();
@@ -526,7 +401,6 @@ const PointsCrossSolarSystemShader = ({ points, size }) => {
     geometry.setAttribute('velocity', new Float32BufferAttribute(velocities, 3));
     geometry.setAttribute('color', new BufferAttribute(new Float32Array(randomColors.flatMap(c => c.toArray())), 3));
     geometry.setAttribute('textureIndex', new BufferAttribute(new Float32Array(randomTextures), 1));
-    // console.log("geom", geometry);
     return geometry;
   }, [positions, randomColors, randomTextures, velocities]);
 

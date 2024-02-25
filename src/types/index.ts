@@ -171,9 +171,6 @@ export interface SolarSystemStoreStateT {
     };
   };
   batchUpdateCelestialBodies: (updates: Partial<SolarSystemStoreStateT["celestialBodies"]>) => void;
-  // properties: Record<string, ObjectsRealtimeDataT>;
-  // properties: { [key: string]: ObjectsRealtimeDataT };
-  // batchUpdateProperties: (updates: Partial<SolarSystemStoreStateT["properties"]>) => void;
   additionalProperties: ObjectsSupportDataT;
   batchUpdateAdditionalProperties: (
     updates: Partial<SolarSystemStoreStateT["additionalProperties"]>

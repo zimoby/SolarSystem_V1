@@ -25,8 +25,6 @@ export const KeyboardInit = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const planetsWithSun = ["sun", ...planetsNamesOrder];
 
-  // console.log("rightPressed", rightPressed, leftPressed, activeObjectName);
-
   useEffect(() => {
     if (!rightPressed && !leftPressed) { return; }
     const findActivePlanet = planetsWithSun.findIndex((planetName) => planetName === activeObjectName);
@@ -59,11 +57,7 @@ export const ControlComponent = () => {
     };
   }, []);
 
-  // console.log("orbitControlsRef", orbitControlsRef);
-
   useFrame(() => {
-
-    
     if (currentPositionRef.current) {
       // const desiredOffset = new Vector3(0, 10, -30);
       // const targetPosition = currentPositionRef.current;
@@ -76,11 +70,7 @@ export const ControlComponent = () => {
       // const controls = orbitControlsRef.current;
       // controls.target.set(targetPosition.x, targetPosition.y, targetPosition.z);
       // // controls.position0.set(targetPosition.x, targetPosition.y,  targetPosition.z);
-
-
       // controls.update();
-
-
 
       // camera.position.lerp(desiredPosition, 0.1);
       camera.lookAt(currentPositionRef.current.x, currentPositionRef.current.y, currentPositionRef.current.z);

@@ -65,9 +65,6 @@ export const useInitiateSolarSystem = () => {
   const objects = useSolarStore((state) => state.celestialBodies.objects);
   const trash = useSolarStore((state) => state.celestialBodies.trash);
 
-  // console.log("development mode check: ", DEV_MODE)
-
-
   useEffect(() => {
     if (isInitialized) {
       return;
@@ -83,9 +80,6 @@ export const useInitiateSolarSystem = () => {
       ...reorderPlanets,
       ...randomObjects
     }});
-
-    
-    
 
     DEV_MODE && console.log("start init");
 
@@ -104,7 +98,6 @@ export const useInitiateSolarSystem = () => {
     ): void => {
 
       const filteredData: SolarObjectParamsBasicT = filterObjectData(data, usedProperties)
-      // console.log("filteredData", name, filteredData)
       const normalizedData: SolarObjectParamsBasicT = normalizeDataToEarth(filteredData, ignoreToNormalize)
 
       const parentVolumetricMeanRadiusKm = type === "moons" ? celestialBodiesUpdates["planets"][parentName]?.volumetricMeanRadiusKm ?? 1 : 1;
@@ -133,7 +126,6 @@ export const useInitiateSolarSystem = () => {
       celestialBodiesUpdates[type][name] = additionalProcessingParams;
       propertiesUpdates[name] = {
         position: new THREE.Vector3(0, 0, 0),
-        // rotation: new THREE.Euler(0, 0, 0),
       };
     };
 
@@ -146,11 +138,8 @@ export const useInitiateSolarSystem = () => {
           processCelestialBody("planets", planetName, data, "sun", iterPlanet);
         }
 
-        // console.log("disableMoons", disableMoons)
-
         if ("moons" in planetData && !disableMoons) {
           const data = planetData as SolarObjectParamsBasicWithMoonsT;
-          // console.log("moons", data.moons)
           data.moons?.forEach((moon, iterMoon) => {
             processCelestialBody("moons", moon.name || "", moon, planetName, iterMoon);
           });
@@ -222,7 +211,6 @@ export const useCelestialBodyUpdates = () => {
     };
   }, [isInitialized, planets, moons, objects]);
 
-
   const [maxDistance, minDistance] = useMemo(() => {
     if (!isInitialized) return [0, 1];
     const distances = Object.keys(combinedObjects).reduce(
@@ -253,10 +241,7 @@ export const useCelestialBodyUpdates = () => {
     useSolarStore.getState().updateSystemSettings({
       maxDistance: maxDistance,
       minDistance: minDistance,
-      // activeObjectInfo: combinedObjects
     });
-
-    // console.log("all objects data", combinedObjects)
 
     const supportData: ObjectsSupportDataT = {};
 
@@ -272,12 +257,10 @@ export const useCelestialBodyUpdates = () => {
 
       let moonsDistanceCompensation = 1;
       let moonsDistanceCompensation2 = 1;
-      // let moonsDistanceCompensation3 = 0;
 
       if (combinedObjects[name].type2 === "moons") {
         moonsDistanceCompensation = objectsDistance;
         moonsDistanceCompensation2 = 1 * parentData.scale;
-        // moonsDistanceCompensation3 = parent.scale;
       }
 
       const distanceXY = calculateRelativeDistanceXY(
@@ -299,8 +282,6 @@ export const useCelestialBodyUpdates = () => {
 
       const rotationY = (combinedObjects[name].type2 === "objects") ? Math.random() * Math.PI * 2 : 0;
       const rotationOffset = Math.random() * Math.PI * 2;
-
-      // console.log(name, rotationOffset)
 
       supportData[name] = {
         distanceXY,
@@ -330,10 +311,7 @@ export const useCelestialBodyUpdates = () => {
 
     Object.keys(combinedObjects).forEach((name) => {
       // const anchorPoint = (combinedObjects[name]?.anchorXYOffset?.y ?? 0);
-      // const startTimeOffset = combinedObjects[name]?.rotationOffset ?? 0;
       const startTimeOffset = useSolarStore.getState().additionalProperties[name]?.rotationOffset ?? 0;
-
-      // console.log("combinedObjects", name, startTimeOffset)
 
       const supportData = objectsSupportDataRef.current[name];
       const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;

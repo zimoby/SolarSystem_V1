@@ -173,7 +173,6 @@ export const useSolarPositionsStore = create<SolarSystemStoreRealtimeStateT>((se
   }),
 }));
 
-
 export const useSolarStore = create<SystemColorsStateT & SystemStoreStateT & SolarSystemStoreStateT>()((...a) => ({
   ...useSystemColorsSlice(...a),
   ...useSystemStore(...a),

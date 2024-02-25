@@ -53,7 +53,6 @@ export const generateTrash = (
     const y = radiusRandom * Math.sin(angle + rotate);
     const z = (Math.random() * 2 - 1) * 0.05;
 
-    // Generate random values from a Gaussian distribution
     const updX = (x + MathUtils.randFloatSpread(2) * destr) * scale;
     const updY = (y + MathUtils.randFloatSpread(2) * destr) * scale;
     const updZ = (z + (MathUtils.randFloatSpread(2) * destr) / 7) * scale;
@@ -69,36 +68,8 @@ export const generateTrash = (
     });
   }
 
-  // console.log("trash", trash);
-
   return trash;
 };
-
-// export const generateTrash = (amount, radius = 1, destr = 0.2, scale = 1, name = "") => {
-//   const trashPositions = new Float32Array(amount * 3);
-//   const angleIncrement = (2 * Math.PI) / amount;
-//   const ring = 5;
-
-//   console.log("generate trash: " + name + ": ", amount);
-
-//   for (let i = 0; i < amount; i++) {
-//       const angle = i * angleIncrement;
-//       const radiusRandom = Math.pow((Math.random() / ring + ring / 2), 1/1) * radius - ring / 3.5;
-//       const x = radiusRandom * Math.cos(angle);
-//       const y = radiusRandom * Math.sin(angle);
-//       const z = (Math.random() * 2 - 1) * 0.05;
-
-//       // Generate random values from a Gaussian distribution
-//       trashPositions[i] = (x + (MathUtils.randFloatSpread(2)) * destr) * scale;
-//       trashPositions[i + 1] = (y + (MathUtils.randFloatSpread(2)) * destr) * scale;
-//       trashPositions[i + 2] = (z + (MathUtils.randFloatSpread(2)) * destr / 7) * scale;
-
-//   }
-
-//   // console.log("trash", trash);
-
-//   return trashPositions;
-// }
 
 const generateRandomName = () => {
   const size = 5;

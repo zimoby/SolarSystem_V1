@@ -2,7 +2,6 @@ import solarData from "../data/data.json";
 import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
 import { OnlyNumbericSolarObjectParamsBasicT, SolarObjectParamsBasicT } from "../types";
 
-
 export const normalizeDataToEarth = (
   objData: OnlyNumbericSolarObjectParamsBasicT,
   ignoreToNormalize: string[]
@@ -26,9 +25,6 @@ export const normalizeDataToEarth = (
 
     const planetValue = objData[key as keyof OnlyNumbericSolarObjectParamsBasicT];
     const earthValue = earthData[key as keyof OnlyNumbericSolarObjectParamsBasicT];
-
-    // console.log("planetValue", key);
-
 
     if (
       typeof planetValue !== "number" ||

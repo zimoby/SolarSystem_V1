@@ -8,32 +8,14 @@ import { SunComponent } from "../Objects/sun";
 import RandomObjects from "../controls/randomObjects";
 import SolarSystemPlanets from "../controls/solarSystemPlanets";
 import { TrashComponent } from "../Objects/trash";
-// import { ActiveObjectInfo } from "./info";
-// import { CenterShader } from "../HUD/shaders";
-// import { AsteroidsText } from "../Objects/asteroidsText";
-
-// import { useEffect, useState } from "react";
-// import skyStars from "../../assets/2k_stars_milky_way.jpg";
 
 export const SolarSystem = () => {
-  // const [allInitialized, setAllInitialized] = useState(false);
   const isInitialized = useSolarStore((state) => state.isInitialized);
   const isInitialized2 = useSolarStore((state) => state.isInitialized2);
   const disableTrash = useSolarStore((state) => state.disableTrash);
 
   useInitiateSolarSystem();
   useCelestialBodyUpdates();
-
-  // useEffect(() => {
-  //   // Check if all components are initialized
-  //   if (sunInitialized && planetsInitialized && randomObjectsInitialized && !allInitialized) {
-  //     // Introduce a delay before showing the solar system
-  //     setTimeout(() => setAllInitialized(true), 1000); // Adjust the delay as needed
-  //   }
-  // }, [sunInitialized, planetsInitialized, randomObjectsInitialized, allInitialized]);
-
-
-  // console.log("isInitialized", isInitialized, isInitialized2);
 
   return (
     <>
@@ -44,7 +26,6 @@ export const SolarSystem = () => {
           <RandomObjects />
           {!disableTrash && <TrashComponent />}
           {/* <AsteroidsText /> */}
-          {/* <CenterShader /> */}
         </group>
       )}
     </>

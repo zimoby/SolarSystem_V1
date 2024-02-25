@@ -8,11 +8,7 @@ export const calculateRelativeDistanceXY = (
   minDistance: number,
   name: string = ""
 ): { x: number; y: number } => {
-  // console.log("calculateRelativeDistanceXY", semimajorAxis10_6Km, orbitEccentricity, sliderValue);
   const offset = -minDistance.toFixed(1);
-  // const farObject = 60;
-  // const distanceX = Math.pow(((semimajorAxis10_6Km * (1 - orbitEccentricity)) + offset), 1 / sliderValue) - offset;
-  // const distanceY = Math.pow(((semimajorAxis10_6Km * (1 + orbitEccentricity)) + offset), 1 / sliderValue) - offset;
   const distanceX = semimajorAxis10_6Km * (1 - orbitEccentricity) + offset;
   const distanceY = semimajorAxis10_6Km * (1 + orbitEccentricity) + offset;
 
@@ -34,18 +30,7 @@ export const calculateRelativeDistanceXY = (
   return { x: backDistanceX, y: backDistanceY };
 };
 
-// export const calculateDistanceXY = (semimajorAxis10_6Km, orbitEccentricity, sliderValue, name = "") => {
-//   // console.log("calculateRelativeDistanceXY", semimajorAxis10_6Km, orbitEccentricity, sliderValue);
-//   const distanceX = (semimajorAxis10_6Km * (1 - orbitEccentricity)) * sliderValue;
-//   const distanceY = (semimajorAxis10_6Km * (1 + orbitEccentricity)) * sliderValue;
-
-//   // console.log("calculateRelativeDistanceXY", name, sliderValue, [distanceX, distanceY], {semimajorAxis10_6Km, orbitEccentricity});
-
-//   return { x: distanceX, y: distanceY };
-// }
-
 export const calculateRelativeScale = (size: number, relativeScale: number, name: string = ""): number => {
-  // const offset = 0.75;
   const calcRelativeScale = Math.pow(size, 1 / relativeScale) / relativeScale;
 
   false && console.log("RelativeScale", name, calcRelativeScale, size, relativeScale)
@@ -76,27 +61,3 @@ export const calculateTime = (
     (Math.PI * 2)
   );
 };
-
-// export const calculatePosition = ({name, positionVectorsRef, time, timeSpeed, timeOffset, supportData, siderealOrbitPeriodDays, quaternionRef}) => {
-
-//   // console.log("calculatePosition", supportData, time, timeSpeed, timeOffset, siderealOrbitPeriodDays);
-
-//   const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;
-//   const t = calculateTime(
-//     time,
-//     (siderealOrbitPeriodDays || 365) * moonsCompenstation,
-//     timeSpeed,
-//     timeOffset
-//   );
-
-//   positionVectorsRef.current[name].set(
-//     Math.cos(t) * supportData.distanceXY.x,
-//     0,
-//     Math.sin(t) * supportData.distanceXY.y
-//   );
-
-//   quaternionRef.current.setFromAxisAngle({x: 1, y: 0, z: 0}, supportData.angleRad);
-//   positionVectorsRef.current[name].applyQuaternion(quaternionRef.current);
-
-//   return positionVectorsRef;
-// }

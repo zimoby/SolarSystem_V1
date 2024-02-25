@@ -5,12 +5,6 @@ import { useSolarStore } from "../store/systemStore";
 export const useSyncControlsWithStore = () => {
   const { timeSpeed, timeOffset, objectsDistance, objectsRelativeScale, disableRandomObjects, disableMoons, disableTrash, orbitAngleOffset } =
     useControls({
-      // solarScale: {
-      //   value: 1,
-      //   min: 1,
-      //   max: 10,
-      //   step: 1,
-      // },
       timeSpeed: {
         value: 50,
         min: 1,
@@ -55,10 +49,7 @@ export const useSyncControlsWithStore = () => {
   const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
 
   useEffect(() => {
-    // console.log("syncing controls with store");
     updateSystemSettings({
-      // solarScale: Math.pow(objectsDistance, 2),
-
       timeSpeed: timeSpeed === 1 ? 1 : timeSpeed * 100000,
       timeOffset,
       objectsDistance,

@@ -7,8 +7,6 @@ import { SceneSetup } from ".";
 import { SolarSystem } from "./solarSystem";
 import { useSolarStore } from "../../store/systemStore";
 // import { EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
-// import { CenterShader } from "../HUD/shaders";
-// import { useSolarStore } from "../../store/systemStore";
 
 const cameraDistance = 100;
 
@@ -28,13 +26,11 @@ export const ThreeJsCanvas = () => {
   return (
     <KeyboardControls map={map}>
       <Canvas
-				// legacy={true}
 				flat={true}
         gl={{ alpha: false }}
         camera={{ fov: 10, position: [0, cameraDistance, cameraDistance * 2] }}
       >
         <color args={["#111111"]} attach="background" />
-
 
         {/* <EffectComposer> */}
           {/* <Bloom height={200} mipmapBlur/> */}
@@ -59,7 +55,6 @@ export const ThreeJsCanvas = () => {
 				}>
 					<SolarSystem />
 				</Suspense>
-				{/* <CenterShader /> */}
 				<ControlComponent />
         <KeyboardInit />
       </Canvas>

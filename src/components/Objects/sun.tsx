@@ -18,7 +18,6 @@ export const SunComponent = () => {
   const timeOffset = useSolarStore((state) => state.timeOffset);
   const updateSunInitialized = useSolarStore((state) => state.updateSystemSettings);
 
-  // console.log("sunData", sunData?.volumetricMeanRadiusKm);
   const sunSize = (sunData?.volumetricMeanRadiusKm ?? 0.1);
 
   const calculatedSunSize = useMemo(() => {
@@ -30,8 +29,6 @@ export const SunComponent = () => {
   const sunOreolRef = useRef<Group>(null);
 
   const { camera } = useThree();
-
-  // console.log("sunData", sunData);
 
   useEffect(() => {
     if (!sunInitialized) {
@@ -47,7 +44,6 @@ export const SunComponent = () => {
     const timeSec = time * Math.PI * 2;
     if (sunRef.current) {
       sunRef.current.rotation.y = calculateObjectsRotation(timeSec, sunData?.siderealRotationPeriodHrs || 100, timeOffset ?? 0);
-      // sunRef.current.position.set(0, 0, 0);
     }
     if (sunOreolRef.current) {
       sunOreolRef.current.lookAt(camera.position);
@@ -57,7 +53,6 @@ export const SunComponent = () => {
   return (
     <group position={[0,0,0]}>
       <InfoAboutObject params={{ name: "sun" }} />
-      {/* <pointLight position={[0, 5, 0]} intensity={1} distance={500} /> */}
       <Sphere
         // @ts-expect-error tired of typescript
         ref={sunRef}
@@ -84,9 +79,6 @@ export const SunComponent = () => {
               type={GradientType.Radial as never}
               innerCircleRadius={0}
               outerCircleRadius={'auto'}
-              // blending={THREE.CustomBlending}
-              // bleding={THREE.AdditiveBlending}
-              // blendMode={THREE.MultiplyBlending}
             />
           </meshBasicMaterial>
         </Circle>

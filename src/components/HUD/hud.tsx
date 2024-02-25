@@ -5,8 +5,6 @@ import { Html, Segment, Segments } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { updateActiveName } from "../../hooks/storeProcessing";
 
-// extend({ Line });
-
 type PlanetHUDComponentProps = {
   planetName: string;
   planetSize?: number;
@@ -55,32 +53,19 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
           if (newPositionRef.current) {
             newPositionRef.current.set(newPosition.x, newPosition.y, newPosition.z);
           } else {
-            // console.log("newPositionRef.current", newPosition);
             newPositionRef.current = new THREE.Vector3(newPosition.x, newPosition.y, newPosition.z);
           }
         }
       }
     );
 
-    // const unsubscribeColor = useSolarStore.subscribe(
-    //   (state) => {
-    //     lineUnderOrbitRef.current = state.hudColors.lineUnderOrbit;
-    //     lineBelowOrbitRef.current = state.hudColors.lineBelowOrbit;
-    //   },
-    //   (state) => state.hudColors
-    // );
-
-    // Cleanup on unmount
     return () => {
       unsubscribePosition();
-      // unsubscribeColor();
     };
   }, [planetName]);
 
-
   useFrame(() => {
     if (newPositionRef.current) {
-      // Update positions based on the latest state
       if (planetHuiRef.current) {
         planetHuiRef.current.position.copy(planetHui1Pos.set(newPositionRef.current.x, newPositionRef.current.y - planetSize, newPositionRef.current.z));
       }
@@ -104,9 +89,6 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
       }
     }
   });
-
-  // console.log("objType", planetName, typeOfObject)
-
 
   return (
     <group>
@@ -184,13 +166,15 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
     <group ref={ref as Ref<THREE.Group<THREE.Object3DEventMap>>} >
       <Html center>
         <div
-          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer z-0 hover:bg-orange-400 hover:z-50`}
+          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer hover:bg-orange-400`}
           style={{ transform: "translate(50%, 75%)" }}
           onClick={() => {
             updateActiveName(params.name);
           }}
         >
-        <div className={`${textStyle}`}>{params.name}</div>
+        <div className={`${textStyle}`}>
+          { params.name }
+        </div>
           {params.extendData && (
             <p className="text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
           )}

@@ -20,21 +20,15 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 }) => {
   const [selected, setSelected] = useState(false);
   const distanceXY = useSolarStore((state) => state.additionalProperties[name]?.distanceXY) || { x: 0, y: 0 };
-  // const obliquityToOrbitDeg = useSolarStore((state) => state.celestialBodies[type][name].obliquityToOrbitDeg ?? 0);
   const objData = useSolarStore((state) => state.additionalProperties[name]);
   const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
   const activeObject = useSolarStore((state) => state.activeObjectName);
 
-  // console.log("ObjectEllipse", objData);
-
   const dashOffsetRef = useRef<THREE.Line>();
   const orbitLineRef = useRef<THREE.Line>();
-  // console.log("ObjectEllipse", params.orbitInclinationDeg);
   color = "white"
-
-  // console.log("ObjectEllipse", name, params.orbitInclinationDeg);
 
   const planetInclination = degreesToRadians( (params.orbitInclinationDeg ?? 0) + orbitAngleOffset );
 
@@ -59,16 +53,11 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   const SelectedTube = useMemo(() => {
     const relScale = objData.scale * 0.3;
-    // return new THREE.RingGeometry(distanceXY.x, distanceXY.x + 0.1, 64, 1, 0, Math.PI * 2);
     return (
       <Ring
         args={[(distanceXY.x - 1 * relScale), (distanceXY.y + 1 * relScale), 128, 1, 0, Math.PI * 2]}
         position={[0, 0, 0]}
         rotation-x={Math.PI / 2}
-        // color={color}
-        // lineWidth={1}
-        // transparent={true}
-        // opacity={opacity}
       >
         <meshBasicMaterial
           side={THREE.DoubleSide}
@@ -102,7 +91,6 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     const activeScale = useSolarStore.getState().additionalProperties[name]?.scale;
     const distance = camera.position.distanceTo(objectPosition);
 
-    // let opacity = 1;
     const minDistance = 2 * (1 + activeScale * 5);
     const maxDistance = 5 * (1 + activeScale * 5);
 
@@ -128,9 +116,6 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     }
   });
 
-  // console.log(name, anchorXYOffset, { params})
-
-
   return (
     <group>
       <group rotation={[-extraRotation,0,0]} >
@@ -154,7 +139,6 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
             color={!selected ? color : "yellow"}
             lineWidth={1}
             transparent={true}
-            // opacity={opacity / 2}
             dashed={true}
             dashSize={5}
             dashScale={30}
@@ -169,10 +153,6 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
             color={!selected ? color : "yellow"}
             lineWidth={!selected ? 1 : 2}
             transparent={true}
-            // opacity={opacity}
-            // dashed={type === "moons"}
-            // dashSize={0.3}
-            // dashScale={10}
           />
         </mesh>
       </group>

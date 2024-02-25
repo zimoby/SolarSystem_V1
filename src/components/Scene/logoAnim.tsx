@@ -5,17 +5,10 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { lerp } from "three/src/math/MathUtils.js";
 import { Group } from "three";
 
-
-
 export const LogoIntroAnimation = () => {
     const logoRef = useRef<Group>(null);
 
     const { viewport } = useThree();
-
-    // console.log("viewport", logoRef.current.boundingSphere.radius);
-
-    // calculate logoRef boundaries
-
 
     useFrame((state) => {
         if (logoRef.current) {

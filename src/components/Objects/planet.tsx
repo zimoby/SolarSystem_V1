@@ -25,7 +25,6 @@ import moonTexture from "../../assets/2k_moon.jpg";
 // @ts-expect-error tired of typescript
 import { resolveLygia } from "resolve-lygia"
 
-
 const ColorShiftMaterial = shaderMaterial(
   { uTime: 0.0, uResolution: new THREE.Vector2(600, 600), side: THREE.DoubleSide},
   // vertex shader
@@ -44,7 +43,6 @@ const ColorShiftMaterial = shaderMaterial(
     uniform float uTime;
 
     #include "lygia/generative/fbm.glsl"
-
 
     void main() {
       vec4 color = vec4(vec3(0.0), 1.0);
@@ -106,14 +104,6 @@ extend({ ColorShiftMaterial });
 //     ].join('\n')
 //   }
 // };
-
-// const filterParamsOnlyNumbers = (params: SolarObjectParamsBasicWithMoonsT): Record<string, number> => {
-//   return Object.fromEntries(
-//     Object.entries(params).filter(([, value]) => {
-//       return typeof value === "number";
-//     })
-//   ) as Record<string, number>;
-// }
 
 // type PlanetInfoCirclesProps = {
 //   planetName: string;
@@ -184,15 +174,12 @@ extend({ ColorShiftMaterial });
 //     </group>
 //   );
 
-
-
 //   // return (
 //   //   <group>
 
 //   //   </group>
 //   // )
 // };
-
 
 const PlanetComponent: React.FC<PlanetComponentProps> = ({
   planetName,
@@ -224,9 +211,6 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
     moonTexture,
   ]);
 
-
-  // console.log("SolarSystemPlanets");
-
   const mapedMoonsTextures = {
     moon: createMoonTexture,
   };
@@ -238,14 +222,6 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
     cloudsTexture = earthCloudsTexture;
     cloudsTextureAlpha = earthAlphaTexture;
   }
-
-  // console.log("planetName", planetName, planetaryRingSystem);
-
-  // const ringTexture = useTexture(saturnRing);
-  // ringTexture.wrapS = THREE.RepeatWrapping;
-  // ringTexture.flipY = true;
-
-  //--------- processings size
 
   const planetEllipseRotation = useMemo(() => {
     const curve = new THREE.EllipseCurve(
@@ -259,45 +235,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
     return curve.getPoints(orbitPathDetalization); // Adjust the number of points as needed
   }, [orbitPathDetalization, planetSize]);
 
-  // const guiRef = useRef<THREE.Mesh>(null);
-
-  //--------- processings size
-
-  // const testCurveBuffer = useMemo(() => {
-  //   const curve = new THREE.EllipseCurve(
-  //     0, 0,
-  //     planetSize * 1.2, planetSize * 1.2,
-  //     0, params.siderealOrbitPeriodDays / 10,
-  //     false,
-  //     0
-  //   );
-
-  //   return curve.getPoints(32); // Adjust the number of points as needed
-  // }, [planetSize]);
-
-  // const { camera } = useThree();
-
-  // const shader = Shaders['atmosphere'];
-  // const uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-
-  // const material = new THREE.ShaderMaterial({
-
-  //       uniforms: uniforms,
-  //       vertexShader: shader.vertexShader,
-  //       fragmentShader: shader.fragmentShader,
-  //       side: THREE.BackSide,
-  //       blending: THREE.AdditiveBlending,
-  //       transparent: true
-
-  //     });
-
-
-  // console.log("camera", camera);
-
-  // -------
-
   const moons = useMemo(() => {
-    // if planetName === moonName, take the data 
     const takeMoons = Object.keys(useSolarStore.getState().celestialBodies.moons).filter((moonName) => {
       return useSolarStore.getState().celestialBodies.moons[moonName].type === planetName;
     } ).map((moonName) => {
@@ -310,8 +248,6 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
 
     return takeMoons;
    }, [planetName]);
-
-  //  const rotationCompensation = type === "moons" ? moonsRotationSpeed : 1;
 
   useFrame((state) => {
     if (!planetsInitialized) { return; }
@@ -327,17 +263,9 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
       // @ts-expect-error tired of typescript
       planetShaderRef.current.uniforms.uTime.value = time;
     }
-
-    // if (guiRef.current) {
-    //   guiRef.current.lookAt(camera.position);
-    // }
   });
 
   const extraRotation = degreesToRadians(obliquityToOrbitDeg);
-
-
-  // console.log("planetName", planetName, rotationCorrection);
-
 
   return (
     <group>
@@ -373,7 +301,6 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
         </mesh> */}
         <group>
           {moons.map((moon, index) => {
-            // console.log("moon", moon);
             return (
               <PlanetComponent
                 key={index}
@@ -412,11 +339,6 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
             />
 
           </Sphere>
-          {/* <mesh>
-            <Sphere args={[planetSize * 1.1]}>
-              <colorShiftMaterial key={ColorShiftMaterial.key} uTime={0} ref={planetShaderRef} />
-            </Sphere>
-          </mesh> */}
           {/* <Sphere
             key={planetName}
             args={[planetSize * 1.1]}

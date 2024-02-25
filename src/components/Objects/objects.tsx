@@ -15,7 +15,6 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
   const objData = useSolarStore((state) => state.additionalProperties[planetName]);
 
   const planetSize: number = useMemo(() => {
-    // console.log("test", planetName, params.volumetricMeanRadiusKm);
     if (!randomObjectsInitialized) { return 0.01; }
     return calculateRelativeScale(
       params.volumetricMeanRadiusKm ?? 0,
@@ -23,8 +22,6 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
       planetName
     );
   }, [objectsRelativeScale, params.volumetricMeanRadiusKm, planetName, randomObjectsInitialized]);
-
-  // console.log("planetName", planetName, isInitialized, isInitialized2, params);
 
   const objectRef = useRef<Group<Object3DEventMap>>(null);
   const typeOfObject = "object";

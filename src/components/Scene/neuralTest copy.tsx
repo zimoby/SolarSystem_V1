@@ -112,10 +112,8 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
                     positions[j * 3 + 1] = points[j].y;
                     positions[j * 3 + 2] = points[j].z;
 
-
                     numConnected++
 
-    
                     // Calculate color based on distance, for example
                     // const alpha = 1 - distance / minDistance;
                     // color.setHSL(1.0, 0.5, alpha);
@@ -137,18 +135,13 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
         linesGeometryRef.current.setDrawRange(0, numConnected * 2)
         linesGeometryRef.current.attributes.position.needsUpdate = true
 
-
         // linesGeometryRef.current.geometry.setDrawRange(0, 2);
 
         // ref.current.attributes.position.needsUpdate = true
         // linesGeometryRef.current.geometry.setDrawRange(0, 2);
     
-
-
     }, []);
 
-
-    
     // const setupGeometries = () => {
 
     // };
@@ -171,8 +164,6 @@ export const NeuralNetwork2 = forwardRef((props, ref) => {
     // }
 
     // useFrame((_, delta) => updateAnimation(delta));
-
-
 
     return (
         <group rotation={[Math.PI / 2, 0,0]}>
