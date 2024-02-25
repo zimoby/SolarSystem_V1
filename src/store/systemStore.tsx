@@ -46,7 +46,7 @@ const useSystemStore: StateCreator<
     SystemStoreStateT
   > = (set) => ({
 
-  DEV_MODE: import.meta.env.VITE_APP_MODE,
+  DEV_MODE: import.meta.env.VITE_APP_MODE === "development",
     
   isInitialized: false,
   isInitialized2: false,
