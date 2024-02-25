@@ -292,7 +292,7 @@ const Particles = ({ points, rotSpeed, size }) => {
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const timeOffset = useSolarStore((state) => state.timeOffset);
 
-  console.log("timeSpeed", timeSpeed);
+  // console.log("timeSpeed", timeSpeed);
 
   const geom = useMemo(() => {
     const geometry = new BufferGeometry();

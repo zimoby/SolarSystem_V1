@@ -28,6 +28,8 @@ const SolarSystemPlanets = () => {
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const updatePlanetsInitialized = useSolarStore((state) => state.updateSystemSettings);
 
+  const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
+
   const [
     createEarthTexture,
     createJupiterTexture,
@@ -67,10 +69,10 @@ const SolarSystemPlanets = () => {
 
   useEffect(() => {
     if (!planetsInitialized) {
-      console.log("SolarSystemPlanets init");
+      DEV_MODE && console.log("SolarSystemPlanets init");
       updatePlanetsInitialized({ planetsInitialized: true });
     }
-  }, [planetsInitialized, updatePlanetsInitialized]);
+  }, [DEV_MODE, planetsInitialized, updatePlanetsInitialized]);
 
   return (
     <>

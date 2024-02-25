@@ -7,7 +7,7 @@ export const generateCrossingObjects = (
   scale = 1,
   name = ""
 ): CrossingTrashParamsT[] => {
-  console.log("generate crossing objects: " + name + ": ", amount);
+  false && console.log("generate crossing objects: " + name + ": ", amount);
   const objects: CrossingTrashParamsT[] = [];
   for (let i = 0; i < amount; i++) {
     const position = {
@@ -44,7 +44,7 @@ export const generateTrash = (
   const angleIncrement = (2 * Math.PI) / amount;
   const ring = 5;
 
-  console.log("generate trash: " + name + ": ", amount);
+  false && console.log("generate trash: " + name + ": ", amount);
 
   for (let i = 0; i < amount; i++) {
     const angle = i * angleIncrement;
@@ -113,7 +113,7 @@ const generateRandomName = () => {
 
 export const generateRandomObjects = (objectNumber = 10) => {
   const randomObjects: { [key: string]: SolarObjectParamsBasicWithMoonsT } = {};
-  console.log("generate random objects");
+  false && console.log("generate random objects");
   for (let i = 0; i < objectNumber; i++) {
     const randomDistance = Math.random() * 4000;
     randomObjects[`object${i}`] = {

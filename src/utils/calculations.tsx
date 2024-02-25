@@ -22,7 +22,7 @@ export const calculateRelativeDistanceXY = (
   const backDistanceX = relativeDistanceX * maxDistance - offset;
   const backDistanceY = relativeDistanceY * maxDistance - offset;
 
-  console.log(
+  false && console.log(
     "calculateRelativeDistanceXY",
     name,
     sliderValue,
@@ -48,7 +48,7 @@ export const calculateRelativeScale = (size: number, relativeScale: number, name
   // const offset = 0.75;
   const calcRelativeScale = Math.pow(size, 1 / relativeScale) / relativeScale;
 
-  console.log("RelativeScale", name, calcRelativeScale, size, relativeScale)
+  false && console.log("RelativeScale", name, calcRelativeScale, size, relativeScale)
 
   return calcRelativeScale;
 };

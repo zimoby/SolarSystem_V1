@@ -65,7 +65,7 @@ export const useInitiateSolarSystem = () => {
   const objects = useSolarStore((state) => state.celestialBodies.objects);
   const trash = useSolarStore((state) => state.celestialBodies.trash);
 
-  console.log("development mode check: ", DEV_MODE)
+  // console.log("development mode check: ", DEV_MODE)
 
 
   useEffect(() => {
@@ -87,7 +87,7 @@ export const useInitiateSolarSystem = () => {
     
     
 
-    console.log("start init");
+    DEV_MODE && console.log("start init");
 
     const celestialBodiesUpdates: Record<
       CelestialBodyType,
@@ -188,13 +188,15 @@ export const useInitiateSolarSystem = () => {
     useSolarPositionsStore.getState().batchUpdateProperties(propertiesUpdates);
     useSolarStore.getState().updateSystemSettings({ dataInitialized: true });
 
-    console.log("end init", celestialBodiesUpdates, propertiesUpdates);
+    DEV_MODE && console.log("end init", celestialBodiesUpdates, propertiesUpdates);
 
     useSolarStore.getState().setInitialized(true);
-  }, [disableMoons, disablePlanets, disableRandomObjects, disableTrash, isInitialized, objects, trash, uiRandomColors]);
+  }, [DEV_MODE, disableMoons, disablePlanets, disableRandomObjects, disableTrash, isInitialized, objects, trash, uiRandomColors]);
 };
 
 export const useCelestialBodyUpdates = () => {
+  const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
+  
   const positionVectorsRef = useRef<PositionVectorsT>({});
   const objectsSupportDataRef = useRef<ObjectsSupportDataT>({});
   const quaternionRef = useRef(new THREE.Quaternion());
@@ -317,16 +319,8 @@ export const useCelestialBodyUpdates = () => {
     objectsSupportDataRef.current = supportData;
     useSolarStore.getState().setInitialized2(true);
     useSolarStore.getState().batchUpdateAdditionalProperties(supportData);
-    console.log("update supportData", supportData);
-  }, [
-    isInitialized,
-    combinedObjects,
-    objectsDistance,
-    orbitAngleOffset,
-    maxDistance,
-    minDistance,
-    objectsRelativeScale,
-  ]);
+    DEV_MODE && console.log("update supportData", supportData);
+  }, [isInitialized, combinedObjects, objectsDistance, orbitAngleOffset, maxDistance, minDistance, objectsRelativeScale, DEV_MODE]);
 
   useFrame((state) => {
     if (!isInitialized || !isInitialized2) return;

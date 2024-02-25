@@ -9,6 +9,7 @@ import { updateActiveName } from "../../hooks/storeProcessing";
 import { AdditiveBlending, DoubleSide, Group } from "three";
 
 export const SunComponent = () => {
+  const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
   const createSunTexture = useTexture(sunTexture);
   
   const sunData = useSolarStore((state) => state.celestialBodies.stars.sun);
@@ -34,10 +35,10 @@ export const SunComponent = () => {
 
   useEffect(() => {
     if (!sunInitialized) {
-      console.log("Sun init");
+      DEV_MODE && console.log("Sun init");
       updateSunInitialized({ sunInitialized: true });
     }
-  }, [sunInitialized, updateSunInitialized]);
+  }, [DEV_MODE, sunInitialized, updateSunInitialized]);
 
   useFrame((state) => {
     if (!sunData || !sunInitialized) { return; }
