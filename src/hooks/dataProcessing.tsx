@@ -60,6 +60,8 @@ export const useInitiateSolarSystem = () => {
   const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects);
   const disableTrash = useSolarStore((state) => state.disableTrash);
 
+  const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
+
   const objects = useSolarStore((state) => state.celestialBodies.objects);
   const trash = useSolarStore((state) => state.celestialBodies.trash);
 
@@ -79,6 +81,9 @@ export const useInitiateSolarSystem = () => {
       ...reorderPlanets,
       ...randomObjects
     }});
+
+    console.log("development mode check: ", DEV_MODE)
+    
 
     console.log("start init");
 
