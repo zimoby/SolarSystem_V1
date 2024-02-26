@@ -44,11 +44,14 @@ export const ControlComponent = () => {
   const { camera } = useThree();
   const currentPositionRef = useRef<THREE.Vector3 | undefined>();
   const orbitControlsRef = useRef(null);
-  
+  const currentObjectName = useSolarStore((state) => state.activeObjectName);
 
+  // console.log("ControlComponent", {currentObjectName, additionalData});
+  
   useEffect(() => {
     const unsubscribeSolarPositions = useSolarPositionsStore.subscribe((state) => {
       const newPosition = state.properties[useSolarStore.getState().activeObjectName]?.position;
+      // console.log("ControlComponent", {newPosition});
       currentPositionRef.current = newPosition as THREE.Vector3 | undefined;
     });
 
@@ -56,6 +59,17 @@ export const ControlComponent = () => {
       unsubscribeSolarPositions();
     };
   }, []);
+
+  useEffect(() => {
+    // console.log("ControlComponent", {currentObjectName, additionalData});
+    if (currentObjectName !== "sun" && currentPositionRef.current) {
+      const newPosition = useSolarPositionsStore.getState().properties[currentObjectName]?.position as THREE.Vector3;
+      const scale = useSolarStore.getState().additionalProperties[currentObjectName].scale || 1;
+      // console.log("ControlComponent", {currentObjectName, additionalData}, newPosition); 
+      camera.position.set(newPosition.x + 30 * scale, newPosition.y + 2 * scale, newPosition.z + 30 * scale);
+    }
+  }, [camera.position, currentObjectName]);
+
 
   useFrame(() => {
     if (currentPositionRef.current) {
@@ -72,7 +86,12 @@ export const ControlComponent = () => {
       // // controls.position0.set(targetPosition.x, targetPosition.y,  targetPosition.z);
       // controls.update();
 
-      // camera.position.lerp(desiredPosition, 0.1);
+      // console.log(camera.zoom)
+
+      // camera.zoom = currentObjectName !== "sun" ? 2 / (additionalData.scale || 1) : 1;
+
+      // camera.position.lerp(desiredPosition, 0.1)
+      // camera.position.set(currentPositionRef.current.x, currentPositionRef.current.y, currentPositionRef.current.z + cameraDistance);
       camera.lookAt(currentPositionRef.current.x, currentPositionRef.current.y, currentPositionRef.current.z);
       // camera.lookAt(targetPosition);
 
