@@ -57,7 +57,7 @@ export const SunComponent = () => {
       <Sphere
         // @ts-expect-error tired of typescript
         ref={sunRef}
-        args={[calculatedSunSize]}
+        args={[calculatedSunSize, 128, 64]}
         onClick={() => {
           updateActiveName("sun");
         }}
