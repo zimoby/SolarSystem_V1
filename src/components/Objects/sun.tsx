@@ -52,7 +52,7 @@ export const SunComponent = () => {
 
   return (
     <group position={[0,0,0]}>
-      <InfoAboutObject params={{ name: "sun" }} />
+      <InfoAboutObject params={{ name: "sun" }} typeOfObject={"star"} />
       <Sphere
         // @ts-expect-error tired of typescript
         ref={sunRef}

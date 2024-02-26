@@ -273,6 +273,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
         planetName={planetName}
         planetSize={planetSize}
         extendData={type == "planets"}
+        typeOfObject={type}
       />
       <group rotation={[0,0,0]}>
         <ObjectEllipse

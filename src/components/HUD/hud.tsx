@@ -128,24 +128,31 @@ type InfoAboutObjectProps = {
 
 export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(({ params, typeOfObject = "" }, ref) => {
 
+  console.log("InfoAboutObject", params, typeOfObject);
   let textStyle;
   let bgStyle;
+  let selectable = true;
+  let selectableStyle = "";
   switch (typeOfObject) {
     case "object":
       bgStyle = "ml-3 mb-2";
       textStyle = "uppercase text-2xs";
+      selectableStyle = "cursor-pointer hover:bg-orange-400"
       break;
     case "star":
-      bgStyle = "bg-yellow-600/70";
-      textStyle = " text-xs";
+      bgStyle = "bg-black/70";
+      textStyle = "uppercase text-xs";
+      selectableStyle = "cursor-pointer hover:bg-red-500"
       break;
-    case "moon":
+    case "moons":
       bgStyle = "bg-gray-600/70";
       textStyle = " text-xs";
+      selectable = false;
       break;
     default:
       bgStyle = "bg-black/70 ";
       textStyle = "uppercase font-extrabold text-xs";
+      selectableStyle = "cursor-pointer hover:bg-orange-400"
       break;
   }
 
@@ -166,18 +173,20 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
     <group ref={ref as Ref<THREE.Group<THREE.Object3DEventMap>>} >
       <Html center>
         <div
-          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none cursor-pointer hover:bg-orange-400`}
+          className={`w-fit h-auto px-1 text-left ${bgStyle} text-red-50 rounded-sm select-none ${selectableStyle}`}
           style={{ transform: "translate(50%, 75%)" }}
           onClick={() => {
-            updateActiveName(params.name);
+            if (selectable) {
+              updateActiveName(params.name);
+            }
           }}
         >
-        <div className={`${textStyle}`}>
-          { params.name }
-        </div>
-          {params.extendData && (
-            <p className="text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
-          )}
+          <div className={`${textStyle}`}>
+            { params.name }
+          </div>
+            {params.extendData && (
+              <p className="text-3xs whitespace-nowrap" ref={positionTextRef}>0.0</p>
+            )}
         </div>
       </Html>
     </group>
