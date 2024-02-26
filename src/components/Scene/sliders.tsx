@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { useSolarStore } from "../../store/systemStore"
 
 import "./styles.css"
+import useMeasure from "react-use-measure"
+import { useSpring, animated, easings } from "@react-spring/web";
 
 const backgroundSliderCalc = (value: number, minVal: number, maxVal: number): string => {
   const percent = maxVal === minVal ? 100 : ((value - minVal) / (maxVal - minVal)) * 100
@@ -86,6 +88,21 @@ const SliderWithInput = ({ label, value, min, max, step, onUpdate }: SliderWithI
 }
 
 export const SolarSystemControls = () => {
+  const [ref, bounds] = useMeasure();
+  const [show, setShow] = useState(true)
+
+
+  const animation = useSpring({
+    from: { height: 0 },
+    to: { height: show ? bounds.height : 0 },
+    config: {
+        duration: 350,
+        easing: easings.easeOutCubic, 
+    },
+});
+
+
+
   const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings)
 
   const disableTrash = useSolarStore((state) => state.disableTrash)
@@ -101,50 +118,62 @@ export const SolarSystemControls = () => {
   }
 
   return (
-    <div className="absolute z-50 top-0 right-0 m-2 flex flex-col space-y-0">
-      <div className=" space-y-1 bg-black/20 py-1 px-2 divide-y divide-white/40 rounded-md">
-        <div className=" space-y-1 ">
-          <SliderWithInput
-            label="Time Speed"
-            value={timeSpeed / 100000}
-            min={0}
-            max={200}
-            step={1}
-            onUpdate={(e) => handleSliderUpdate(e, "timeSpeed", 100000)}
-          />
-          <SliderWithInput label="Time Offset" value={timeOffset} min={-1} max={1} step={0.1} onUpdate={(e) => handleSliderUpdate(e, "timeOffset")} />
-        </div>
-        <div className=" space-y-1  pt-1">
-          <SliderWithInput
-            label="Relative Distance"
-            value={objectsDistance}
-            min={1}
-            max={5}
-            step={1}
-            onUpdate={(e) => handleSliderUpdate(e, "objectsDistance")}
-          />
-          <SliderWithInput
-            label="Relative Scale"
-            value={objectsRelativeScale}
-            min={1}
-            max={10}
-            step={1}
-            onUpdate={(e) => handleSliderUpdate(e, "objectsRelativeScale")}
-          />
-          <SliderWithInput
-            label="Orbit Rotation"
-            value={orbitAngleOffset}
-            min={0}
-            max={360}
-            step={1}
-            onUpdate={(e) => handleSliderUpdate(e, "orbitAngleOffset")}
-          />
-        </div>
-        <div className=" space-y-1 pt-1">
-          <CheckBox label="Disable Asteroids" value={disableTrash} onUpdate={() => handleSliderUpdate(!disableTrash, "disableTrash")} />
-          <CheckBox label="Disable Objects" value={disableRandomObjects} onUpdate={() => handleSliderUpdate(!disableRandomObjects, "disableRandomObjects")} />
-        </div>
+    <div className="absolute z-50 top-0 right-0 m-4 flex flex-col space-y-0">
+      <div 
+          className="absolute -top-3 left-0 font-sans text-lg -m-1 select-none cursor-pointer text-red-600 hover:scale-150 hover:text-neutral-50"
+          onClick={() => setShow(!show)}
+      >
+          +
       </div>
+      <animated.div style={{ overflow: 'hidden', ...animation }}>
+        <div
+          ref={show ? ref : undefined}
+          className=" space-y-1 bg-black/20 py-1 px-2 divide-y divide-white/40 rounded-md"
+        >
+          <div className=" space-y-1 ">
+            <SliderWithInput
+              label="Time Speed"
+              value={timeSpeed / 100000}
+              min={0}
+              max={200}
+              step={1}
+              onUpdate={(e) => handleSliderUpdate(e, "timeSpeed", 100000)}
+            />
+            <SliderWithInput label="Time Offset" value={timeOffset} min={-1} max={1} step={0.1} onUpdate={(e) => handleSliderUpdate(e, "timeOffset")} />
+          </div>
+          <div className=" space-y-1  pt-1">
+            <SliderWithInput
+              label="Relative Distance"
+              value={objectsDistance}
+              min={1}
+              max={5}
+              step={1}
+              onUpdate={(e) => handleSliderUpdate(e, "objectsDistance")}
+            />
+            <SliderWithInput
+              label="Relative Scale"
+              value={objectsRelativeScale}
+              min={1}
+              max={10}
+              step={1}
+              onUpdate={(e) => handleSliderUpdate(e, "objectsRelativeScale")}
+            />
+            <SliderWithInput
+              label="Orbit Rotation"
+              value={orbitAngleOffset}
+              min={0}
+              max={360}
+              step={1}
+              onUpdate={(e) => handleSliderUpdate(e, "orbitAngleOffset")}
+            />
+          </div>
+          <div className=" space-y-1 pt-1">
+            <CheckBox label="Disable Asteroids" value={disableTrash} onUpdate={() => handleSliderUpdate(!disableTrash, "disableTrash")} />
+            <CheckBox label="Disable Objects" value={disableRandomObjects} onUpdate={() => handleSliderUpdate(!disableRandomObjects, "disableRandomObjects")} />
+          </div>
+        </div>
+
+      </animated.div>
     </div>
   )
 }
