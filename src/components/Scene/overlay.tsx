@@ -14,12 +14,16 @@ export const OverlayElements = () => {
     <>
       <div className="absolute bottom-0 right-0">
         <div className="flex flex-col">
-          <div className=" *:text-xs flex flex-row space-x-3 opacity-50  p-2 text-neutral-50">
+          <div className=" *:text-xs flex flex-row space-x-3 p-2 text-neutral-50/50">
             <p>Three.js Journey</p>
             <p>|</p>
-            <p>Challenge 008: Solar System</p>
+            <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://github.com/zimoby/SolarSystem_V1" target="_blank">Challenge 008: Solar System</a>
             <p>|</p>
-            <p>Author: Bondartsov Denys</p>
+            <p>
+              <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://www.notion.so/zimoby" target="_blank">
+                Bondartsov Denys
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -27,7 +31,7 @@ export const OverlayElements = () => {
         {/* <div className="flex flex-row justify-between" > */}
           <div className="w-full select-none m-3 text-neutral-50">
             <div className="flex flex-wrap just text-2xs space-x-4 divide-x-2 divide-white/50">
-              <div className="">{svgLogo}</div>
+            <a className="fill-neutral-50 hover:fill-orange-500 cursor-pointer" href="https://github.com/zimoby/SolarSystem_V1" target="_blank">{svgLogo}</a>
               {/* <div className="*:pl-4 flex flex-col leading-3 -space-y-1">
                             <p>Data driven Solar system</p>
                         </div> */}
