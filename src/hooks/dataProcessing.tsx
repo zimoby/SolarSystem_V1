@@ -288,7 +288,7 @@ export const useCelestialBodyUpdates = () => {
           volumetricMeanRadiusKm ?? 0.1,
           objectsRelativeScale,
           name ?? ""
-        ) : volumetricMeanRadiusKm;
+        ) : volumetricMeanRadiusKm ?? 0.1;
 
       // const rotationY = (combinedObjects[name].type2 === "objects") ? Math.random() * Math.PI * 2 : 0;
       // const rotationOffset = Math.random() * Math.PI * 2;
