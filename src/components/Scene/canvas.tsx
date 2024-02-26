@@ -43,8 +43,6 @@ export const ThreeJsCanvas = () => {
         {/* <SolarEffects /> */}
 				{/* <Svg src={svg}  /> */}
 
-				{/* <NeuralNetwork2 ref={particlePositionsRef} /> */}
-
 				{/* <LogoIntroAnimation /> */}
         {DEV_MODE && <AppStatsPerformance />}
 				<SceneSetup />
