@@ -33,8 +33,10 @@ const ObjectsComponent = ({ planetName, params }: { planetName: string, params: 
     }
   });
 
+  // console.log("ObjectsComponent", {planetName, params, objData});
+
   return (
-    <group rotation-y={objData.rotationY}>
+    <group rotation-y={params.rotationY}>
       <PlanetHUDComponent planetName={planetName} planetSize={planetSize} extendData={false} typeOfObject={typeOfObject} />
       <ObjectEllipse params={params} name={planetName} color={params.color} opacity={0.3} />
       <group ref={objectRef}>
