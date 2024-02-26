@@ -91,7 +91,6 @@ export const SolarSystemControls = () => {
   const [ref, bounds] = useMeasure();
   const [show, setShow] = useState(true)
 
-
   const animation = useSpring({
     from: { height: 0 },
     to: { height: show ? bounds.height : 0 },
@@ -99,7 +98,7 @@ export const SolarSystemControls = () => {
         duration: 350,
         easing: easings.easeOutCubic, 
     },
-});
+  });
 
 
 
@@ -120,7 +119,7 @@ export const SolarSystemControls = () => {
   return (
     <div className="absolute z-50 top-0 right-0 m-4 flex flex-col space-y-0">
       <div 
-          className="absolute -top-3 left-0 font-sans text-lg -m-1 select-none cursor-pointer text-red-600 hover:scale-150 hover:text-neutral-50"
+          className="absolute -top-3 left-0 font-sans text-lg -m-2 select-none cursor-pointer text-red-600 hover:scale-150 hover:text-neutral-50"
           onClick={() => setShow(!show)}
       >
           +

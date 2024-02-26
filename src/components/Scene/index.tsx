@@ -33,7 +33,7 @@ export const SceneSetup = () => {
       <group position={[0,0.0,0]}>
         <pointLight ref={lightRef} castShadow={true} />
       </group>
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.15} />
       <Stars />
 
       <Grid position={[0, -2, 0]} args={[10, 10]} {...gridConfig} />

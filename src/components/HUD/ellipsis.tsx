@@ -31,11 +31,59 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   const dashOffsetRef = useRef<THREE.Line>();
   const orbitLineRef = useRef<THREE.Line>();
+  const traectoryRingRef = useRef<THREE.Mesh>();
   color = "white"
 
   const planetInclination = degreesToRadians( (params.orbitInclinationDeg ?? 0) + orbitAngleOffset );
 
   // const anchorXYOffset = (params.anchorXYOffset?.y ?? 0) ;
+
+  const {camera} = useThree();
+
+  useFrame((state) => {
+    if (!planetsInitialized) { return; }
+
+    const time = state.clock.getElapsedTime() * Math.PI * 2;
+    if (dashOffsetRef.current) {
+      // @ts-expect-error wrong use of dashOffset
+      dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
+    }
+    
+    const objectPosition = useSolarPositionsStore.getState().properties[name]?.position as THREE.Vector3;
+    const activeScale = useSolarStore.getState().additionalProperties[name]?.scale;
+    const distance = camera.position.distanceTo(objectPosition);
+
+    const minDistance = 2 * (1 + activeScale * 10);
+    const maxDistance = 5 * (1 + activeScale * 10);
+
+    let distRelativeOpacity = 1;
+    if (distance <= maxDistance && distance >= minDistance) {
+      distRelativeOpacity = (distance - minDistance) / (maxDistance - minDistance);
+    } else if (distance < minDistance) {
+      distRelativeOpacity = 0;
+    }
+    const relativeOpacity = Math.min(Math.max(distRelativeOpacity, 0), 1) * (distRelativeOpacity);
+
+    if (dashOffsetRef.current && orbitLineRef.current) {
+      const material = dashOffsetRef.current.material as LineMaterial;
+      material.dashScale = (1 / distance) * 2000;
+
+      if (activeObject === name) {
+        material.opacity = relativeOpacity / 2;
+        (orbitLineRef.current.material as LineMaterial).opacity = relativeOpacity;
+      } else {
+        material.opacity = opacity / 2;
+        (orbitLineRef.current.material as LineMaterial).opacity = opacity;
+      }
+    }
+
+    if (traectoryRingRef.current) {
+      // console.log(traectoryRingRef.current)
+      (traectoryRingRef.current.material as THREE.MeshBasicMaterial).opacity = selected ? 0.2 : relativeOpacity / 30;
+    }
+
+  });
+
 
   const points = useMemo(() => 
     new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(orbitPathDetalization),
@@ -58,6 +106,8 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     const relScale = objData.scale * 0.3;
     return (
       <Ring
+        // @ts-expect-error tired of typescript
+        ref={traectoryRingRef}
         args={[(distanceXY.x - 1 * relScale), (distanceXY.y + 1 * relScale), 128, 1, 0, Math.PI * 2]}
         position={[0, 0, 0]}
         rotation-x={Math.PI / 2}
@@ -79,45 +129,6 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     return ((Math.random()) * decr - decr);
   }, []);
 
-  const {camera} = useThree();
-
-  useFrame((state) => {
-    if (!planetsInitialized) { return; }
-
-    const time = state.clock.getElapsedTime() * Math.PI * 2;
-    if (dashOffsetRef.current) {
-      // @ts-expect-error wrong use of dashOffset
-      dashOffsetRef.current.material.dashOffset = -(time) % (Math.PI * 2);
-    }
-    
-    const objectPosition = useSolarPositionsStore.getState().properties[name]?.position as THREE.Vector3;
-    const activeScale = useSolarStore.getState().additionalProperties[name]?.scale;
-    const distance = camera.position.distanceTo(objectPosition);
-
-    const minDistance = 2 * (1 + activeScale * 5);
-    const maxDistance = 5 * (1 + activeScale * 5);
-
-    let distRelativeOpacity = 1;
-    if (distance <= maxDistance && distance >= minDistance) {
-      distRelativeOpacity = (distance - minDistance) / (maxDistance - minDistance);
-    } else if (distance < minDistance) {
-      distRelativeOpacity = 0;
-    }
-    const relativeOpacity = Math.min(Math.max(distRelativeOpacity, 0), 1) * (distRelativeOpacity);
-
-    if (dashOffsetRef.current && orbitLineRef.current) {
-      const material = dashOffsetRef.current.material as LineMaterial;
-      material.dashScale = (1 / distance) * 2000;
-
-      if (activeObject === name) {
-        material.opacity = relativeOpacity / 2;
-        (orbitLineRef.current.material as LineMaterial).opacity = relativeOpacity;
-      } else {
-        material.opacity = opacity / 2;
-        (orbitLineRef.current.material as LineMaterial).opacity = opacity;
-      }
-    }
-  });
 
   return (
     <group>

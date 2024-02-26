@@ -15,6 +15,7 @@ export const SunComponent = () => {
   const sunData = useSolarStore((state) => state.celestialBodies.stars.sun);
   const sunInitialized = useSolarStore((state) => state.sunInitialized);
   const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
+  const objectsDistance = useSolarStore((state) => state.objectsDistance);
   const timeOffset = useSolarStore((state) => state.timeOffset);
   const updateSunInitialized = useSolarStore((state) => state.updateSystemSettings);
 
@@ -51,12 +52,12 @@ export const SunComponent = () => {
   });
 
   return (
-    <group position={[0,0,0]}>
+    <group position={[0,0,0]} scale={[(Math.pow(objectsDistance,3)),(Math.pow(objectsDistance,3)),(Math.pow(objectsDistance,3))]}>
       <InfoAboutObject params={{ name: "sun" }} typeOfObject={"star"} />
       <Sphere
         // @ts-expect-error tired of typescript
         ref={sunRef}
-        args={[calculatedSunSize]}
+        args={[calculatedSunSize, 128, 64]}
         onClick={() => {
           updateActiveName("sun");
         }}
