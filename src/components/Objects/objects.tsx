@@ -12,8 +12,6 @@ import { Group, Object3DEventMap, Vector3 } from "three";
 const ObjectsComponent = ({ planetName, params }: { planetName: string, params: ObjectsAdditionalDataT, planetTexture?: TextureImageData | null }) => {
   const randomObjectsInitialized = useSolarStore((state) => state.randomObjectsInitialized);
   const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
-  const objData = useSolarStore((state) => state.activeObjectInfo[planetName]);
-  // const objData = useSolarStore((state) => state.additionalProperties[planetName]);
 
   const planetSize: number = useMemo(() => {
     if (!randomObjectsInitialized) { return 0.01; }
