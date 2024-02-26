@@ -50,6 +50,8 @@ export interface OnlyNumbericSolarObjectParamsBasicT {
 export type SolarObjectParamsBasicT = OnlyNumbericSolarObjectParamsBasicT & {
   planetaryRingSystem?: boolean;
   anchorXYOffset?: { x: number; y: number };
+  rotationY?: number;
+  rotationOffset?: number;
   name?: string;
   type?: string | null;
   type2?: string;
@@ -145,6 +147,8 @@ export type ObjectsAdditionalDataT = SolarObjectParamsBasicT & {
   type2?: string;
   color?: Color | string | undefined;
   moonsAmount?: number;
+  // rotationY?: number;
+  // rotationOffset?: number;
 }
 
 export interface SolarSystemStoreStateT {
@@ -188,8 +192,8 @@ export interface SupportDataT {
     y: number;
   };
   angleRad: number;
-  rotationY: number;
-  rotationOffset: number;
+  // rotationY: number;
+  // rotationOffset: number;
   type?: string;
   scale: number;
 }

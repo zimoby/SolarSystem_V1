@@ -6,7 +6,7 @@ import { useSolarStore } from "../../store/systemStore";
 import { Html, Point, PointMaterial, Points, shaderMaterial, useTexture } from "@react-three/drei";
 
 import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Vector2, Vector3 } from "three";
-import { useFrame, extend, useThree } from "@react-three/fiber";
+import { useFrame, extend } from "@react-three/fiber";
 import { calculateRelativeDistanceXY, calculateTime } from "../../utils/calculations";
 import { TrashParamsT } from "../../types";
 

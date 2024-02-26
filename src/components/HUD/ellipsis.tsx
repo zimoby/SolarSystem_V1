@@ -19,12 +19,15 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
   extraRotation = 0,
 }) => {
   const [selected, setSelected] = useState(false);
+
   const distanceXY = useSolarStore((state) => state.additionalProperties[name]?.distanceXY) || { x: 0, y: 0 };
   const objData = useSolarStore((state) => state.additionalProperties[name]);
   const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
   const activeObject = useSolarStore((state) => state.activeObjectName);
+
+  const disabledObjects = useSolarStore((state) => state.disableRandomObjects);
 
   const dashOffsetRef = useRef<THREE.Line>();
   const orbitLineRef = useRef<THREE.Line>();
@@ -120,7 +123,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     <group>
       <group rotation={[-extraRotation,0,0]} >
         <mesh position={[0, randomZposition - 0.5, 0]}>
-          <OrbitDisk size={distanceXY.x} opacity={0.1} positionYoffset={0} />
+          <OrbitDisk size={distanceXY.x} opacity={disabledObjects ? 0.2 : 0.1} positionYoffset={0} />
         </mesh>
       </group>
       <group

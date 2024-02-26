@@ -120,6 +120,8 @@ export const useInitiateSolarSystem = () => {
         type2: type,
         moonsAmount: moonsAmount,
         color: randomColor,
+        rotationOffset: Math.random() * Math.PI * 2,
+        rotationY: (type === "objects") ? Math.random() * Math.PI * 2 : 0
       }
 
       celestialBodiesUpdates[type] = celestialBodiesUpdates[type] || {};
@@ -273,6 +275,7 @@ export const useCelestialBodyUpdates = () => {
       );
 
       const angleRad = degreesToRadians((orbitInclinationDeg ?? 0) + orbitAngleOffset);
+      // const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
 
       const scale = calculateRelativeScale(
         volumetricMeanRadiusKm ?? 0.1,
@@ -280,15 +283,15 @@ export const useCelestialBodyUpdates = () => {
         name ?? ""
       );
 
-      const rotationY = (combinedObjects[name].type2 === "objects") ? Math.random() * Math.PI * 2 : 0;
-      const rotationOffset = Math.random() * Math.PI * 2;
+      // const rotationY = (combinedObjects[name].type2 === "objects") ? Math.random() * Math.PI * 2 : 0;
+      // const rotationOffset = Math.random() * Math.PI * 2;
 
       supportData[name] = {
         distanceXY,
         angleRad,
         scale,
-        rotationY,
-        rotationOffset,
+        // rotationY,
+        // rotationOffset,
         type: combinedObjects[name].type2,
       };
 
@@ -311,7 +314,8 @@ export const useCelestialBodyUpdates = () => {
 
     Object.keys(combinedObjects).forEach((name) => {
       // const anchorPoint = (combinedObjects[name]?.anchorXYOffset?.y ?? 0);
-      const startTimeOffset = useSolarStore.getState().additionalProperties[name]?.rotationOffset ?? 0;
+      // const startTimeOffset = useSolarStore.getState().additionalProperties[name]?.rotationOffset ?? 0;
+      const startTimeOffset = combinedObjects[name]?.rotationOffset ?? 0;
 
       const supportData = objectsSupportDataRef.current[name];
       const moonsCompenstation = supportData.type === "moons" ? moonsRotationSpeed : 1;
