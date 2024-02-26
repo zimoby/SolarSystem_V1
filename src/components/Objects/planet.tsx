@@ -283,7 +283,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
           extraRotation={rotationCorrection}
         />
       </group>
-      {/* <Trail
+      {/* {type == "planets" && <Trail
         local
         width={planetSize * 100}
         length={5}
@@ -291,7 +291,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
         attenuation={(t) => t * t}
         // @ts-expect-error tired of typescript
         target={planetRef}
-      /> */}
+      />} */}
       <group ref={planetRef}  rotation-x={extraRotation}>
         {/* <mesh ref={guiRef}>
           <PlanetInfoCircles
