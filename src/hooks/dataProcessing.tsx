@@ -333,7 +333,7 @@ export const useCelestialBodyUpdates = () => {
   }, [isInitialized, combinedObjects, objectsDistance, orbitAngleOffset, maxDistance, minDistance, objectsRelativeScale, DEV_MODE]);
 
   const trashInner1 = useMemo(() => {
-    console.log("trashInner1", objectsDistance);
+    // console.log("trashInner1", objectsDistance);
     return generateTrash(1000, 1, 0.25 / (objectsDistance ?? 1), 1, "inner circle")
   }, [objectsDistance]);
   const trashInner2 = useMemo(() => {
