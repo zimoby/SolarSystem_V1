@@ -7,7 +7,7 @@ import { Html, Point, PointMaterial, Points, shaderMaterial, useTexture } from "
 
 import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, ShaderMaterial, Vector2, Vector3 } from "three";
 import { useFrame, extend } from "@react-three/fiber";
-import { calculateRelativeDistanceXY, calculateTime } from "../../utils/calculations";
+import { calculateRelativeDistanceXY, calculateTime, degreesToRadians } from "../../utils/calculations";
 import { TrashParamsT } from "../../types";
 
 import textureAtlasSrc from "../../assets/dot_style_atlas.png"
@@ -17,6 +17,7 @@ export const TrashComponent = () => {
   const objectsDistance = useSolarStore((state) => state.objectsDistance);
   const maxDistance = useSolarStore((state) => state.maxDistance);
   const minDistance = useSolarStore((state) => state.minDistance);
+  const orbitAngleOffset = useSolarStore((state) => state.orbitAngleOffset);
 
   const trashInner1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashInner1);
   const trashMiddle1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle1);
@@ -73,7 +74,7 @@ export const TrashComponent = () => {
   const innerSpeed = 1;
 
   return (
-    <group>
+    <group rotation-x={degreesToRadians(orbitAngleOffset)}>
       {generateInnerTrash && !disableTrash && (
         <>
           <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
