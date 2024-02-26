@@ -15,7 +15,7 @@ export const OverlayElements = () => {
       <div className="absolute bottom-0 right-0">
         <div className="flex flex-col">
           <div className=" *:text-xs flex flex-row space-x-3 p-2 text-neutral-50/50">
-            <p>Three.js Journey</p>
+            <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://threejs-journey.com" target="_blank">Three.js Journey</a>
             <p>|</p>
             <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://github.com/zimoby/SolarSystem_V1" target="_blank">Challenge 008: Solar System</a>
             <p>|</p>
