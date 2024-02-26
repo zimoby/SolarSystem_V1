@@ -117,7 +117,7 @@ const PointsOrbitRotation = ({ points, text = false, name}: PointsOrbitRotationP
   const pointRefs = useRef<THREE.Points[]>([]);
   pointRefs.current = points.map((_, i) => pointRefs.current[i]);
 
-  const baseSpeed = 30;
+  const baseSpeed = 6;
   const extraMultiply = 3;
 
   const dotsSpeedMultiplier = useMemo(() => {
@@ -137,7 +137,7 @@ const PointsOrbitRotation = ({ points, text = false, name}: PointsOrbitRotationP
     points.forEach((dot, i) => {
       const currentRef = pointRefs.current[i];
       if (currentRef) {
-        const newAngle = dot.angle + baseSpeed * t / 2 * dotsSpeedMultiplier[i];
+        const newAngle = dot.angle + baseSpeed * t  * dotsSpeedMultiplier[i];
         const newX = dot.distance * Math.cos(newAngle);
         const newY = dot.distance * Math.sin(newAngle);
         currentRef.position.x = newX;
