@@ -1,5 +1,5 @@
 import { create, StateCreator } from "zustand";
-import { generateCrossingObjects, generateRandomObjects, generateTrash } from "../utils/generators";
+import { generateRandomObjects } from "../utils/generators";
 import { distOfEarthToSun10_6Km } from "../data/solarSystemData";
 import { ObjectsRealtimeDataT, ObjectsSupportDataT, SolarSystemStoreRealtimeStateT, SolarSystemStoreStateT, SystemColorsStateT, SystemStoreStateT } from "../types";
 
@@ -86,10 +86,10 @@ const useSystemStore: StateCreator<
 
 const randomObjectsAmount = 10;
 
-const trashInnerAmount = 1000;
-const trashMiddleAmount = 1000;
-const trashOuterAmount = 4000;
-const trashCross = 100;
+// const trashInnerAmount = 1000;
+// const trashMiddleAmount = 1000;
+// const trashOuterAmount = 4000;
+// const trashCross = 100;
 
 const useSolarSystemStore: StateCreator<
     SolarSystemStoreStateT,
@@ -105,28 +105,28 @@ const useSolarSystemStore: StateCreator<
     objects: generateRandomObjects(randomObjectsAmount),
     trash: {
       trashInner1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3.3,
       },
       trashInner2: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3.3,
       },
       trashMiddle1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 2.5,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 17,
       },
       trashMiddle2: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 2.5,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 17,
       },
       trashOuter1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 52,
       },
     },
     trashCollection: {
-      trashInner1: generateTrash(trashInnerAmount, 0.9, 0.2, 1, "inner circle"),
-      trashInner2: generateTrash(trashInnerAmount, 0.9, 0.2, 1, "inner circle", 2),
-      trashMiddle1: generateTrash(trashMiddleAmount, 3.5, 4, 1, "middle circle"),
-      trashMiddle2: generateTrash(trashMiddleAmount / 50, 3.5, 4, 1, "middle circle"),
-      trashOuter1: generateTrash(trashOuterAmount, 7, 1, 1, "outer circle"),
-      trashCross: generateCrossingObjects(trashCross, [10, 10, 3]),
+      // trashInner1: generateTrash(trashInnerAmount,        1, 0.25, 1, "inner circle"),
+      // trashInner2: generateTrash(trashInnerAmount,        1, 0.25, 1, "inner circle", 2),
+      // trashMiddle1: generateTrash(trashMiddleAmount,      1 , 0.6, 1, "middle circle"),
+      // trashMiddle2: generateTrash(trashMiddleAmount / 50, 1 , 0.6, 1, "middle circle"),
+      // trashOuter1: generateTrash(trashOuterAmount,        1, 0.05, 1, "outer circle"),
+      // trashCross: generateCrossingObjects(trashCross, [10, 10, 3]),
     },
   },
   batchUpdateCelestialBodies: (updates) =>

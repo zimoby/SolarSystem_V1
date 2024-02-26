@@ -5,7 +5,7 @@ import { useMemo, useRef } from "react";
 import { useSolarStore } from "../../store/systemStore";
 import { Html, Point, PointMaterial, Points, shaderMaterial, useTexture } from "@react-three/drei";
 
-import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, MathUtils, ShaderMaterial, Vector2, Vector3 } from "three";
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, ShaderMaterial, Vector2, Vector3 } from "three";
 import { useFrame, extend } from "@react-three/fiber";
 import { calculateRelativeDistanceXY, calculateTime } from "../../utils/calculations";
 import { TrashParamsT } from "../../types";
@@ -29,8 +29,9 @@ const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotation
   const extraMultiply = 3;
 
   const dotsSpeedMultiplier = useMemo(() => {
-    const mult = text ? extraMultiply + MathUtils.randFloatSpread(4) : extraMultiply;
-    return points.map((dot) => (1 / (dot.distance - 1)) * mult);
+    const mult = text ? extraMultiply + Math.random() * 2 : extraMultiply;
+    // const mult = text ? extraMultiply + MathUtils.randFloatSpread(4) : extraMultiply;
+    return points.map((dot) => (1 / (dot.distance)) * mult);
   }, [points, text]);
 
   useFrame(( { clock } ) => {
@@ -44,7 +45,7 @@ const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotation
     points.forEach((dot, i) => {
       const currentRef = pointRefs.current[i];
       if (currentRef) {
-        const newAngle = dot.angle + baseSpeed * t * dotsSpeedMultiplier[i];
+        const newAngle = dot.angle + baseSpeed * t / 2 * dotsSpeedMultiplier[i];
         const newX = dot.distance * Math.cos(newAngle);
         const newY = dot.distance * Math.sin(newAngle);
         currentRef.position.x = newX;
@@ -103,17 +104,42 @@ export const TrashComponent = () => {
 
   const trashPositions = useSolarStore((state) => state.celestialBodies.trash);
 
+  // console.log("trash data", {minDistance, maxDistance, trashPositions});
+
   const relativeScaleInner = useMemo(() => {
-    return calculateRelativeDistanceXY( trashPositions.trashInner1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
+    return calculateRelativeDistanceXY(
+      trashPositions.trashInner1.semimajorAxis10_6Km,
+      0,
+      objectsDistance,
+      maxDistance,
+      minDistance,
+      "trash inner"
+    );
   }, [maxDistance, minDistance, objectsDistance, trashPositions.trashInner1.semimajorAxis10_6Km]);
 
   const relativeScaleMiddle = useMemo(() => {
-    return calculateRelativeDistanceXY( trashPositions.trashMiddle1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
+    return calculateRelativeDistanceXY(
+      trashPositions.trashMiddle1.semimajorAxis10_6Km,
+      0,
+      objectsDistance,
+      maxDistance ?? 1,
+      minDistance ?? 0.3,
+      "trash middle"
+    );
   }, [maxDistance, minDistance, objectsDistance, trashPositions.trashMiddle1.semimajorAxis10_6Km]);
 
   const relativeScaleOuter = useMemo(() => {
-    return calculateRelativeDistanceXY( trashPositions.trashOuter1.semimajorAxis10_6Km, 0, objectsDistance, maxDistance, minDistance, "trash" );
+    return calculateRelativeDistanceXY(
+      trashPositions.trashOuter1.semimajorAxis10_6Km,
+      0,
+      objectsDistance,
+      maxDistance,
+      minDistance,
+      "trash outer"
+    );
   }, [maxDistance, minDistance, objectsDistance, trashPositions.trashOuter1.semimajorAxis10_6Km]);
+
+  // console.log("relativeScaleInner", relativeScaleInner.x, relativeScaleMiddle.x, relativeScaleOuter.x);
 
   const generateInnerTrash = true;
   const generateMiddleTrash = true;
@@ -127,8 +153,8 @@ export const TrashComponent = () => {
       {generateInnerTrash && (
         <>
           <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
-            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.02} />
-            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.02} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.007 * relativeScaleInner.x} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.007 * relativeScaleInner.x} />
           </group>
         </>
       )}
@@ -146,7 +172,7 @@ export const TrashComponent = () => {
         </group>
       )}
 
-      {generateCrossTrash && <group scale={[relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x]}>
+      {generateCrossTrash && <group scale={[5, 5, 5]}>
         <PointsCrossSolarSystemShader points={trashCross} size={20} />
       </group>}
     </group>
@@ -190,6 +216,7 @@ const Particles = ({ points, rotSpeed, size }) => {
 
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const timeOffset = useSolarStore((state) => state.timeOffset);
+  // const objectsDistance = useSolarStore((state) => state.objectsDistance);
 
   const geom = useMemo(() => {
     const geometry = new BufferGeometry();
@@ -216,6 +243,8 @@ const Particles = ({ points, rotSpeed, size }) => {
 
   });
 
+  // console.log("size Particles", size);
+
   return (
     <group>
       <points
@@ -229,6 +258,7 @@ const Particles = ({ points, rotSpeed, size }) => {
           time={0}
           attach="material"
           size={size}
+          // size={size * (Math.pow(objectsDistance, objectsDistance * 0.3))}
           color={'#FFFFFF'}
         />
       </points>
@@ -252,7 +282,7 @@ const OrbitShaderMaterial = shaderMaterial(
     uniform float baseSpeed;
     uniform float size;
     void main() {
-      float effectiveSpeed = baseSpeed * (1.0 / (distance - 1.0)) * 10.0;
+      float effectiveSpeed = baseSpeed * (1.0 / (distance)) * 10.0;
       float newAngle = angle + time * effectiveSpeed;
       vec3 transformed = position;
       transformed.x = distance * cos(newAngle);
@@ -307,7 +337,7 @@ const PointsOrbitRotationShader = ({ points, size }) => {
 
 
     if (materialRef.current) {
-      materialRef.current.uniforms.time.value = t * 400;
+      materialRef.current.uniforms.time.value = t * 100;
     }
   });
 

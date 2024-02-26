@@ -27,6 +27,7 @@ import {
   SolarObjectParamsBasicT,
   SolarObjectParamsBasicWithMoonsT,
 } from "../types";
+import { generateCrossingObjects, generateTrash } from "../utils/generators";
 
 const usedProperties: string[] = [
   "volumetricMeanRadiusKm",
@@ -194,6 +195,9 @@ export const useCelestialBodyUpdates = () => {
 
   const isInitialized = useSolarStore((state) => state.isInitialized);
   const isInitialized2 = useSolarStore((state) => state.isInitialized2);
+  // const randomObjectsInitialized = useSolarStore((state) => state.randomObjectsInitialized);
+  const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings);
+  
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const timeOffset = useSolarStore((state) => state.timeOffset);
   const objectsDistance = useSolarStore((state) => state.objectsDistance);
@@ -274,6 +278,8 @@ export const useCelestialBodyUpdates = () => {
         name ?? ""
       );
 
+      // console.log("distanceXY", name, distanceXY);
+
       const angleRad = degreesToRadians((orbitInclinationDeg ?? 0) + orbitAngleOffset);
       // const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
 
@@ -300,11 +306,78 @@ export const useCelestialBodyUpdates = () => {
       }
     });
 
+    // const trashInner1 = generateTrash(1000,        1, 0.25 / objectsDistance, 1, "inner circle");
+    // const trashInner2 = generateTrash(1000,        1, 0.25 / objectsDistance, 1, "inner circle", 2);
+    // const trashMiddle1 = generateTrash(1000,      1 , 0.6 / objectsDistance, 1, "middle circle");
+    // const trashMiddle2 = generateTrash(1000 / 50, 1 , 0.6 / objectsDistance, 1, "middle circle");
+    // const trashOuter1 = generateTrash(4000,        1, 0.05 / objectsDistance, 1, "outer circle");
+    // const trashCross = generateCrossingObjects(100, [10, 10, 3]);
+
+    // useSolarStore.getState().batchUpdateCelestialBodies({
+    //   trashCollection: {
+    //     trashInner1,
+    //     trashInner2,
+    //     trashMiddle1,
+    //     trashMiddle2,
+    //     trashOuter1,
+    //     trashCross,
+    //   },
+    // });
+
+
     objectsSupportDataRef.current = supportData;
     useSolarStore.getState().setInitialized2(true);
     useSolarStore.getState().batchUpdateAdditionalProperties(supportData);
     DEV_MODE && console.log("update supportData", supportData);
   }, [isInitialized, combinedObjects, objectsDistance, orbitAngleOffset, maxDistance, minDistance, objectsRelativeScale, DEV_MODE]);
+
+  const trashInner1 = useMemo(() => {
+    console.log("trashInner1", objectsDistance);
+    return generateTrash(1000, 1, 0.25 / (objectsDistance ?? 1), 1, "inner circle")
+  }, [objectsDistance]);
+  const trashInner2 = useMemo(() => {
+    return generateTrash(1000, 1, 0.25 / (objectsDistance ?? 1), 1, "inner circle", 2)
+  }, [objectsDistance]);
+  const trashMiddle1 = useMemo(() => {
+    return generateTrash(1000, 1 , 0.6 / (objectsDistance ?? 1), 1, "middle circle")
+  }, [objectsDistance]);
+  const trashMiddle2 = useMemo(() => {
+    return generateTrash(1000 / 50, 1, 0.6 / (objectsDistance ?? 1), 1, "middle circle")
+  }, [objectsDistance]);
+  const trashOuter1 = useMemo(() => {
+    return generateTrash(4000, 1, 0.05 / (objectsDistance ?? 1), 1, "outer circle")
+  }, [objectsDistance]);
+  const trashCross = useMemo(() => generateCrossingObjects(100, [10, 10, 3]), []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    useSolarStore.getState().batchUpdateCelestialBodies({
+      trashCollection: {
+        trashInner1,
+        trashInner2,
+        trashMiddle1,
+        trashMiddle2,
+        trashOuter1,
+        trashCross,
+      },
+    });
+
+    DEV_MODE && console.log("Trash init");
+    updateSystemSettings({ trashInitialized: true });
+
+  }, [isInitialized, trashInner1, trashInner2, trashMiddle1, trashMiddle2, trashOuter1, trashCross, updateSystemSettings, DEV_MODE]);
+
+
+  // useEffect(() => {
+  //   if (!isInitialized || !isInitialized2) return;
+
+  //   console.log("init trash");
+
+
+
+  // }, [isInitialized, isInitialized2])
+
 
   useFrame((state) => {
     if (!isInitialized || !isInitialized2) return;

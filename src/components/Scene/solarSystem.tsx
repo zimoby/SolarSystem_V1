@@ -12,19 +12,19 @@ import { TrashComponent } from "../Objects/trash";
 export const SolarSystem = () => {
   const isInitialized = useSolarStore((state) => state.isInitialized);
   const isInitialized2 = useSolarStore((state) => state.isInitialized2);
-  const disableTrash = useSolarStore((state) => state.disableTrash);
+  const trashInitialized = useSolarStore((state) => state.trashInitialized);
 
   useInitiateSolarSystem();
   useCelestialBodyUpdates();
 
   return (
     <>
-      {isInitialized && isInitialized2 && (
+      {isInitialized && isInitialized2 && trashInitialized && (
         <group>
           <SunComponent />
           <SolarSystemPlanets />
           <RandomObjects />
-          {!disableTrash && <TrashComponent />}
+          <TrashComponent />
           {/* <AsteroidsText /> */}
         </group>
       )}

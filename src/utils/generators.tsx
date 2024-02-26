@@ -42,13 +42,13 @@ export const generateTrash = (
 ): TrashParamsT[] => {
   const trash: TrashParamsT[] = [];
   const angleIncrement = (2 * Math.PI) / amount;
-  const ring = 5;
+  // const ring = 5;
 
   false && console.log("generate trash: " + name + ": ", amount);
 
   for (let i = 0; i < amount; i++) {
     const angle = i * angleIncrement;
-    const radiusRandom = Math.pow(Math.random() / ring + ring / 2, 1 / 1) * radius - ring / 3.5;
+    const radiusRandom = radius;
     const x = radiusRandom * Math.cos(angle + rotate);
     const y = radiusRandom * Math.sin(angle + rotate);
     const z = (Math.random() * 2 - 1) * 0.05;
@@ -86,7 +86,7 @@ export const generateRandomObjects = (objectNumber = 10) => {
   const randomObjects: { [key: string]: SolarObjectParamsBasicWithMoonsT } = {};
   false && console.log("generate random objects");
   for (let i = 0; i < objectNumber; i++) {
-    const randomDistance = Math.random() * 4000;
+    const randomDistance = Math.random() * 4000 + 50;
     randomObjects[`object${i}`] = {
       volumetricMeanRadiusKm: 100,
       semimajorAxis10_6Km: randomDistance,

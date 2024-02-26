@@ -166,12 +166,12 @@ export interface SolarSystemStoreStateT {
       trashOuter1: { semimajorAxis10_6Km: number };
     };
     trashCollection: {
-      trashInner1: TrashParamsT[];
-      trashInner2: TrashParamsT[];
-      trashMiddle1: TrashParamsT[];
-      trashMiddle2: TrashParamsT[];
-      trashOuter1: TrashParamsT[];
-      trashCross: CrossingTrashParamsT[];
+      // trashInner1: TrashParamsT[];
+      // trashInner2: TrashParamsT[];
+      // trashMiddle1: TrashParamsT[];
+      // trashMiddle2: TrashParamsT[];
+      // trashOuter1: TrashParamsT[];
+      // trashCross: CrossingTrashParamsT[];
     };
   };
   batchUpdateCelestialBodies: (updates: Partial<SolarSystemStoreStateT["celestialBodies"]>) => void;
