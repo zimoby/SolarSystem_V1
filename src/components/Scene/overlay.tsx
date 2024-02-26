@@ -7,6 +7,7 @@ import {
   relativeEarthSizeDependOnDistance,
   starsScaleFactor,
 } from "../../data/solarSystemData"
+// import { SolarSystemControls } from "./sliders"
 
 export const OverlayElements = () => {
   return (
@@ -22,25 +23,32 @@ export const OverlayElements = () => {
           </div>
         </div>
       </div>
-      <div className="absolute top-0 left-0 select-none m-3 text-neutral-50">
-        <div className="flex flex-row text-2xs space-x-4 divide-x-2 divide-white/50">
-          <div className="">{svgLogo}</div>
-          {/* <div className="*:pl-4 flex flex-col leading-3 -space-y-1">
-                        <p>Data driven Solar system</p>
-                    </div> */}
-          <div className="*:pl-4 flex flex-col leading-4 -space-y-1">
-            <p>Planets size increased to x{planetsScaleFactor / relativeEarthSizeDependOnDistance}</p>
-            <p>Sun size increased to x{starsScaleFactor / relativeEarthSizeDependOnDistance}</p>
-            <p>Planets rotation decreased to x{objectsRotationSpeed}</p>
-            <p>Moons rotation decreased to x{moonsRotationSpeed}</p>
-            <p>Moons distance from planet decreased to x{Math.round(moonsDistanceFactor)}</p>
+      <div className="absolute top-0">
+        {/* <div className="flex flex-row justify-between" > */}
+          <div className="w-full select-none m-3 text-neutral-50">
+            <div className="flex flex-wrap just text-2xs space-x-4 divide-x-2 divide-white/50">
+              <div className="">{svgLogo}</div>
+              {/* <div className="*:pl-4 flex flex-col leading-3 -space-y-1">
+                            <p>Data driven Solar system</p>
+                        </div> */}
+              <div className="*:pl-4 flex flex-col leading-4 -space-y-1">
+                <p>Planets size increased to x{planetsScaleFactor / relativeEarthSizeDependOnDistance}</p>
+                <p>Sun size increased to x{starsScaleFactor / relativeEarthSizeDependOnDistance}</p>
+                <p>Planets rotation decreased to x{objectsRotationSpeed}</p>
+                <p>Moons rotation decreased to x{moonsRotationSpeed}</p>
+                <p>Moons distance from planet decreased to x{Math.round(moonsDistanceFactor)}</p>
+              </div>
+              <div className="*:pl-4 flex flex-col leading-3">
+                <p>Choose a planet with arrows ⟵ / ⟶</p>
+                <p>Or click on the planet info</p>
+              </div>
+            </div>
+            {/* <SolarSystemControls /> */}
           </div>
-          <div className="*:pl-4 flex flex-col leading-3">
-            <p>Choose a planet with arrows ⟵ / ⟶</p>
-            <p>Or click on the planet info</p>
-          </div>
+
         </div>
-      </div>
+
+      {/* </div> */}
     </>
   )
 }
