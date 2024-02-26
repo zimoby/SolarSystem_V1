@@ -104,6 +104,8 @@ export const TrashComponent = () => {
 
   const trashPositions = useSolarStore((state) => state.celestialBodies.trash);
 
+  const disableTrash = useSolarStore((state) => state.disableTrash);
+
   // console.log("trash data", {minDistance, maxDistance, trashPositions});
 
   const relativeScaleInner = useMemo(() => {
@@ -150,7 +152,7 @@ export const TrashComponent = () => {
 
   return (
     <group>
-      {generateInnerTrash && (
+      {generateInnerTrash && !disableTrash && (
         <>
           <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
             <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.007 * relativeScaleInner.x} />
@@ -159,20 +161,20 @@ export const TrashComponent = () => {
         </>
       )}
 
-      {generateOuterTrash && (
+      {generateOuterTrash && !disableTrash && (
         <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
           <Particles points={trashOuter1} rotSpeed={ innerSpeed * 50 } size={0.5} double={false} />
         </group>
       )}
 
-      {generateMiddleTrash && (
+      {generateMiddleTrash && !disableTrash && (
         <group scale={[relativeScaleMiddle.x, relativeScaleMiddle.x, relativeScaleMiddle.x]}>
           <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
           <PointsOrbitRotationShader points={trashMiddle1} size={3} name={"identDots"} />
         </group>
       )}
 
-      {generateCrossTrash && <group scale={[5, 5, 5]}>
+      {generateCrossTrash && !disableTrash && <group scale={[5, 5, 5]}>
         <PointsCrossSolarSystemShader points={trashCross} size={20} />
       </group>}
     </group>
