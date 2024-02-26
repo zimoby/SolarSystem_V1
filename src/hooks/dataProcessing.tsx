@@ -283,11 +283,12 @@ export const useCelestialBodyUpdates = () => {
       const angleRad = degreesToRadians((orbitInclinationDeg ?? 0) + orbitAngleOffset);
       // const objectsRelativeScale = useSolarStore((state) => state.objectsRelativeScale);
 
-      const scale = calculateRelativeScale(
-        volumetricMeanRadiusKm ?? 0.1,
-        objectsRelativeScale,
-        name ?? ""
-      );
+      const scale = combinedObjects[name].type2 !== "moons" ?
+        calculateRelativeScale(
+          volumetricMeanRadiusKm ?? 0.1,
+          objectsRelativeScale,
+          name ?? ""
+        ) : volumetricMeanRadiusKm;
 
       // const rotationY = (combinedObjects[name].type2 === "objects") ? Math.random() * Math.PI * 2 : 0;
       // const rotationOffset = Math.random() * Math.PI * 2;
