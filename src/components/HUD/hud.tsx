@@ -128,7 +128,7 @@ type InfoAboutObjectProps = {
 
 export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(({ params, typeOfObject = "" }, ref) => {
 
-  console.log("InfoAboutObject", params, typeOfObject);
+  // console.log("InfoAboutObject", params, typeOfObject);
   let textStyle;
   let bgStyle;
   let selectable = true;
