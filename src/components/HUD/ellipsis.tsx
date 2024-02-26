@@ -79,7 +79,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
     if (traectoryRingRef.current) {
       // console.log(traectoryRingRef.current)
-      traectoryRingRef.current.material.opacity = selected ? 0.2 : relativeOpacity / 30;
+      (traectoryRingRef.current.material as THREE.MeshBasicMaterial).opacity = selected ? 0.2 : relativeOpacity / 30;
     }
 
   });
