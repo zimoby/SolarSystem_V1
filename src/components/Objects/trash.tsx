@@ -12,13 +12,105 @@ import { TrashParamsT } from "../../types";
 
 import textureAtlasSrc from "../../assets/dot_style_atlas.png"
 
+export const TrashComponent = () => {
+
+  const objectsDistance = useSolarStore((state) => state.objectsDistance);
+  const maxDistance = useSolarStore((state) => state.maxDistance);
+  const minDistance = useSolarStore((state) => state.minDistance);
+
+  const trashInner1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashInner1);
+  const trashMiddle1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle1);
+  const trashMiddle2 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle2);
+  const trashOuter1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashOuter1);
+  const trashCross = useSolarStore((state) => state.celestialBodies.trashCollection.trashCross);
+
+  const trashPositions = useSolarStore((state) => state.celestialBodies.trash);
+
+  const disableTrash = useSolarStore((state) => state.disableTrash);
+
+  // console.log("trash data", {minDistance, maxDistance, trashPositions});
+
+  const relativeScaleInner = useMemo(() => {
+    return calculateRelativeDistanceXY(
+      trashPositions.trashInner1.semimajorAxis10_6Km,
+      0,
+      objectsDistance,
+      maxDistance,
+      minDistance,
+      "trash inner"
+    );
+  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashInner1.semimajorAxis10_6Km]);
+
+  const relativeScaleMiddle = useMemo(() => {
+    return calculateRelativeDistanceXY(
+      trashPositions.trashMiddle1.semimajorAxis10_6Km,
+      0,
+      objectsDistance,
+      maxDistance ?? 1,
+      minDistance ?? 0.3,
+      "trash middle"
+    );
+  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashMiddle1.semimajorAxis10_6Km]);
+
+  const relativeScaleOuter = useMemo(() => {
+    return calculateRelativeDistanceXY(
+      trashPositions.trashOuter1.semimajorAxis10_6Km,
+      0,
+      objectsDistance,
+      maxDistance,
+      minDistance,
+      "trash outer"
+    );
+  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashOuter1.semimajorAxis10_6Km]);
+
+  // console.log("relativeScaleInner", relativeScaleInner.x, relativeScaleMiddle.x, relativeScaleOuter.x);
+
+  const generateInnerTrash = true;
+  const generateMiddleTrash = true;
+  const generateOuterTrash = true;
+  const generateCrossTrash = true;
+
+  const innerSpeed = 1;
+
+  return (
+    <group>
+      {generateInnerTrash && !disableTrash && (
+        <>
+          <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
+            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.007 * relativeScaleInner.x} opacity={0.7} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.007 * relativeScaleInner.x} opacity={0.7} />
+          </group>
+        </>
+      )}
+
+      {generateOuterTrash && !disableTrash && (
+        <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
+          <Particles points={trashOuter1} rotSpeed={ innerSpeed * 50 } size={0.5} double={false} opacity={0.4} />
+        </group>
+      )}
+
+      {generateMiddleTrash && !disableTrash && (
+        <group scale={[relativeScaleMiddle.x, relativeScaleMiddle.x, relativeScaleMiddle.x]}>
+          <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} opacity={0.7} />
+          <PointsOrbitRotationShader points={trashMiddle1} size={3} name={"identDots"} opacity={0.7} />
+        </group>
+      )}
+
+      {generateCrossTrash && !disableTrash && <group scale={[5, 5, 5]}>
+        <PointsCrossSolarSystemShader points={trashCross} size={20} />
+      </group>}
+    </group>
+  );
+};
+
 type PointsOrbitRotationProps = {
   points: TrashParamsT[];
   text?: boolean;
   name: string;
+  opacity?: number;
 };
 
-const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotationProps) => {
+const PointsOrbitRotation = ({ points, text = false, name}: PointsOrbitRotationProps) => {
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const timeOffset = useSolarStore((state) => state.timeOffset);
 
@@ -90,103 +182,14 @@ const PointsOrbitRotation = ({ points, text = false, name }: PointsOrbitRotation
   );
 };
 
-export const TrashComponent = () => {
-
-  const objectsDistance = useSolarStore((state) => state.objectsDistance);
-  const maxDistance = useSolarStore((state) => state.maxDistance);
-  const minDistance = useSolarStore((state) => state.minDistance);
-
-  const trashInner1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashInner1);
-  const trashMiddle1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle1);
-  const trashMiddle2 = useSolarStore((state) => state.celestialBodies.trashCollection.trashMiddle2);
-  const trashOuter1 = useSolarStore((state) => state.celestialBodies.trashCollection.trashOuter1);
-  const trashCross = useSolarStore((state) => state.celestialBodies.trashCollection.trashCross);
-
-  const trashPositions = useSolarStore((state) => state.celestialBodies.trash);
-
-  const disableTrash = useSolarStore((state) => state.disableTrash);
-
-  // console.log("trash data", {minDistance, maxDistance, trashPositions});
-
-  const relativeScaleInner = useMemo(() => {
-    return calculateRelativeDistanceXY(
-      trashPositions.trashInner1.semimajorAxis10_6Km,
-      0,
-      objectsDistance,
-      maxDistance,
-      minDistance,
-      "trash inner"
-    );
-  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashInner1.semimajorAxis10_6Km]);
-
-  const relativeScaleMiddle = useMemo(() => {
-    return calculateRelativeDistanceXY(
-      trashPositions.trashMiddle1.semimajorAxis10_6Km,
-      0,
-      objectsDistance,
-      maxDistance ?? 1,
-      minDistance ?? 0.3,
-      "trash middle"
-    );
-  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashMiddle1.semimajorAxis10_6Km]);
-
-  const relativeScaleOuter = useMemo(() => {
-    return calculateRelativeDistanceXY(
-      trashPositions.trashOuter1.semimajorAxis10_6Km,
-      0,
-      objectsDistance,
-      maxDistance,
-      minDistance,
-      "trash outer"
-    );
-  }, [maxDistance, minDistance, objectsDistance, trashPositions.trashOuter1.semimajorAxis10_6Km]);
-
-  // console.log("relativeScaleInner", relativeScaleInner.x, relativeScaleMiddle.x, relativeScaleOuter.x);
-
-  const generateInnerTrash = true;
-  const generateMiddleTrash = true;
-  const generateOuterTrash = true;
-  const generateCrossTrash = true;
-
-  const innerSpeed = 1;
-
-  return (
-    <group>
-      {generateInnerTrash && !disableTrash && (
-        <>
-          <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
-            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.007 * relativeScaleInner.x} />
-            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.007 * relativeScaleInner.x} />
-          </group>
-        </>
-      )}
-
-      {generateOuterTrash && !disableTrash && (
-        <group scale={[relativeScaleOuter.x, relativeScaleOuter.x, relativeScaleOuter.x]}>
-          <Particles points={trashOuter1} rotSpeed={ innerSpeed * 50 } size={0.5} double={false} />
-        </group>
-      )}
-
-      {generateMiddleTrash && !disableTrash && (
-        <group scale={[relativeScaleMiddle.x, relativeScaleMiddle.x, relativeScaleMiddle.x]}>
-          <PointsOrbitRotation points={trashMiddle2} text={true} name={"identDots"} />
-          <PointsOrbitRotationShader points={trashMiddle1} size={3} name={"identDots"} />
-        </group>
-      )}
-
-      {generateCrossTrash && !disableTrash && <group scale={[5, 5, 5]}>
-        <PointsCrossSolarSystemShader points={trashCross} size={20} />
-      </group>}
-    </group>
-  );
-};
-
 const ParticleShaderMaterial = shaderMaterial(
   {
     color: new Color(0xffffff),
     time: 0,
     size: 1.0,
     cameraPosition: new Vector3(),
+    opacity: { value: 1.0 },
+    transparent: true,
   },
   `
     uniform float size;
@@ -201,18 +204,19 @@ const ParticleShaderMaterial = shaderMaterial(
   `,
   `
     uniform vec3 color;
+    uniform float opacity; 
     void main() {
       float r = distance(gl_PointCoord, vec2(0.5, 0.5));
       float delta = 0.02;
       if (r > 0.5) discard;
-      gl_FragColor = vec4(color, 1.0);
+      gl_FragColor = vec4(color, opacity);
     }
   `
 );
 
 extend({ ParticleShaderMaterial });
 
-const Particles = ({ points, rotSpeed, size }) => {
+const Particles = ({ points, rotSpeed, size, opacity = 1.0 }) => {
   const pointsRef1 = useRef<THREE.Points>();
   const materialRef = useRef();
 
@@ -262,6 +266,7 @@ const Particles = ({ points, rotSpeed, size }) => {
           size={size}
           // size={size * (Math.pow(objectsDistance, objectsDistance * 0.3))}
           color={'#FFFFFF'}
+          opacity={opacity}
         />
       </points>
     </group>
@@ -276,6 +281,8 @@ const OrbitShaderMaterial = shaderMaterial(
     angles: [],
     color: new Color(0xffffff),
     size: 1.0,
+    transparent: true,
+    opacity: 1.0,
   },
   `
     attribute float distance;
@@ -295,18 +302,19 @@ const OrbitShaderMaterial = shaderMaterial(
   `,
   `
   uniform vec3 color;
+  uniform float opacity;
   void main() {
     float r = distance(gl_PointCoord, vec2(0.5, 0.5));
     float delta = 0.02;
     if (r > 0.5) discard;
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, opacity);
   }
   `
 );
 
 extend({ OrbitShaderMaterial });
 
-const PointsOrbitRotationShader = ({ points, size }) => {
+const PointsOrbitRotationShader = ({ points, size, opacity = 1.0 }) => {
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const timeOffset = useSolarStore((state) => state.timeOffset);
 
@@ -353,6 +361,7 @@ const PointsOrbitRotationShader = ({ points, size }) => {
         size={size.toFixed(2)}
         distances={distances}
         angles={angles}
+        opacity={opacity}
       />
     </points>
   );
