@@ -138,6 +138,7 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
       bgStyle = "ml-3 mb-2";
       textStyle = "uppercase text-2xs";
       selectableStyle = "cursor-pointer hover:bg-orange-400"
+      selectable = false;
       break;
     case "star":
       bgStyle = "bg-black/70";
