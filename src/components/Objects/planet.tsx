@@ -25,6 +25,68 @@ import moonTexture from "../../assets/2k_moon.jpg";
 // @ts-expect-error tired of typescript
 import { resolveLygia } from "resolve-lygia"
 
+const AtmosphereMaterial = shaderMaterial(
+  {
+    uPlanetRadius: 0,
+    uAtmosphereRadius: 0,
+    uColor: new THREE.Color(0x93C5FD),
+    transparent: true,
+  },
+  // Vertex Shader
+  `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  // Fragment Shader
+  // `
+  //   uniform float uPlanetRadius;
+  //   uniform float uAtmosphereRadius;
+  //   uniform vec3 uColor;
+  //   varying vec3 vNormal;
+  //   void main() {
+  //     float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
+  //     float factor = smoothstep(uPlanetRadius, uAtmosphereRadius, intensity);
+  //     gl_FragColor = vec4(uColor * factor, 1.0);
+  //   }
+  // `
+  `
+    uniform float uPlanetRadius;
+    uniform float uAtmosphereRadius;
+    uniform vec3 uColor;
+    varying vec3 vNormal;
+    void main() {
+      // float atmosphereThickness = uAtmosphereRadius - uPlanetRadius;
+      // float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
+      // float edgeSmoothness = 0.4; // Adjust for smoother edge. Lower is sharper; higher is smoother.
+      // float alpha = smoothstep(atmosphereThickness * edgeSmoothness, 0.0, intensity);
+      // gl_FragColor = vec4(uColor, alpha);
+
+
+
+        // float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
+        // float factor = smoothstep(uPlanetRadius, uAtmosphereRadius, intensity);
+        // float alpha = 1.0; // Set the alpha value here
+        // gl_FragColor = vec4(uColor * factor, alpha);
+
+
+
+          float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
+          float factor = smoothstep(uPlanetRadius, uAtmosphereRadius, intensity);
+          if(factor < 0.1) { // Adjust this value to control when the atmosphere becomes transparent
+            discard; // Skip rendering this fragment, making it fully transparent
+          } else {
+            gl_FragColor = vec4(uColor * factor, 1.0); // Fully opaque color
+          }
+
+    }
+  `
+);
+
+extend({ AtmosphereMaterial });
+
 const ColorShiftMaterial = shaderMaterial(
   { uTime: 0.0, uResolution: new THREE.Vector2(600, 600), side: THREE.DoubleSide},
   // vertex shader
@@ -204,6 +266,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
   const planetRef = useRef<THREE.Group>(null);
   const planetRotationRef = useRef<THREE.Group>(null);
   const planetShaderRef = useRef<THREE.Mesh>(null);
+  const planetCloudsRef = useRef<THREE.Mesh>(null);
 
   const [
     createMoonTexture,
@@ -257,6 +320,10 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
     }
     if (planetRotationRef.current) {
       planetRotationRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs ?? 0, timeSpeed ?? 0);
+    }
+
+    if (planetCloudsRef.current) {
+      planetCloudsRef.current.rotation.y = calculateObjectsRotation(time, siderealRotationPeriodHrs ?? 0, timeSpeed ?? 0);
     }
 
     if (planetShaderRef.current) {
@@ -341,6 +408,19 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
 
           </Sphere>
           {/* <Sphere
+            args={[planetSize * 1.01, 64, 32]} // Adjust the multiplier for the desired atmosphere size
+            position={[0, 0, 0]}
+          >
+            <atmosphereMaterial
+              uPlanetRadius={planetSize}
+              uAtmosphereRadius={planetSize * 1.01} 
+              uColor={new THREE.Color(0x93C5FD)}
+              transparent={true}
+              depthWrite={false}
+              blending={THREE.AdditiveBlending}
+            />
+          </Sphere> */}
+          {/* <Sphere
             key={planetName}
             args={[planetSize * 1.1]}
 
@@ -358,6 +438,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
 
           {cloudsTexture && cloudsTextureAlpha && (
             <Sphere
+              ref={planetCloudsRef}
               key={planetName + "clouds"}
               args={[planetSize * 1.01]}
               onClick={() => {
