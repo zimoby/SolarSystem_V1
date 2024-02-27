@@ -78,8 +78,8 @@ export const TrashComponent = () => {
       {generateInnerTrash && !disableTrash && (
         <>
           <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
-            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.007 * relativeScaleInner.x} opacity={0.7} />
-            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.007 * relativeScaleInner.x} opacity={0.7} extraRotate={Math.PI} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.01 * relativeScaleInner.x} opacity={0.7} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.01 * relativeScaleInner.x} opacity={0.7} extraRotate={Math.PI} />
           </group>
         </>
       )}
