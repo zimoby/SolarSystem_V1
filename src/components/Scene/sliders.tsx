@@ -45,7 +45,7 @@ const CheckBox = ({ label, value, onUpdate }: CheckBoxProps) => {
       {value ? (
         <div
           className="absolute inset-0 m-auto w-1 h-1 rounded-full bg-white"
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 1, pointerEvents: "none" }}
         />
       ) : null
       }
