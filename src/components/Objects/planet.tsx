@@ -263,7 +263,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
-  const atmosphereColor = useSolarStore((state) => state.atmosphereDefaultColors);
+  // const atmosphereColor = useSolarStore((state) => state.atmosphereDefaultColors);
   const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
 
   // @ts-expect-error tired of typescript
@@ -418,7 +418,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
             />
 
           </Sphere>
-          <Sphere
+          {/* <Sphere
             args={[planetSize * 1.01, 64, 32]} // Adjust the multiplier for the desired atmosphere size
             position={[0, 0, 0]}
           >
@@ -428,7 +428,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
               uColor={new THREE.Color(atmosphereColor[planetName])}
               transparent={true}
               depthWrite={false}
-              // blending={THREE.AdditiveBlending}
+              blending={THREE.AdditiveBlending}
             />
           </Sphere>
           {/* <Sphere
