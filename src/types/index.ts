@@ -100,7 +100,7 @@ export interface SystemColorsStateT {
 }
 
 interface CollectedSolarObjectInfo {
-  [key: string]: SolarObjectParamsBasicT;
+  [key: string]: SolarObjectParamsBasicWithMoonsT;
 }
 
 export interface SystemStoreStateT {
