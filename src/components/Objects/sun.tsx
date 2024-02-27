@@ -67,7 +67,7 @@ export const SunComponent = () => {
         <meshStandardMaterial
           map={createSunTexture}
           emissive="orange"
-          emissiveIntensity={2}
+          emissiveIntensity={1.5}
           toneMapped={false}
         />
       </Sphere>
