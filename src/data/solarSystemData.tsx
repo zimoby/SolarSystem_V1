@@ -11,7 +11,7 @@ export const relativeEarthSizeDependOnDistance = earchRadiusKm / distanceToSunKm
 
 export const planetsScaleFactor = relativeEarthSizeDependOnDistance * 1200;
 export const starsScaleFactor = relativeEarthSizeDependOnDistance * 10;
-export const objectsRotationSpeed = 100
+export const objectsRotationSpeed = 400
 export const moonsRotationSpeed = 500
 export const moonsDistanceFactor = relativeEarthSizeDependOnDistance * 6000000 / 2;
 
