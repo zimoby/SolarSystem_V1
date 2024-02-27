@@ -249,7 +249,29 @@
         "siderealRotationPeriodHrs": 153.2928,
         "lengthOfDayHrs": 153.282,
         "obliquityToOrbitDeg": 122.53,
-        "inclinationOfEquatorDeg": 57.47
+        "inclinationOfEquatorDeg": 57.47,
+        "moons": [
+            {
+                "name": "Charon",
+                "volumetricMeanRadiusKm": 606,
+                "distanceToPlanetKm": 19571,
+                "semimajorAxis10_6Km": 0.19571,
+                "siderealOrbitPeriodDays": 6.3872,
+                "tropicalOrbitPeriodDays": 6.3872,
+                "perihelion10_6Km": 0.19571,
+                "aphelion10_6Km": 0.19571,
+                "synodicPeriodDays": 6.3872,
+                "meanOrbitalVelocityKmS": 0.21,
+                "maxOrbitalVelocityKmS": 0.21,
+                "minOrbitalVelocityKmS": 0.21,
+                "orbitInclinationDeg": 0.001,
+                "orbitEccentricity": 0.0022,
+                "siderealRotationPeriodHrs": 153.2928,
+                "lengthOfDayHrs": 153.282,
+                "obliquityToOrbitDeg": 0.001,
+                "inclinationOfEquatorDeg": 0.001
+            }
+        ]
     },
     "jupiter": {
         "mass10_24Kg": 1898.19,
@@ -497,7 +519,29 @@
         "siderealRotationPeriodHrs": 17.24,
         "lengthOfDayHrs": 17.24,
         "obliquityToOrbitDeg": 97.77,
-        "inclinationOfEquatorDeg": 82.23
+        "inclinationOfEquatorDeg": 82.23,
+        "moons": [
+            {
+                "name": "Miranda",
+                "volumetricMeanRadiusKm": 235.8,
+                "distanceToPlanetKm": 129390,
+                "semimajorAxis10_6Km": 0.1294,
+                "siderealOrbitPeriodDays": 1.4135,
+                "tropicalOrbitPeriodDays": 1.4135,
+                "perihelion10_6Km": 0.1294,
+                "aphelion10_6Km": 0.1294,
+                "synodicPeriodDays": 1.4135,
+                "meanOrbitalVelocityKmS": 6.66,
+                "maxOrbitalVelocityKmS": 6.66,
+                "minOrbitalVelocityKmS": 6.66,
+                "orbitInclinationDeg": 4.232,
+                "orbitEccentricity": 0.0013,
+                "siderealRotationPeriodHrs": 58.79,
+                "lengthOfDayHrs": 58.79,
+                "obliquityToOrbitDeg": 0.036,
+                "inclinationOfEquatorDeg": 0.036
+            }
+        ]
     },
     "neptune": {
         "mass10_24Kg": 102.413,
@@ -533,6 +577,28 @@
         "siderealRotationPeriodHrs": 16.11,
         "lengthOfDayHrs": 16.11,
         "obliquityToOrbitDeg": 28.32,
-        "inclinationOfEquatorDeg": 28.32
+        "inclinationOfEquatorDeg": 28.32,
+        "moons": [
+            {
+                "name": "Triton",
+                "volumetricMeanRadiusKm": 1353.4,
+                "distanceToPlanetKm": 354759,
+                "semimajorAxis10_6Km": 0.3548,
+                "siderealOrbitPeriodDays": -5.877,
+                "tropicalOrbitPeriodDays": -5.877,
+                "perihelion10_6Km": 0.3548,
+                "aphelion10_6Km": 0.3548,
+                "synodicPeriodDays": 5.877,
+                "meanOrbitalVelocityKmS": 4.39,
+                "maxOrbitalVelocityKmS": 4.39,
+                "minOrbitalVelocityKmS": 4.39,
+                "orbitInclinationDeg": 156.865,
+                "orbitEccentricity": 0,
+                "siderealRotationPeriodHrs": 141.044,
+                "lengthOfDayHrs": 141.044,
+                "obliquityToOrbitDeg": 0.1,
+                "inclinationOfEquatorDeg": 0.1
+            }
+        ]
     }
 }
