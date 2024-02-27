@@ -33,7 +33,22 @@ const CheckBox = ({ label, value, onUpdate }: CheckBoxProps) => {
   return (
     <div className="relative flex flex-row text-xs justify-start items-center">
       <div className="relative w-32 truncate select-none">{label}</div>
-      <input type="checkbox" checked={value} onChange={handleChange} />
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={handleChange}
+        className="h-4 w-4 cursor-pointer appearance-none rounded-sm"
+        style={{
+          background: value ? "rgba(128, 0, 128, 0.7)" : "rgba(255, 255, 255, 0.1)",
+        }}
+      />
+      {value ? (
+        <div
+          className="absolute inset-0 m-auto w-1 h-1 rounded-full bg-white"
+          style={{ zIndex: 1 }}
+        />
+      ) : null
+      }
     </div>
   )
 }
