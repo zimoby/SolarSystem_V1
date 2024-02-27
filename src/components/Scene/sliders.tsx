@@ -119,6 +119,8 @@ export const SolarSystemControls = () => {
 
   const disableTrash = useSolarStore((state) => state.disableTrash)
   const disableRandomObjects = useSolarStore((state) => state.disableRandomObjects)
+  const disableOrbits = useSolarStore((state) => state.disableOrbits);
+
   const timeSpeed = useSolarStore((state) => state.timeSpeed)
   const timeOffset = useSolarStore((state) => state.timeOffset)
   const objectsDistance = useSolarStore((state) => state.objectsDistance)
@@ -179,9 +181,11 @@ export const SolarSystemControls = () => {
               onUpdate={(e) => handleSliderUpdate(e, "orbitAngleOffset")}
             />
           </div>
-          <div className=" space-y-1 pt-1">
+          <div className="space-y-1 pt-1">
+          {/* <div className="w-72 space-y-1 pt-1 flex flex-wrap justify-between"> */}
             <CheckBox label="Disable Asteroids" value={disableTrash} onUpdate={() => handleSliderUpdate(!disableTrash, "disableTrash")} />
             <CheckBox label="Disable Objects" value={disableRandomObjects} onUpdate={() => handleSliderUpdate(!disableRandomObjects, "disableRandomObjects")} />
+            <CheckBox label="Disable Ellipses" value={disableOrbits} onUpdate={() => handleSliderUpdate(!disableOrbits, "disableOrbits")} />
           </div>
         </div>
 

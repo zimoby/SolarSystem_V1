@@ -17,6 +17,7 @@ import { OrbitDisk } from "../Objects/disk";
 const SolarSystemPlanets = () => {
   const getPlanetsData = useSolarStore((state) => state.celestialBodies.planets);
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
+  const disableOrbits = useSolarStore((state) => state.disableOrbits);
   const updatePlanetsInitialized = useSolarStore((state) => state.updateSystemSettings);
 
   const DEV_MODE = useSolarStore((state) => state.DEV_MODE);
@@ -72,7 +73,7 @@ const SolarSystemPlanets = () => {
           />
         );
       })}
-      <OrbitDisk size={40} positionYoffset={-2} opacity={0.1} />
+      {!disableOrbits && <OrbitDisk size={40} positionYoffset={-2} opacity={0.1} />}
     </>
   );
 };

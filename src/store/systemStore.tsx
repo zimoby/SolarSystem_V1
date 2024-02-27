@@ -72,6 +72,7 @@ const useSystemStore: StateCreator<
   disableMoons: false,
   disableRandomObjects: false,
   disableTrash: false,
+  disableOrbits: false,
 
   activeObjectName: "sun",
   activeObjectNameInfo: "sun",

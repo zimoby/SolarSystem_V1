@@ -28,6 +28,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
   const activeObject = useSolarStore((state) => state.activeObjectName);
 
   const disabledObjects = useSolarStore((state) => state.disableRandomObjects);
+  const disableOrbits = useSolarStore((state) => state.disableOrbits);
 
   const dashOffsetRef = useRef<THREE.Line>();
   const orbitLineRef = useRef<THREE.Line>();
@@ -81,9 +82,7 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
       // console.log(traectoryRingRef.current)
       (traectoryRingRef.current.material as THREE.MeshBasicMaterial).opacity = selected ? 0.2 : relativeOpacity / 30;
     }
-
   });
-
 
   const points = useMemo(() => 
     new THREE.EllipseCurve(0, 0, distanceXY.x, distanceXY.y, 0, Math.PI * 2, false).getPoints(orbitPathDetalization),
@@ -129,10 +128,9 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
     return ((Math.random()) * decr - decr);
   }, []);
 
-
   return (
     <group>
-      {type !== "moons" && <group rotation={[-extraRotation,0,0]} >
+      {type !== "moons" && !disableOrbits && <group rotation={[-extraRotation,0,0]} >
         <mesh position={[0, randomZposition - 0.5, 0]}>
           <OrbitDisk size={distanceXY.x} opacity={disabledObjects ? 0.3 : 0.1} positionYoffset={0} />
         </mesh>

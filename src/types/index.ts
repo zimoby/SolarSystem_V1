@@ -120,6 +120,7 @@ export interface SystemStoreStateT {
   disableMoons: boolean;
   disableRandomObjects: boolean;
   disableTrash: boolean;
+  disableOrbits: boolean;
 
   activeObjectName: string;
   activeObjectNameInfo: string;
