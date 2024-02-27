@@ -20,7 +20,7 @@ export const OverlayElements = () => {
             <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://github.com/zimoby/SolarSystem_V1" target="_blank">Challenge 008: Solar System</a>
             <p>|</p>
             <p>
-              <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://www.notion.so/zimoby" target="_blank">
+              <a className="text-neutral-50/50 hover:text-orange-500 cursor-pointer" href="https://zimoby.notion.site" target="_blank">
                 Bondartsov Denys
               </a>
             </p>
