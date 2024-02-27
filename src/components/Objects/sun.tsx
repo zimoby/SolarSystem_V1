@@ -52,7 +52,9 @@ export const SunComponent = () => {
   });
 
   return (
-    <group position={[0,0,0]} scale={[(Math.pow(objectsDistance,3)),(Math.pow(objectsDistance,3)),(Math.pow(objectsDistance,3))]}>
+    // <group position={[0,0,0]} scale={[1,1,1]}>
+    <group position={[0,0,0]} scale={[(Math.pow(objectsDistance,1)),(Math.pow(objectsDistance,1)),(Math.pow(objectsDistance,1))]}>
+    {/* <group position={[0,0,0]} scale={[(Math.pow(objectsDistance,3)),(Math.pow(objectsDistance,3)),(Math.pow(objectsDistance,3))]}> */}
       <InfoAboutObject params={{ name: "sun" }} typeOfObject={"star"} />
       <Sphere
         // @ts-expect-error tired of typescript

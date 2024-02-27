@@ -13,7 +13,7 @@ export const planetsScaleFactor = relativeEarthSizeDependOnDistance * 1200;
 export const starsScaleFactor = relativeEarthSizeDependOnDistance * 10;
 export const objectsRotationSpeed = 100
 export const moonsRotationSpeed = 500
-export const moonsDistanceFactor = relativeEarthSizeDependOnDistance * 8000000 / 2;
+export const moonsDistanceFactor = relativeEarthSizeDependOnDistance * 6000000 / 2;
 
 export const yearInSeconds = 60 * 60 * 24 * 365;
 export const dayInSeconds = 60 * 60 * 24;

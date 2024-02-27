@@ -100,8 +100,6 @@ export const SolarSystemControls = () => {
     },
   });
 
-
-
   const updateSystemSettings = useSolarStore((state) => state.updateSystemSettings)
 
   const disableTrash = useSolarStore((state) => state.disableTrash)
@@ -154,7 +152,7 @@ export const SolarSystemControls = () => {
               value={objectsRelativeScale}
               min={1}
               max={10}
-              step={1}
+              step={0.1}
               onUpdate={(e) => handleSliderUpdate(e, "objectsRelativeScale")}
             />
             <SliderWithInput

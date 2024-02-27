@@ -103,7 +103,7 @@ export const useInitiateSolarSystem = () => {
 
       const parentVolumetricMeanRadiusKm = type === "moons" ? celestialBodiesUpdates["planets"][parentName]?.volumetricMeanRadiusKm ?? 1 : 1;
       const parentMoonsAmount = type === "moons" ? celestialBodiesUpdates["planets"][parentName].moonsAmount ?? 1 : 1;
-      const relativeMoonsDistance = parentVolumetricMeanRadiusKm * 2.5 + 0.011 * ((iter + 1) / parentMoonsAmount) * moonsDistanceFactor;
+      const relativeMoonsDistance = parentVolumetricMeanRadiusKm * 1.2 + 0.018 * ((iter + 1) / parentMoonsAmount) * moonsDistanceFactor;
 
       const moonsAmount = (data as SolarObjectParamsBasicWithMoonsT).moons?.length || 0;
 

@@ -31,7 +31,7 @@ export const calculateRelativeDistanceXY = (
 };
 
 export const calculateRelativeScale = (size: number, relativeScale: number, name: string = ""): number => {
-  const calcRelativeScale = Math.pow(size, 1 / relativeScale) / relativeScale;
+  const calcRelativeScale = Math.pow(size, 1 / relativeScale) / 1;
 
   false && console.log("RelativeScale", name, calcRelativeScale, size, relativeScale)
 

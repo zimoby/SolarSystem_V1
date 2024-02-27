@@ -68,7 +68,7 @@ const useSystemStore: StateCreator<
   timeSpeed: 35 * 100000,
   timeOffset: 0,
   objectsDistance: 1,
-  objectsRelativeScale: 1,
+  objectsRelativeScale: 1.4,
   orbitAngleOffset: 0,
 
   maxDistance: 100,
