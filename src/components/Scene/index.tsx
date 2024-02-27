@@ -4,8 +4,8 @@ import { PointLight } from "three";
 
 export const SceneSetup = () => {
   const { ...gridConfig } = {
-    cellSize: 0.2,
-    cellThickness: 0.5,
+    cellSize: 0.25,
+    cellThickness: 0.3,
     cellColor: "#ffffff", //6f6f6f
     sectionSize: 1,
     sectionThickness: 1,
