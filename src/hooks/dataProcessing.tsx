@@ -73,14 +73,7 @@ export const useInitiateSolarSystem = () => {
 
     const randomObjects: Record<string, SolarObjectParamsBasicT> = !disableRandomObjects ? objects : {};
     const trashObjects: Record<string, SolarObjectParamsBasicT> = !disableTrash ? trash : {};
-  
-    useSolarStore.getState().updateSystemSettings({
-      // @ts-expect-error tired of typing
-      activeObjectInfo: {
-        sun: sunData,
-      ...reorderPlanets,
-      ...randomObjects
-    }});
+    const collectMoonsData: Record<string, SolarObjectParamsBasicWithMoonsT> = {} as Record<string, SolarObjectParamsBasicWithMoonsT>;
 
     DEV_MODE && console.log("start init");
 
@@ -144,6 +137,11 @@ export const useInitiateSolarSystem = () => {
         if ("moons" in planetData && !disableMoons) {
           const data = planetData as SolarObjectParamsBasicWithMoonsT;
           data.moons?.forEach((moon, iterMoon) => {
+            collectMoonsData[moon.name || ""] = {
+              ...moon,
+              planetName: planetName,
+              type: "moons",
+            };
             processCelestialBody("moons", moon.name || "", moon, planetName, iterMoon);
           });
         }
@@ -181,6 +179,16 @@ export const useInitiateSolarSystem = () => {
     useSolarStore.getState().updateSystemSettings({ dataInitialized: true });
 
     DEV_MODE && console.log("end init", celestialBodiesUpdates, propertiesUpdates);
+
+
+    useSolarStore.getState().updateSystemSettings({
+      // @ts-expect-error tired of typing
+      activeObjectInfo: {
+        sun: sunData,
+      ...reorderPlanets,
+      ...randomObjects,
+      ...collectMoonsData
+    }});
 
     useSolarStore.getState().setInitialized(true);
   }, [DEV_MODE, disableMoons, disablePlanets, disableRandomObjects, disableTrash, isInitialized, objects, trash, uiRandomColors]);

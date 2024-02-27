@@ -3,7 +3,7 @@ import { useSolarStore, useSolarPositionsStore } from "../../store/systemStore";
 import * as THREE from "three";
 import { Html, Segment, Segments } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { updateActiveName } from "../../hooks/storeProcessing";
+import { updateActiveInfo, updateActiveName } from "../../hooks/storeProcessing";
 
 type PlanetHUDComponentProps = {
   planetName: string;
@@ -180,6 +180,10 @@ export const InfoAboutObject = forwardRef<HTMLDivElement, InfoAboutObjectProps>(
               updateActiveName(params.name);
             }
           }}
+          onMouseOver={() => {
+              updateActiveInfo(params.name);
+            }
+          }
         >
           <div className={`${textStyle}`}>
             { params.name }

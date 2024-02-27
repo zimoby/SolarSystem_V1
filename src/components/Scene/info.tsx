@@ -4,7 +4,8 @@ import { useSolarStore } from "../../store/systemStore";
 import useMeasure from "react-use-measure";
 
 export const ActiveObjectInfo = () => {
-    const activeObjectName = useSolarStore((state) => state.activeObjectName);
+    // const activeObjectName = useSolarStore((state) => state.activeObjectName);
+    const activeObjectNameInfo = useSolarStore((state) => state.activeObjectNameInfo);
     const objectsInfo = useSolarStore((state) => state.activeObjectInfo);
     const initialized = useSolarStore((state) => state.isInitialized);
 
@@ -22,7 +23,7 @@ export const ActiveObjectInfo = () => {
     const objInfoIntoArray = useMemo(() => {
         const groupedInfo = [];
 
-        const filteredInfo = Object.entries(objectsInfo[activeObjectName] || {}).filter(([name]) => (name !== "moons" && name !== "name" && name !== "anchorXYOffset"));
+        const filteredInfo = Object.entries(objectsInfo[activeObjectNameInfo] || {}).filter(([name]) => (name !== "moons" && name !== "name" && name !== "anchorXYOffset"));
         for (const group in groups) {
             const groupEntries = filteredInfo.filter(([name]) => groups[group as keyof typeof groups].includes(name)).map(([name, value]) => ({ name, value: String(value) }));
             if (groupEntries.length > 0) {
@@ -31,7 +32,7 @@ export const ActiveObjectInfo = () => {
         }
 
         return groupedInfo;
-    }, [objectsInfo, activeObjectName, groups]);
+    }, [objectsInfo, activeObjectNameInfo, groups]);
 
     const animation = useSpring({
         from: { height: 0 },
@@ -44,7 +45,7 @@ export const ActiveObjectInfo = () => {
 
     useEffect(() => {
         if (!initialized) return;
-    }, [activeObjectName, initialized]);
+    }, [activeObjectNameInfo, initialized]);
 
     return (
         <div className="absolute bottom-0 left-0 m-2">
@@ -59,8 +60,12 @@ export const ActiveObjectInfo = () => {
                     onClick={() => setShowMoreActiveInfo(!showMoreActiveInfo)}
                 >
                     <div className="uppercase font-bold text-2xl font-sans">
-                        {activeObjectName}
+                        {activeObjectNameInfo}
                     </div>
+
+                    { objectsInfo[activeObjectNameInfo]?.type && <div className="uppercase font-bold text-sm mb-2 font-sans">
+                        Planet: {objectsInfo[activeObjectNameInfo].planetName}
+                    </div> }
                 </div>
                 <animated.div style={{ overflow: 'hidden', ...animation }}>
                     <div ref={showMoreActiveInfo ? ref : undefined} className="text-2xs leading-3 space-y-2">
@@ -69,7 +74,7 @@ export const ActiveObjectInfo = () => {
                                 <div className=" text-sm font-bold font-sans">{group.groupName}</div>
                                 {group.entries.map((el) => (
                                     <div key={el.name}>
-                                        {el.name}: {el.value}
+                                        {el.name}: {typeof parseFloat(el.value) === 'number' ? parseFloat(el.value).toFixed(2) : "String(el.value)"}
                                     </div>
                                 ))}
                             </div>

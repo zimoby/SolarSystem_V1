@@ -55,6 +55,7 @@ export type SolarObjectParamsBasicT = OnlyNumbericSolarObjectParamsBasicT & {
   name?: string;
   type?: string | null;
   type2?: string;
+  planetName?: string;
 }
 
 export type SolarObjectParamsBasicWithMoonsT = SolarObjectParamsBasicT & {
@@ -120,6 +121,7 @@ export interface SystemStoreStateT {
   disableTrash: boolean;
 
   activeObjectName: string;
+  activeObjectNameInfo: string;
   activeObjectInfo: CollectedSolarObjectInfo;
 
   timeSpeed: number;

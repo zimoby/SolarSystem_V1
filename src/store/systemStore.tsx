@@ -63,6 +63,7 @@ const useSystemStore: StateCreator<
   disableTrash: false,
 
   activeObjectName: "sun",
+  activeObjectNameInfo: "sun",
   activeObjectInfo: {},
 
   timeSpeed: 35 * 100000,

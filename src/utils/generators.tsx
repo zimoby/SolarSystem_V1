@@ -117,7 +117,7 @@ export const generateRandomObjects = (objectNumber = 10) => {
   for (let i = 0; i < objectNumber; i++) {
     const randomDistance = Math.random() * 4000 + 50;
     randomObjects[`object${i}`] = {
-      volumetricMeanRadiusKm: 100,
+      volumetricMeanRadiusKm: 0,
       semimajorAxis10_6Km: randomDistance,
       anchorXYOffset: { x: 0, y: (Math.random() - 0.5) * (randomDistance / 2) },
       siderealOrbitPeriodDays: Math.random() * 1000 + 400,
