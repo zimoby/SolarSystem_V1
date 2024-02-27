@@ -428,7 +428,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
               uColor={new THREE.Color(atmosphereColor[planetName])}
               transparent={true}
               depthWrite={false}
-              blending={THREE.AdditiveBlending}
+              // blending={THREE.AdditiveBlending}
             />
           </Sphere>
           {/* <Sphere
