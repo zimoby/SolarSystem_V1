@@ -42,13 +42,14 @@ export const generateTrash = (
 ): TrashParamsT[] => {
   const trash: TrashParamsT[] = [];
   const angleIncrement = (2 * Math.PI) / amount;
-  // const ring = 5;
+  const ring = 5;
+  
 
   false && console.log("generate trash: " + name + ": ", amount);
 
   for (let i = 0; i < amount; i++) {
     const angle = i * angleIncrement;
-    const radiusRandom = radius;
+    const radiusRandom = Math.pow(Math.random() / ring + ring / 2, 1 / 1) * radius - ring / 3.5;
     const x = radiusRandom * Math.cos(angle + rotate);
     const y = radiusRandom * Math.sin(angle + rotate);
     const z = (Math.random() * 2 - 1) * 0.05;
@@ -70,6 +71,34 @@ export const generateTrash = (
 
   return trash;
 };
+
+// const trash: TrashParamsT[] = [];
+// const angleIncrement = (2 * Math.PI) / amount;
+// const ring = 5;
+
+// false && console.log("generate trash: " + name + ": ", amount);
+
+// for (let i = 0; i < amount; i++) {
+//   const angle = i * angleIncrement;
+//   const radiusRandom = Math.pow(Math.random() / ring + ring / 2, 1 / 1) * radius - ring / 3.5;
+//   const x = radiusRandom * Math.cos(angle + rotate);
+//   const y = radiusRandom * Math.sin(angle + rotate);
+//   const z = (Math.random() * 2 - 1) * 0.05;
+
+//   const updX = (x + MathUtils.randFloatSpread(2) * destr) * scale;
+//   const updY = (y + MathUtils.randFloatSpread(2) * destr) * scale;
+//   const updZ = (z + (MathUtils.randFloatSpread(2) * destr) / 7) * scale;
+
+//   trash.push({
+//     position: [updX, updY, updZ],
+//     scale: (Math.random() / 2 + 0.2) * 0.01 * scale,
+//     rotation: [0, 0, Math.random() * Math.PI],
+//     distance: Math.sqrt(updX * updX + updY * updY + updZ * updZ),
+//     angle,
+//     color: "white",
+//     name: generateRandomName(),
+//   });
+// }
 
 const generateRandomName = () => {
   const size = 5;

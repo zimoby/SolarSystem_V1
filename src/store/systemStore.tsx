@@ -105,16 +105,16 @@ const useSolarSystemStore: StateCreator<
     objects: generateRandomObjects(randomObjectsAmount),
     trash: {
       trashInner1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3.3,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 2.5,
       },
       trashInner2: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 3.3,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 2.5,
       },
       trashMiddle1: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 17,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 16,
       },
       trashMiddle2: {
-        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 17,
+        semimajorAxis10_6Km: distOfEarthToSun10_6Km * 16,
       },
       trashOuter1: {
         semimajorAxis10_6Km: distOfEarthToSun10_6Km * 52,
