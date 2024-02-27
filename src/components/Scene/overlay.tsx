@@ -36,10 +36,10 @@ export const OverlayElements = () => {
                             <p>Data driven Solar system</p>
                         </div> */}
               <div className="*:pl-4 flex flex-col leading-4 -space-y-1">
-                <p>Planets size increased to x{planetsScaleFactor / relativeEarthSizeDependOnDistance}</p>
-                <p>Sun size increased to x{starsScaleFactor / relativeEarthSizeDependOnDistance}</p>
-                <p>Planets rotation decreased to x{objectsRotationSpeed}</p>
-                <p>Moons rotation decreased to x{moonsRotationSpeed}</p>
+                <p>Planets size increased to x{Math.round(planetsScaleFactor / relativeEarthSizeDependOnDistance)}</p>
+                <p>Sun size increased to x{Math.round(starsScaleFactor / relativeEarthSizeDependOnDistance)}</p>
+                <p>Planets rotation decreased to x{Math.round(objectsRotationSpeed)}</p>
+                <p>Moons rotation decreased to x{Math.round(moonsRotationSpeed)}</p>
                 <p>Moons distance from planet decreased to x{Math.round(moonsDistanceFactor)}</p>
               </div>
               <div className="*:pl-4 flex flex-col leading-3">

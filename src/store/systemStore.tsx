@@ -65,7 +65,7 @@ const useSystemStore: StateCreator<
   activeObjectName: "sun",
   activeObjectInfo: {},
 
-  timeSpeed: 50 * 100000,
+  timeSpeed: 35 * 100000,
   timeOffset: 0,
   objectsDistance: 1,
   objectsRelativeScale: 1,
@@ -126,7 +126,7 @@ const useSolarSystemStore: StateCreator<
       // trashMiddle1: generateTrash(trashMiddleAmount,      1 , 0.6, 1, "middle circle"),
       // trashMiddle2: generateTrash(trashMiddleAmount / 50, 1 , 0.6, 1, "middle circle"),
       // trashOuter1: generateTrash(trashOuterAmount,        1, 0.05, 1, "outer circle"),
-
+      // trashCross: generateCrossingObjects(trashCross, [10, 10, 3]),
     },
   },
   batchUpdateCelestialBodies: (updates) =>
