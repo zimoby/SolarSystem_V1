@@ -25,6 +25,25 @@ import moonTexture from "../../assets/2k_moon.jpg";
 // @ts-expect-error tired of typescript
 import { resolveLygia } from "resolve-lygia"
 
+interface AtmosphereMaterialProps {
+  uPlanetRadius: number;
+  uAtmosphereRadius: number;
+  uColor: THREE.Color;
+  transparent: boolean;
+  depthWrite?: boolean;
+  blending?: THREE.Blending;
+}
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      atmosphereMaterial: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & AtmosphereMaterialProps;
+    }
+  }
+}
+
+
 const AtmosphereMaterial = shaderMaterial(
   {
     uPlanetRadius: 0,
@@ -40,50 +59,41 @@ const AtmosphereMaterial = shaderMaterial(
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   `,
-  // Fragment Shader
-  // `
-  //   uniform float uPlanetRadius;
-  //   uniform float uAtmosphereRadius;
-  //   uniform vec3 uColor;
-  //   varying vec3 vNormal;
-  //   void main() {
-  //     float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
-  //     float factor = smoothstep(uPlanetRadius, uAtmosphereRadius, intensity);
-  //     gl_FragColor = vec4(uColor * factor, 1.0);
-  //   }
-  // `
   `
     uniform float uPlanetRadius;
     uniform float uAtmosphereRadius;
     uniform vec3 uColor;
     varying vec3 vNormal;
     void main() {
-      // float atmosphereThickness = uAtmosphereRadius - uPlanetRadius;
-      // float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
-      // float edgeSmoothness = 0.4; // Adjust for smoother edge. Lower is sharper; higher is smoother.
-      // float alpha = smoothstep(atmosphereThickness * edgeSmoothness, 0.0, intensity);
-      // gl_FragColor = vec4(uColor, alpha);
 
-
-
-        // float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
-        // float factor = smoothstep(uPlanetRadius, uAtmosphereRadius, intensity);
-        // float alpha = 1.0; // Set the alpha value here
-        // gl_FragColor = vec4(uColor * factor, alpha);
-
-
-
-          float intensity = pow(1.05 - dot(vNormal, vec3(0, 0, 1)), 2.0);
-          float factor = smoothstep(uPlanetRadius, uAtmosphereRadius, intensity);
-          if(factor < 0.1) { // Adjust this value to control when the atmosphere becomes transparent
-            discard; // Skip rendering this fragment, making it fully transparent
-          } else {
-            gl_FragColor = vec4(uColor * factor, 1.0); // Fully opaque color
-          }
+      float intensity = pow(1.04 - dot(vNormal, vec3(0, 0, 1)), 5.0);
+      float alphaFactor = smoothstep((uAtmosphereRadius - uPlanetRadius), 0.1, intensity * 0.1);
+      if(alphaFactor < 0.05) { 
+        discard;
+      } else {
+        gl_FragColor = vec4(uColor, alphaFactor); 
+      }
 
     }
   `
 );
+
+// void main() {
+//   float intensity = pow(1.04 - dot(vNormal, vec3(0, 0, 1)), 2.0);
+
+//   // Adjust the calculation of alphaFactor for a smoother transition
+//   // Start the transition closer to the planet surface and end it farther into the atmosphere
+//   float startFade = uPlanetRadius + (uAtmosphereRadius - uPlanetRadius) * 0.3; // Adjust this value to control the start of the fade
+//   float endFade = uAtmosphereRadius;
+//   float fadeRange = endFade - startFade;
+//   float alphaFactor = 1.0 - smoothstep(0.0, fadeRange, intensity - startFade);
+
+//   if(alphaFactor < 0.05) {  // Adjust this threshold as needed
+//       discard; // Skip rendering to make it fully transparent
+//   } else {
+//       gl_FragColor = vec4(uColor, alphaFactor); // Apply the smooth alpha factor
+//   }
+// }
 
 extend({ AtmosphereMaterial });
 
@@ -253,6 +263,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
   const planetsInitialized = useSolarStore((state) => state.planetsInitialized);
   const timeSpeed = useSolarStore((state) => state.timeSpeed);
   const objectDefaultColors = useSolarStore((state) => state.objectDefaultColors);
+  const atmosphereColor = useSolarStore((state) => state.atmosphereDefaultColors);
   const orbitPathDetalization = useSolarStore((state) => state.orbitPathDetalization);
 
   // @ts-expect-error tired of typescript
@@ -407,19 +418,19 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
             />
 
           </Sphere>
-          {/* <Sphere
+          <Sphere
             args={[planetSize * 1.01, 64, 32]} // Adjust the multiplier for the desired atmosphere size
             position={[0, 0, 0]}
           >
             <atmosphereMaterial
               uPlanetRadius={planetSize}
               uAtmosphereRadius={planetSize * 1.01} 
-              uColor={new THREE.Color(0x93C5FD)}
+              uColor={new THREE.Color(atmosphereColor[planetName])}
               transparent={true}
               depthWrite={false}
               blending={THREE.AdditiveBlending}
             />
-          </Sphere> */}
+          </Sphere>
           {/* <Sphere
             key={planetName}
             args={[planetSize * 1.1]}

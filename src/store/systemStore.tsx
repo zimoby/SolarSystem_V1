@@ -36,6 +36,17 @@ const useSystemColorsSlice: StateCreator<
     rhea: "#f0f0f0",
     lapetus: "#f0f0f0",
   },
+  atmosphereDefaultColors: {
+    mercury: "#909090",
+    venus: "#ffd28e",
+    earth: "#93C5FD",
+    mars: "#ff5733",
+    jupiter: "#caa472",
+    saturn: "#f4e8c1",
+    uranus: "#73fcd6",
+    neptune: "#6082b6",
+    pluto: "#9e9e9e",
+  },
   updateColors: (updates) => set((state) => ({ ...state, ...updates })),
 });
 

@@ -96,6 +96,7 @@ export interface SystemColorsStateT {
     directLine: { color: string; opacity: number };
   };
   objectDefaultColors: { [key: string]: string };
+  atmosphereDefaultColors: { [key: string]: string };
   updateColors: (updates: Partial<SystemColorsStateT>) => void;
 }
 
