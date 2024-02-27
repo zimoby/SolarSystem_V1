@@ -34,9 +34,13 @@ export const ActiveObjectInfo = () => {
         return groupedInfo;
     }, [objectsInfo, activeObjectNameInfo, groups]);
 
+    const windowHeight = window.innerHeight;
+    const maxInfoHeight = windowHeight - 160;
+    const shouldHideInfo = showMoreActiveInfo && bounds.height > maxInfoHeight;
+
     const animation = useSpring({
         from: { height: 0 },
-        to: { height: showMoreActiveInfo ? bounds.height : 0 },
+        to: { height: shouldHideInfo ? maxInfoHeight : showMoreActiveInfo ? bounds.height : 0 },
         config: {
             duration: 350,
             easing: easings.easeOutCubic, 
@@ -67,7 +71,7 @@ export const ActiveObjectInfo = () => {
                         Planet: {objectsInfo[activeObjectNameInfo].planetName}
                     </div> }
                 </div>
-                <animated.div style={{ overflow: 'hidden', ...animation }}>
+                <animated.div className={`scrollbar`} style={{ ...animation }}>
                     <div ref={showMoreActiveInfo ? ref : undefined} className="text-2xs leading-3 space-y-2">
                         {objInfoIntoArray.map((group) => (
                             <div key={group.groupName}>
