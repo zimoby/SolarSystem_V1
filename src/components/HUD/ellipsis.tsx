@@ -132,11 +132,11 @@ export const ObjectEllipse: React.FC<ObjectEllipseProps> = ({
 
   return (
     <group>
-      <group rotation={[-extraRotation,0,0]} >
+      {type !== "moons" && <group rotation={[-extraRotation,0,0]} >
         <mesh position={[0, randomZposition - 0.5, 0]}>
-          <OrbitDisk size={distanceXY.x} opacity={disabledObjects ? 0.2 : 0.1} positionYoffset={0} />
+          <OrbitDisk size={distanceXY.x} opacity={disabledObjects ? 0.3 : 0.1} positionYoffset={0} />
         </mesh>
-      </group>
+      </group>}
       <group
         rotation={[0,0,0]}
         onPointerOver={() => setSelected(true)} onPointerLeave={() => setSelected(false)}
