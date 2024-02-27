@@ -79,7 +79,7 @@ export const TrashComponent = () => {
         <>
           <group scale={ [relativeScaleInner.x, relativeScaleInner.x, relativeScaleInner.x] }>
             <Particles points={trashInner1} rotSpeed={ innerSpeed } size={0.007 * relativeScaleInner.x} opacity={0.7} />
-            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.007 * relativeScaleInner.x} opacity={0.7} />
+            <Particles points={trashInner1} rotSpeed={ innerSpeed * 2 } size={0.007 * relativeScaleInner.x} opacity={0.7} extraRotate={Math.PI} />
           </group>
         </>
       )}
@@ -217,7 +217,7 @@ const ParticleShaderMaterial = shaderMaterial(
 
 extend({ ParticleShaderMaterial });
 
-const Particles = ({ points, rotSpeed, size, opacity = 1.0 }) => {
+const Particles = ({ points, rotSpeed, size, opacity = 1.0, extraRotate = 0 }) => {
   const pointsRef1 = useRef<THREE.Points>();
   const materialRef = useRef();
 
@@ -229,8 +229,9 @@ const Particles = ({ points, rotSpeed, size, opacity = 1.0 }) => {
     const geometry = new BufferGeometry();
     const positions = points.flatMap((p) => p.position);
     geometry.setAttribute('position', new BufferAttribute(new Float32Array(positions), 3));
+    geometry.rotateX(extraRotate);
     return geometry;
-  }, [points]);
+  }, [extraRotate, points]);
 
   useFrame(({ clock }) => {
     const t = calculateTime(
