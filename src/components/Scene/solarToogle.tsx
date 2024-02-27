@@ -6,8 +6,9 @@ import { updateActiveInfo, updateActiveName } from "../../hooks/storeProcessing"
 export const CelestialToggle = () => {
   const planetsWithSun = ["sun", ...planetsNamesOrder]
   const [hoveredIndex, setHoveredIndex] = useState(-1)
-  const circleSize = 5
+  const circleSize = 5;
 
+  const activeObjectName = useSolarStore((state) => state.activeObjectName)
   const supportData = useSolarStore((state) => state.additionalProperties)
   const objectsInfo = useSolarStore((state) => state.activeObjectInfo)
 
@@ -22,6 +23,9 @@ export const CelestialToggle = () => {
           <div key={planetName + "circles"} className="w-5 h-5 flex justify-center items-center font-bold text-center font-sans text-2xl">
             <div
               className="absolute m-0 p-1 flex flex-col justify-center items-center hover:translate-y-3 fill-neutral-50 opacity-80 hover:fill-red-500 -space-y-1"
+              style={{
+                fill: activeObjectName === planetName ? "red" : "white",
+              }}
               onMouseEnter={() => {
                 updateActiveInfo(planetName)
                 setHoveredIndex(index)
