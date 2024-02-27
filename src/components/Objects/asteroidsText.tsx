@@ -23,15 +23,23 @@ export const AsteroidsText = () => {
   const curve = useMemo(() => new CatmullRomCurve3([...handlePos], true, 'centripetal'), [handlePos])
 
   const textGeo = useMemo(() => {
-    const size = 2
-    const height = 0.1
-    const curveSegments = 64
-    return new TextGeometry("Kuiper Belt", {
+    const size = 2;
+    const height = 0;
+    const curveSegments = 128;
+
+
+
+    const geo = new TextGeometry("Kuiper Belt", {
       font,
       size,
       height,
       curveSegments,
     })
+
+    geo.center();
+    geo.rotateX(Math.PI / 2);
+
+    return geo;
   }, [font])
 
   // useEffect(() => {
@@ -49,11 +57,11 @@ export const AsteroidsText = () => {
       ref={curveRef}
       curve={curve}
     >
-      <mesh position={[0, 0, 0]} rotation={[0,0, 0]}>
+      <mesh position={[0, 0, 0]} rotation={[0,0,0]}>
         <meshPhongMaterial color="white" />
         <primitive object={textGeo} />
       </mesh>
-    </CurveModifier>
+   </CurveModifier>
 
   )
 }
