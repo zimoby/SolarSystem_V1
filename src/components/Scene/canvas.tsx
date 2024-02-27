@@ -30,7 +30,7 @@ export const ThreeJsCanvas = () => {
         gl={{ alpha: false }}
         camera={{ fov: 10, position: [0, cameraDistance, cameraDistance * 2] }}
       >
-        <color args={["#111111"]} attach="background" />
+        <color args={["#00070E"]} attach="background" />
 
         {/* <EffectComposer> */}
           {/* <Bloom height={200} mipmapBlur/> */}
