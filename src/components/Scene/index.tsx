@@ -1,4 +1,4 @@
-import { GizmoHelper, GizmoViewport, Grid, Stars } from "@react-three/drei";
+import { Grid, Stars } from "@react-three/drei";
 import { useEffect, useRef } from "react";
 import { PointLight } from "three";
 
