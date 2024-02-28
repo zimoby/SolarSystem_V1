@@ -14,3 +14,4 @@ Project for ThreeJS Journey course challenge by Bruno Simon.
 
 - [Eyes on the Solar System](https://eyes.nasa.gov/apps/solar-system/#/home)
 - [BLINDSIGHT](https://myshli.com/project/blindsight)
+- [Refs Board](https://www.pinterest.com/zimoby/solar-system/)
