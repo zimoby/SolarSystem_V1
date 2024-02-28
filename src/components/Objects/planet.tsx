@@ -49,7 +49,6 @@ const AtmosphereMaterial = shaderMaterial(
     uPlanetRadius: 0,
     uAtmosphereRadius: 0,
     uColor: new THREE.Color(0x93C5FD),
-    transparent: true,
   },
   // Vertex Shader
   `
@@ -428,10 +427,10 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
               uColor={new THREE.Color(atmosphereColor[planetName])}
               transparent={true}
               depthWrite={false}
-              blending={THREE.AdditiveBlending}
+              // blending={THREE.AdditiveBlending}
             />
-          </Sphere>
-          {/* <Sphere
+          </Sphere> */}
+           {/* <Sphere
             key={planetName}
             args={[planetSize * 1.1]}
 
