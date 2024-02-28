@@ -6,9 +6,16 @@ Project for ThreeJS Journey course challenge by Bruno Simon.
 
 ## Assets
 
+### Textures
+
 - [Solar System Scope](https://www.solarsystemscope.com/textures/)
 - [JHT's Planetary Pixel Emporium](https://planetpixelemporium.com/)
 - [Wikimedia Commons](https://commons.wikimedia.org/)
+
+### Data
+
+- [Planetary Fact Sheets](https://nssdc.gsfc.nasa.gov/planetary/planetfact.html)
+- [JSON Planetary Fact Sheet](https://github.com/sempostma/planetary-factsheet/)
 
 ## Style References
 
