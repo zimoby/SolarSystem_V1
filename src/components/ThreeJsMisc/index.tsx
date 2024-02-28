@@ -83,7 +83,7 @@ export const ControlComponent = () => {
 
   return (
     <>
-      <PerspectiveCamera  makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
+      <PerspectiveCamera makeDefault position={[0, cameraDistance, cameraDistance * 2]} fov={10}  />
       <OrbitControls 
         ref={orbitControlsRef}
         dampingFactor={0.3}

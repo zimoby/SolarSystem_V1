@@ -162,10 +162,10 @@ const PointsOrbitRotation = ({ points, text = false, name}: PointsOrbitRotationP
             {text && (
               <group>
                 <Html center>
-                  <div className={`size-4 border`} />
+                  <div className={`size-4 border hover:border-red-500 hover:animate-ping`} />
                 </Html>
                 <Html>
-                  <div className="ml-3 flex flex-col -space-y-1">
+                  <div className="ml-3 flex flex-col -space-y-1 select-none">
                     <p className="text-white text-xs -mt-2 select-none">
                       {dot.name.toUpperCase()}
                     </p>

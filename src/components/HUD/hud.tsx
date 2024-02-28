@@ -43,7 +43,7 @@ export const PlanetHUDComponent: React.FC<PlanetHUDComponentProps> = ({
     }
   });
 
-  const selectionType = typeOfObject === "object" ? "border border-dashed " : "";
+  const selectionType = typeOfObject === "object" ? "border border-dashed hover:border-red-500" : "";
 
   useEffect(() => {
     const unsubscribePosition = useSolarPositionsStore.subscribe(
