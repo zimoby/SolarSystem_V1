@@ -451,7 +451,7 @@ const PlanetComponent: React.FC<PlanetComponentProps> = ({
             <Sphere
               ref={planetCloudsRef}
               key={planetName + "clouds"}
-              args={[planetSize * 1.01]}
+              args={[planetSize * 1.01, 64, 32]}
               onClick={() => {
                 updateActiveName(planetName);
               }}
