@@ -1,8 +1,8 @@
 # Solar System
 
-Project for ThreeJS Journey course challenge by Bruno Simon.
+Project for [ThreeJS Journey](https://threejs-journey.com/) course challenge by Bruno Simon.
 
-- [ThreeJS Journey](https://threejs-journey.com/)
+Live: [Solar System](https://solar-system-v1-eosin.vercel.app)
 
 ## Assets
 
