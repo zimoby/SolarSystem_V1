@@ -4,6 +4,12 @@ Project for [ThreeJS Journey](https://threejs-journey.com/) course challenge by 
 
 Live: [Solar System](https://solar-system-v1-eosin.vercel.app)
 
+This version is locked for the course challenge.
+New features and improvements will be added to the V2 project:
+
+[Github V2 project](https://github.com/zimoby/SolarSystem_V2)
+[Live: Solar System V2](https://solar-system-v2.vercel.app/)
+
 ## Assets
 
 ### Textures
